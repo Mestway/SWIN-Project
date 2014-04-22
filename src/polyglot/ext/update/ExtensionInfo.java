@@ -20,7 +20,7 @@ import java.io.*;
 /**
  * Extension information for update extension.
  */
-public class ExtensionInfo extends polyglot.ext.jl.ExtensionInfo {
+public class ExtensionInfo extends polyglot.ext.jl5.ExtensionInfo {
     static {
         // force Topics to load
         Topics t = new Topics();
@@ -57,7 +57,7 @@ public class ExtensionInfo extends polyglot.ext.jl.ExtensionInfo {
 					new OutputPass(Pass.OUTPUT,job, 
 					new CodeRefactoring(job,ts,nf,targetFactory())));
 		
-		removeCheckings(passes);
+		//removeCheckings(passes);
 
 		return passes;
     }
@@ -69,6 +69,8 @@ public class ExtensionInfo extends polyglot.ext.jl.ExtensionInfo {
 		removePass(passes, Pass.EXIT_CHECK);
 		removePass(passes, Pass.INIT_CHECK);
 		removePass(passes, Pass.CONSTRUCTOR_CHECK);
+		removePass(passes, GENERIC_TYPE_HANDLER);
+		removePass(passes, APPLICATION_CHECK);
 	}
 
 }

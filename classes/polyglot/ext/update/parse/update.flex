@@ -63,6 +63,7 @@ import java.util.HashMap;
         keywords.put("do",            new Integer(sym.DO));
         keywords.put("double",        new Integer(sym.DOUBLE));
         keywords.put("else",          new Integer(sym.ELSE));
+        keywords.put("enum",          new Integer(sym.ENUM));
         keywords.put("extends",       new Integer(sym.EXTENDS));
         keywords.put("final",         new Integer(sym.FINAL));
         keywords.put("finally",       new Integer(sym.FINALLY));
@@ -342,6 +343,8 @@ OctalEscape = \\ [0-7]
     "<<="  { return op(sym.LSHIFTEQ);   }
     ">>="  { return op(sym.RSHIFTEQ);   }
     ">>>=" { return op(sym.URSHIFTEQ);  }
+    "@"    { return op(sym.AT);         }
+    "..."    { return op(sym.ELLIPSIS);         }
 
     /* 3.10.1 Integer Literals */
     {OctalNumeral} [lL]          { Token t = long_lit(chop(), 8);
