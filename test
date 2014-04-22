@@ -1,0 +1,6 @@
+#!/bin/bash
+
+mkdir output
+cd output
+../bin/jlc -ext update ../update_test/0.update
+../bin/jlc -ext update ../update_test/1.update
