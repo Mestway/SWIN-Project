@@ -53,11 +53,11 @@ public class ExtensionInfo extends polyglot.ext.jl5.ExtensionInfo {
     public List passes(Job job) {
         List passes = super.passes(job);
 		// TODO: add passes as needed by your compiler
-		replacePass(passes, Pass.OUTPUT,
-					new OutputPass(Pass.OUTPUT,job, 
-					new CodeRefactoring(job,ts,nf,targetFactory())));
+		beforePass(passes, Pass.OUTPUT,
+					new VisitorPass(Pass.OUTPUT,job, 
+					new CodeRefactoring(nf)));
 		
-		//removeCheckings(passes);
+		removeCheckings(passes);
 
 		return passes;
     }

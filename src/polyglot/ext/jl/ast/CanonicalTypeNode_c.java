@@ -36,7 +36,8 @@ public class CanonicalTypeNode_c extends TypeNode_c implements CanonicalTypeNode
   }
 
   public void prettyPrint(CodeWriter w, PrettyPrinter tr) {
-    w.write(type.translate(null));
+	System.out.println("Infspaodfdpofaioj");
+	  w.write(type.translate(null));
   }
 
   /**
@@ -65,7 +66,6 @@ public class CanonicalTypeNode_c extends TypeNode_c implements CanonicalTypeNode
   }
 
   public String toString() {
-    if (type == null) return "<unknown-type>";
     return type.toString();
   }
 
