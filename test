@@ -1,31 +1,24 @@
 #!/bin/bash
 
-cd update_test
-FileCount=`ls | wc -l`
-cd ..
-
 if [ -e output ]
 then
 	rm -r output
 fi
 
 mkdir output
-cd output
 FileSuffix=".update"
 
 if [ $# -gt 0 ]
 then
 	echo "Compiling File "$1
-	../bin/jlc -ext update ../update_test/$1
+	bin/jlc -d output/ -ext update update_test/$1
 else
-	Files=`ls ../update_test`
+	Files=`ls update_test`
 	for i in $Files; do
 		echo "Compiling File "$i
 		j=$i
 		j=${j/.update/}
-		mkdir $j
-		cd $j
-		../../bin/jlc -ext update ../../update_test/$i > $i".log"
-		cd ..
+		mkdir output/$j
+		bin/jlc -d output/$j -ext update update_test/$i > output/$j/$i".log"
 	done
 fi

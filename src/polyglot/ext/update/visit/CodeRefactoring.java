@@ -7,26 +7,47 @@
 
 package polyglot.ext.update.visit;
 
+import java.io.*;
+import java.util.ArrayList;
+
 import polyglot.ast.Node;
 import polyglot.ast.NodeFactory;
-import polyglot.ext.jl.ast.TypeNode_c;
-import polyglot.ext.jl.types.PrimitiveType_c;
 import polyglot.ext.update.ast.*;
-import polyglot.frontend.Job;
-import polyglot.frontend.OutputPass;
-import polyglot.frontend.TargetFactory;
-import polyglot.types.PrimitiveType;
-import polyglot.types.TypeSystem;
+import polyglot.ext.update.match.Matching;
 import polyglot.visit.NodeVisitor;
-import polyglot.visit.Translator;
 
 public class CodeRefactoring extends NodeVisitor
 {
 	NodeFactory nf;
-	
+	String fileName = "MatchInfo.in";
+	ArrayList<Matching> rawMatching = new ArrayList<Matching>();
+
 	public CodeRefactoring(NodeFactory nf) {	
 		this.nf = nf;
 		System.out.println("Code Refactoring Begin");
+		
+		File file = new File(fileName);
+		BufferedReader reader = null;
+		System.out.println(file.getAbsolutePath());
+
+		try {
+			reader = new BufferedReader(new FileReader(file));
+			
+			String tempString = null;
+			
+			while ((tempString = reader.readLine()) != null) {
+				//System.out.println(":" + tempString);
+				rawMatching.add(new Matching(tempString));
+			}
+			reader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+	private void MatchProcessing(){
+	
 	}
 
 	@Override
