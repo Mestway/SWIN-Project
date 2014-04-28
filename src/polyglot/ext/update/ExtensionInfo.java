@@ -6,13 +6,13 @@ import polyglot.ext.update.parse.Grm;
 import polyglot.ext.update.ast.*;
 import polyglot.ext.update.types.*;
 import polyglot.ext.update.visit.CodeRefactoring;
+import polyglot.ext.update.visit.NameCollector;
 
 import polyglot.ast.*;
 import polyglot.types.*;
 import polyglot.util.*;
 import polyglot.visit.*;
 import polyglot.frontend.*;
-import polyglot.main.*;
 
 import java.util.*;
 import java.io.*;
@@ -49,14 +49,19 @@ public class ExtensionInfo extends polyglot.ext.jl5.ExtensionInfo {
     }
 
 	public static final Pass.ID API_UPDATE = new Pass.ID("api-update");
+	public static final Pass.ID NAME_COLLECT = new Pass.ID("name-collect");
 
     public List passes(Job job) {
         List passes = super.passes(job);
 		
 		beforePass(passes, Pass.OUTPUT,
 					new VisitorPass(API_UPDATE,job, 
-					new CodeRefactoring(job, nf)));
+					new NameCollector(job, nf)));
 		
+		beforePass(passes, Pass.OUTPUT,
+					new VisitorPass(API_UPDATE,job, 
+					new CodeRefactoring(job, nf)));
+
 		//removeCheckings(passes);
 		replacePass(passes, Pass.OUTPUT, new OutputPass(Pass.OUTPUT,job,
 					new TypedTranslator(job, ts, nf, targetFactory())));
