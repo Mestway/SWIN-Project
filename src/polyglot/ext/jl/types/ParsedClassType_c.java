@@ -138,7 +138,7 @@ public class ParsedClassType_c extends ClassType_c implements ParsedClassType
         if (isAnonymous())
             throw new InternalCompilerError("Anonymous classes cannot have names.");
         this.name = name;
-    }
+	}
 
     public void position(Position pos) {
 	this.position = pos;

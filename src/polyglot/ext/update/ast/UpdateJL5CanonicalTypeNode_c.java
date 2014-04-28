@@ -32,6 +32,10 @@ public class UpdateJL5CanonicalTypeNode_c extends JL5CanonicalTypeNode_c
 		String outputType = type.translate(null);
 	}
 
+	public String getOutputString() {
+		return type.translate(null);
+	}
+
 	@Override
 	public void translate(CodeWriter w, Translator tr) {
 		if(Options.global.fully_qualified_names || ! (tr instanceof TypedTranslator)) {
@@ -40,7 +44,10 @@ public class UpdateJL5CanonicalTypeNode_c extends JL5CanonicalTypeNode_c
 				outputType = outputName;
 			w.write(outputType);
 		} else {
-			w.write(type.translate(((TypedTranslator) tr).context()));
+			String outputType = type.translate(((TypedTranslator) tr).context());
+			if(outputName != null)
+				outputType = outputName;
+			w.write(outputType);
 		}
 	}
 }

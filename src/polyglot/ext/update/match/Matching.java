@@ -49,9 +49,8 @@ public class Matching {
 			typePair.add(tempMatcher.group());
 		}
 		
-		typePair.print();
-		defPair.print();
-		blockPair.print();
-		System.out.println("-----");
+		//typePair.print();
+		//defPair.print();
+		//blockPair.print();
 	}
 }

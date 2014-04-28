@@ -10,8 +10,12 @@ FileSuffix=".update"
 
 if [ $# -gt 0 ]
 then
-	echo "Compiling File "$1
-	bin/jlc -d output/ -ext update update_test/$1
+	echo "Compiling File "$@
+#	Compile=""
+#	for i in $@;do
+#		Compile=$Compile" update_test/"$i
+#	done
+	bin/jlc -d output/ -ext update $@
 else
 	Files=`ls update_test`
 	for i in $Files; do
