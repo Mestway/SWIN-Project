@@ -54,4 +54,14 @@ public class UpdateNodeFactory_c extends JL5NodeFactory_c implements UpdateNodeF
 		return n;
 	}
 
+	public JL5New JL5New(Position pos, Expr qualifier, TypeNode tn, List arguments, ClassBody body, List typeArgs) {
+		JL5New n = new UpdateJL5New_c(pos, qualifier, tn, arguments, body, typeArgs);
+		return n;
+	}
+
+	public JL5New JL5New(Position pos, TypeNode tn, List arguments, ClassBody body, List typeArgs) {
+		JL5New n = new UpdateJL5New_c(pos, null, tn, arguments, body, typeArgs);
+		return n;
+	}
+
 }

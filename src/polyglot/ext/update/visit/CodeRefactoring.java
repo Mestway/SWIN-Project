@@ -53,42 +53,91 @@ public class CodeRefactoring extends NodeVisitor
 		}
 	}
 
-	private void MatchProcessing(){
-	
+	protected void MatchProcessing(){
+			
 	}
 
 	@Override
 	public NodeVisitor enter(Node n) {
+		
+		// Check if the typeNames presented in mathcing is ambiguious.
 		if (ClassTypeString.Visited == false) {
 			ClassTypeString.printMap();
 			ClassTypeString.Visited = true;
+			for (Matching match : rawMatching) {
+				if (ClassTypeString.bannedName().contains(match.getTypePair().first())
+				||	ClassTypeString.bannedName().contains(match.getTypePair().second())) {
+					System.err.println("ShortName unable to identify");
+					System.exit(-1);
+				}
+			}
 		}
+		
+		// Visit different Nodes
 		if (n instanceof UpdateJL5CanonicalTypeNode_c) {
 			typeNodeHandler((UpdateJL5CanonicalTypeNode_c)n);
 		} else if (n instanceof UpdateJL5Call_c) {
 			callNodeHandler((UpdateJL5Call_c)n);
+		} else if (n instanceof UpdateJL5New_c) {
+			newNodeHandler((UpdateJL5New_c)n);
 		}
 		return this;
 	}
 
-	private void typeNodeHandler(UpdateJL5CanonicalTypeNode_c node) {
+	// Deal with UpdateJL5CanonicalTypeNode_c
+	protected void typeNodeHandler(UpdateJL5CanonicalTypeNode_c node) {
 		String outputName = null;
-		node.setOutputName(outputName);
 		ClassTypeString classType = parseClassType(node.toString());
+		for (Matching match : rawMatching) {
+			classType = classType.processMatching(match);
+		}
+		outputName = classType.toTypeString();
+		node.setOutputName(outputName);
 	}
 
-	private void callNodeHandler(UpdateJL5Call_c node) {
+	// TODO: Deal with callNode replacement
+	// Deal with UpdateJL5Call_c
+	protected void callNodeHandler(UpdateJL5Call_c node) {
 		String outputName = null;
-		node.setOutputName(outputName);
 		try {
 			ReferenceType targetType = node.findTargetType();
 			ClassTypeString targetClassType = parseClassType(targetType.toString());
+			System.out.println("targetClassType: " + targetClassType.toTypeString());
+	
+			for	(Matching match : rawMatching) {
+				String callType = match.getDefPair().first();
+				
+				if (ClassTypeString.classTypeCompare(callType, targetClassType.typeName())) {
+					String srcMethodName = parseMethodInvoke(match.getBlockPair().first());
+					
+					if (node.name().equals(srcMethodName)) {
+						String dstMethodName = parseMethodInvoke(match.getBlockPair().second()); 
+						outputName = dstMethodName;
+					}
+				}	
+			}
+			node.setOutputName(outputName);
 		} catch (SemanticException e) {
 			System.err.println("JL5Call_c Node Type cannot find: " + node.toString());	
 		}
+
 	}
 
-	private ClassTypeString parseClassType(String type) {	
+	// Deal with UpdateJL5New_c
+	protected void newNodeHandler(UpdateJL5New_c node) {
+		String outputName = null;
+		ClassTypeString classType = parseClassType(node.objectType().toString());
+		for (Matching match : rawMatching) {
+			classType = classType.processMatching(match);
+		}
+		outputName = classType.toTypeString();
+		node.setOutputName(outputName);
+	}
+
+	// Parse a string represent class type
+	// and store it into ClassTypeString
+	// e.g. ArrayList<Integer> will be stored in a ClassTypeString
+	protected ClassTypeString parseClassType(String type) {	
 		String tempType = type;
 		ClassTypeString classType = new ClassTypeString();
 
@@ -106,6 +155,25 @@ public class CodeRefactoring extends NodeVisitor
 		}
 		classType.typeName(tempType);
 		return classType;
+	}
+
+	protected String parseMethodName(String type) {
+		String[] parts = type.split("\\.");
+		return parts[parts.length - 1];
+	}
+
+	protected String parseMethodInvoke(String srcMethod) {
+		String[] parts = srcMethod.split("\\.");
+		String method = parts[parts.length - 1];
+
+		String regex = "[^\\(\\)]*";
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(method);
+		if (matcher.find()) {
+			String methodName = matcher.group();
+			return methodName;
+		}
+		return "";
 	}
 
 }

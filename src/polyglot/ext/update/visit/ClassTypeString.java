@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
+import polyglot.ext.update.match.*;
 
 /*************************************************************************
 	> File Name: visit/ClassTypeString.java
@@ -14,11 +15,13 @@ import java.util.Map.Entry;
 
 public class ClassTypeString {
 	
-	public static HashMap<String,String> nameMap = new HashMap<String,String>();
-	public static HashSet<String> bannedName = new HashSet<String>();
-	public static Boolean Visited = false;
+	protected static HashMap<String,String> nameMap = new HashMap<String,String>();
+	protected static HashSet<String> bannedName = new HashSet<String>();
+	protected static Boolean Visited = false;
 
+	/* typeName specifies the name of a type without counting the type arguments */
 	protected String typeName;
+	/* typeArgs specifies the type arugmetns */
 	protected ArrayList<String> typeArgs;
 
 	public ClassTypeString() {
@@ -46,16 +49,61 @@ public class ClassTypeString {
 		return this.typeArgs;
 	}
 	
+	public String toTypeString() {
+		String type = new String();
+		type += typeName;
+		if (typeArgs.size() > 0) {
+			type += "<";
+			for (int i = 0; i < typeArgs.size() - 1; i ++) {
+				type += typeArgs.get(i);
+				type += ",";
+			}
+			type += typeArgs.get(typeArgs.size() - 1);
+			type += ">";
+		}
+		return type;
+	}
+
+	public ClassTypeString processMatching(Matching match) {
+		if (classTypeCompare(typeName, match.getTypePair().first())) {
+			this.typeName = match.getTypePair().second();	
+		}
+
+		ArrayList<String> tempTypeArgs = new ArrayList<String>();
+		for (String str : this.typeArgs) {
+			if (classTypeCompare(str, match.getTypePair().first())) {	
+				tempTypeArgs.add(match.getTypePair().second());
+			} else {
+				tempTypeArgs.add(str);
+			}
+		}
+
+		this.typeArgs = tempTypeArgs;
+		return this;
+	}
+
 	public void print() {
 		System.out.println("Class: " + typeName);
 		for (String part : typeArgs) {
 			System.out.println("Args: " + part);
 		}
+		System.out.println("All: " + toTypeString());
 	}
 
 	public static String getShortName(String fullName) {
 		String[] parts = fullName.split("\\.");
 		return parts[parts.length - 1];
+	}
+
+	public static boolean classTypeCompare(String first, String second) {
+		if (first.equals(second)) 
+			return true;
+		else if (!bannedName.contains(getShortName(first)) && !bannedName.contains(getShortName(second))
+				&& getShortName(first).equals(getShortName(second))){
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public static void addMapEntry(String fullName) {
@@ -71,6 +119,14 @@ public class ClassTypeString {
 		} else {
 			nameMap.put(shortName, fullName);
 		}
+	}
+
+	public static HashSet<String> bannedName() {
+		return bannedName;
+	}
+
+	public static HashMap<String,String> nameMap() {
+		return nameMap;
 	}
 
 	public static void printMap() {

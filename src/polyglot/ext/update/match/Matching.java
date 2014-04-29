@@ -12,9 +12,9 @@ import java.util.regex.Pattern;
 
 public class Matching {
 	
-	Pair typePair =  new Pair();	
-	Pair defPair = new Pair();
-	Pair blockPair = new Pair();
+	protected Pair typePair =  new Pair();	
+	protected Pair defPair = new Pair();
+	protected Pair blockPair = new Pair();
 
 	public Matching(String rawMatching) {
 		rawMatching = rawMatching.substring(rawMatching.indexOf("[") + 1, rawMatching.indexOf("]"));
@@ -39,7 +39,7 @@ public class Matching {
 			tempMatcher = tempPattern.matcher(partString);
 			tempMatcher.find();
 			String def = tempMatcher.group();
-			defPair.add(def.substring(1,def.length()-1));
+			defPair.add(def.substring(1,def.length()-1).split(" ")[0]);
 			partString = partString.substring(0, tempMatcher.start());
 			
 			tempRegex = "\\S+";
@@ -49,8 +49,20 @@ public class Matching {
 			typePair.add(tempMatcher.group());
 		}
 		
-		//typePair.print();
-		//defPair.print();
-		//blockPair.print();
+		typePair.print();
+		defPair.print();
+		blockPair.print();
+	}
+
+	public Pair getTypePair() {
+		return typePair;
+	}
+
+	public Pair getDefPair() {
+		return defPair;
+	}
+
+	public Pair getBlockPair() {
+		return blockPair;
 	}
 }

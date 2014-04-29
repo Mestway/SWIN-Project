@@ -8,7 +8,7 @@ package polyglot.ext.update.match;
  ************************************************************************/
 
 public class Pair {
-	public String v1 = null, v2 = null;
+	protected String v1 = null, v2 = null;
 
 	public Pair() {
 		v1 = null;
@@ -32,6 +32,14 @@ public class Pair {
 			this.v2 = v;
 			return true;
 		} else return false;
+	}
+
+	public String first() {
+		return v1;
+	}
+
+	public String second() {
+		return v2;
 	}
 	
 	public void print() {

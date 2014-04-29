@@ -1,5 +1,7 @@
 import java.util.Enumeration;
 import java.util.Vector;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Test2 {
 	public static void main(String[] args) {
@@ -9,7 +11,7 @@ public class Test2 {
 		}
 		Enumeration<Integer> it = array.elements();
 		while(it.hasMoreElements()) {
-			System.out.println(it.nextElement());
+			System.out.println(it.nextElement().toString());
 		}
 	}
 }
