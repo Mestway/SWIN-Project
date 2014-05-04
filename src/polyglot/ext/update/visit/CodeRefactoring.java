@@ -51,6 +51,7 @@ public class CodeRefactoring extends NodeVisitor
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
 	}
 
 	protected void MatchProcessing(){
@@ -68,6 +69,7 @@ public class CodeRefactoring extends NodeVisitor
 				if (ClassTypeString.bannedName().contains(match.getTypePair().first())
 				||	ClassTypeString.bannedName().contains(match.getTypePair().second())) {
 					System.err.println("ShortName unable to identify");
+					System.err.println(match.getTypePair().first() + " + " + match.getTypePair().second());
 					System.exit(-1);
 				}
 			}
@@ -95,14 +97,12 @@ public class CodeRefactoring extends NodeVisitor
 		node.setOutputName(outputName);
 	}
 
-	// TODO: Deal with callNode replacement
 	// Deal with UpdateJL5Call_c
 	protected void callNodeHandler(UpdateJL5Call_c node) {
 		String outputName = null;
 		try {
 			ReferenceType targetType = node.findTargetType();
 			ClassTypeString targetClassType = parseClassType(targetType.toString());
-			System.out.println("targetClassType: " + targetClassType.toTypeString());
 	
 			for	(Matching match : rawMatching) {
 				String callType = match.getDefPair().first();
@@ -134,11 +134,14 @@ public class CodeRefactoring extends NodeVisitor
 		node.setOutputName(outputName);
 	}
 
+	// WARNING : this is replaced by parseClassType2
 	// Parse a string represent class type
 	// and store it into ClassTypeString
 	// e.g. ArrayList<Integer> will be stored in a ClassTypeString
-	protected ClassTypeString parseClassType(String type) {	
-		String tempType = type;
+	protected ClassTypeString parseClassType(String type) {
+		return parseClassType2(type);
+
+	/*	String tempType = type;
 		ClassTypeString classType = new ClassTypeString();
 
 		String tempRegex = "<[^<>]*>";
@@ -155,11 +158,65 @@ public class CodeRefactoring extends NodeVisitor
 		}
 		classType.typeName(tempType);
 		return classType;
+	*/
+	}
+
+	protected ClassTypeString parseClassType2(String type) {
+		int firstI = type.indexOf("<");
+		int lastI = type.lastIndexOf(">");
+
+		if (firstI == -1 && lastI == -1) {
+			ClassTypeString strClassType = new ClassTypeString();
+			strClassType.typeName(type);
+			return strClassType;
+		}
+
+		String typeName = type.substring(0, firstI);
+		String args = type.substring(firstI + 1, lastI);
+
+		ClassTypeString classType = new ClassTypeString();
+		classType.typeName = (typeName);
+		ArrayList<String> typeArgs = splitByComma(args);
+		for (String str : typeArgs) {
+			if (str.indexOf('<') == -1 && str.indexOf('>') == -1) {
+				classType.typeArgs().add(str);
+			} else {
+				ClassTypeString arg = parseClassType2(str);
+				classType.typeArgs().add(arg);
+			}
+		}
+		
+		return classType;
 	}
 
 	protected String parseMethodName(String type) {
 		String[] parts = type.split("\\.");
 		return parts[parts.length - 1];
+	}
+
+	
+
+	// input a string and return an arrayList without comma outside 
+	protected ArrayList<String> splitByComma(String input) {
+		int count = 0;
+		ArrayList<String> array = new ArrayList<String>();
+		for (int i = input.length() - 1; i >= 0; i --) {
+			if (input.charAt(i) == ',' && count == 0) {
+				array.add(input.substring(i+1,input.length()));
+				input = input.substring(0,i);
+			} else if (input.charAt(i) == '>') {
+				count ++;
+			} else if (input.charAt(i) == '<') {
+				count --;
+			}
+		}
+
+		array.add(input);
+		ArrayList<String> result = new ArrayList<String>();
+		for (int i = array.size() - 1; i >= 0; i --) {
+			result.add(array.get(i));
+		}
+		return result;
 	}
 
 	protected String parseMethodInvoke(String srcMethod) {

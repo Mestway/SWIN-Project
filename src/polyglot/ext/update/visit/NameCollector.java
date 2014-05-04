@@ -56,7 +56,9 @@ public class NameCollector extends NodeVisitor
 	private void collectClassType(String type) {	
 		String tempType = type;
 		String tempRegex = "<[^<>]*>";
+		
 		Pattern tempPattern = Pattern.compile(tempRegex);
+		
 		Matcher tempMatcher = tempPattern.matcher(tempType);
 		if (tempMatcher.find()) {
 			String arguments = tempMatcher.group();
@@ -65,8 +67,15 @@ public class NameCollector extends NodeVisitor
 			for (String part : parts) {
 				ClassTypeString.collectTypeArgs(part);
 			}
-			tempType = tempType.substring(0, tempMatcher.start());
+			tempType = tempType.substring(0, tempMatcher.start()) + tempType.substring(tempMatcher.end(), tempType.length());
 		}
-		ClassTypeString.collectTypeName(tempType);
+
+		if (tempType.contains("<") && tempType.contains(">"))
+			collectClassType(tempType);
+		else {
+			//System.out.println("tempType -- " + tempType);
+			ClassTypeString.collectTypeName(tempType);
+		}
 	}
+
 }

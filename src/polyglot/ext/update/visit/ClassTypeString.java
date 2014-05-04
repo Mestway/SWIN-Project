@@ -22,11 +22,11 @@ public class ClassTypeString {
 	/* typeName specifies the name of a type without counting the type arguments */
 	protected String typeName;
 	/* typeArgs specifies the type arugmetns */
-	protected ArrayList<String> typeArgs;
+	protected ArrayList<Object> typeArgs;
 
 	public ClassTypeString() {
 		typeName = new String();
-		typeArgs = new ArrayList<String>();
+		typeArgs = new ArrayList<Object>();
 	}
 
 	public void typeName(String typeName) {
@@ -45,7 +45,7 @@ public class ClassTypeString {
 		ClassTypeString.addMapEntry(typeArg);
 	}
 
-	public ArrayList<String> typeArgs() {
+	public ArrayList<Object> typeArgs() {
 		return this.typeArgs;
 	}
 	
@@ -55,26 +55,41 @@ public class ClassTypeString {
 		if (typeArgs.size() > 0) {
 			type += "<";
 			for (int i = 0; i < typeArgs.size() - 1; i ++) {
-				type += typeArgs.get(i);
+				Object tmpArg = typeArgs.get(i);
+				if (tmpArg instanceof String) {
+					type += (String)tmpArg;
+				} else if (tmpArg instanceof ClassTypeString) {
+					type += ((ClassTypeString)tmpArg).toTypeString();
+				}
 				type += ",";
 			}
-			type += typeArgs.get(typeArgs.size() - 1);
+			Object lastArg = typeArgs.get(typeArgs.size() - 1);
+			if (lastArg instanceof String) {
+				type += (String)lastArg;
+			} else if (lastArg instanceof ClassTypeString) {
+				type += ((ClassTypeString)lastArg).toTypeString();
+			}
 			type += ">";
 		}
 		return type;
 	}
 
+	// we need to handle recursive type arguments
 	public ClassTypeString processMatching(Matching match) {
 		if (classTypeCompare(typeName, match.getTypePair().first())) {
 			this.typeName = match.getTypePair().second();	
 		}
 
-		ArrayList<String> tempTypeArgs = new ArrayList<String>();
-		for (String str : this.typeArgs) {
-			if (classTypeCompare(str, match.getTypePair().first())) {	
-				tempTypeArgs.add(match.getTypePair().second());
-			} else {
-				tempTypeArgs.add(str);
+		ArrayList<Object> tempTypeArgs = new ArrayList<Object>();
+		for (Object str : this.typeArgs) {
+			if (str instanceof String) {
+				if (classTypeCompare((String)str, match.getTypePair().first())) {	
+					tempTypeArgs.add(match.getTypePair().second());
+				} else {
+					tempTypeArgs.add((String)str);
+				}
+			} else if (str instanceof ClassTypeString) {
+				tempTypeArgs.add(((ClassTypeString)str).processMatching(match));
 			}
 		}
 
@@ -84,8 +99,8 @@ public class ClassTypeString {
 
 	public void print() {
 		System.out.println("Class: " + typeName);
-		for (String part : typeArgs) {
-			System.out.println("Args: " + part);
+		for (Object part : typeArgs) {
+			System.out.println("Args: " + part.toString());
 		}
 		System.out.println("All: " + toTypeString());
 	}
