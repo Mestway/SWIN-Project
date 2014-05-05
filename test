@@ -8,21 +8,24 @@ fi
 mkdir output
 FileSuffix=".update"
 
-if [ $# -gt 0 ]
+if [ $# -gt 1 ]
 then
 	echo "Compiling File "$@
-#	Compile=""
-#	for i in $@;do
-#		Compile=$Compile" update_test/"$i
-#	done
-	bin/jlc -d output/ -ext update $@
-else
-	Files=`ls update_test`
-	for i in $Files; do
-		echo "Compiling File "$i
-		j=$i
-		j=${j/.update/}
-		mkdir output/$j
-		bin/jlc -d output/$j -ext update update_test/$i > output/$j/$i".log"
+	Compile=""
+	flag=0
+	filename=$1
+	cp $filename "DONOTUSETHISNAME.DONOTUSETHISNAME"
+	for i in $@;do
+		if [ $flag -gt 0 ]
+		then 
+			Compile=$Compile" "$i
+		else
+			flag=1
+		fi
 	done
+	echo $Compile
+	bin/jlc -d output/ -ext update $Compile
+	rm "DONOTUSETHISNAME.DONOTUSETHISNAME"
+else
+	echo "An error occured. Seems arguments are not right"
 fi

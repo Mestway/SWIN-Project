@@ -1,5 +1,12 @@
 This is an implementation of Java Update Calculus based on polyglot-1.3.5 with JL5 extension. 
 
+Build
+=====================================================================
+To build the project, make sure you have java and ant.
+
+        ~:ant
+        ~:ant update
+
 Input
 ============================================================================
 To run a example, you need two inputs:

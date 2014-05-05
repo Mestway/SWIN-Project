@@ -25,7 +25,7 @@ import polyglot.visit.NodeVisitor;
 public class CodeRefactoring extends NodeVisitor
 {
 	NodeFactory nf;
-	String fileName = "MatchInfo.in";
+	String fileName = "DONOTUSETHISNAME.DONOTUSETHISNAME";
 	ArrayList<Matching> rawMatching = new ArrayList<Matching>();
 	Context context;
 
@@ -38,6 +38,8 @@ public class CodeRefactoring extends NodeVisitor
 		File file = new File(fileName);
 		BufferedReader reader = null;
 		System.out.println(file.getAbsolutePath());
+	
+		String inputString = new String();
 
 		try {
 			reader = new BufferedReader(new FileReader(file));
@@ -45,11 +47,20 @@ public class CodeRefactoring extends NodeVisitor
 			String tempString = null;
 			
 			while ((tempString = reader.readLine()) != null) {
-				rawMatching.add(new Matching(tempString));
+				inputString += tempString;
+				//rawMatching.add(new Matching(tempString));
 			}
 			reader.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+
+		String pattern = "\\[[^\\[\\]]*\\]";
+		Pattern r = Pattern.compile(pattern);
+		Matcher matcher = r.matcher(inputString);
+		while (matcher.find()) {
+			String oneMatching = matcher.group();
+			rawMatching.add(new Matching(oneMatching));	
 		}
 
 	}
