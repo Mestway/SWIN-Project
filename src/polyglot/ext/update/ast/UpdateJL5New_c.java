@@ -21,6 +21,7 @@ import polyglot.visit.PrettyPrinter;
 public class UpdateJL5New_c extends JL5New_c {
 
 	protected String outputName = null;
+	protected Boolean transformToInvoke = false;
 
 	public UpdateJL5New_c(Position pos, Expr qualifier, TypeNode tn, 
 			List arguments, ClassBody body, List typeArguments) {
@@ -30,7 +31,9 @@ public class UpdateJL5New_c extends JL5New_c {
 	@Override
 	public void prettyPrint(CodeWriter w, PrettyPrinter tr) {
 		printQualifier(w, tr);
-		w.write("new ");
+
+		if (!transformToInvoke)
+			w.write("new ");
 		
 		if (qualifier != null) {
 			if (outputName == null)
@@ -50,6 +53,10 @@ public class UpdateJL5New_c extends JL5New_c {
 
 	public void setOutputName(String outputName) {
 		this.outputName = outputName;
+	}
+
+	public void setTransformToInvoke() {
+		this.transformToInvoke = true;
 	}
 
 }

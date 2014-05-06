@@ -48,10 +48,12 @@ public class Matching {
 			tempMatcher.find();
 			typePair.add(tempMatcher.group());
 		}
+	
 		
-		typePair.print();
-		defPair.print();
-		blockPair.print();
+
+		//typePair.print();
+		//defPair.print();
+		//blockPair.print();
 	}
 
 	public Pair getTypePair() {
