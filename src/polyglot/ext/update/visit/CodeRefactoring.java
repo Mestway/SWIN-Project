@@ -120,7 +120,7 @@ public class CodeRefactoring extends NodeVisitor
 				
 				if (ClassTypeString.classTypeCompare(callType, targetClassType.typeName())) {
 					String srcMethodName = parseMethodInvoke(match.getBlockPair().first());
-					
+				
 					if (node.name().equals(srcMethodName)) {
 						String dstMethodName = parseMethodInvoke(match.getBlockPair().second()); 
 						outputName = dstMethodName;
@@ -231,17 +231,30 @@ public class CodeRefactoring extends NodeVisitor
 	}
 
 	protected String parseMethodInvoke(String srcMethod) {
-		String[] parts = srcMethod.split("\\.");
-		String method = parts[parts.length - 1];
+		String method = srcMethod.substring(srcMethod.indexOf('.')+1,srcMethod.length());
+
+		ArrayList<String> methodSeq = new ArrayList<String>();
 
 		String regex = "[^\\(\\)]*";
 		Pattern pattern = Pattern.compile(regex);
 		Matcher matcher = pattern.matcher(method);
-		if (matcher.find()) {
+		while (matcher.find()) {
 			String methodName = matcher.group();
-			return methodName;
+			if(!methodName.equals(""))
+				methodSeq.add(methodName);
 		}
-		return "";
+		
+		if (methodSeq.size() == 0)
+			return "";
+
+		// TODO --> maybe bugs with arguments
+		String outputName = new String();
+		for (int i = 0; i <= methodSeq.size() - 2; i ++) {
+			outputName += methodSeq.get(i) + "()";
+		}
+		outputName += methodSeq.get(methodSeq.size()-1);
+	
+		return outputName;
 	}
 
 }
