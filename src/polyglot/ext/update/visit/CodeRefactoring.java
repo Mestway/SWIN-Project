@@ -21,6 +21,8 @@ import polyglot.types.Context;
 import polyglot.types.ReferenceType;
 import polyglot.types.SemanticException;
 import polyglot.visit.NodeVisitor;
+import polyglot.ext.update.match.TypeName;
+import polyglot.ext.update.match.Pair;
 
 public class CodeRefactoring extends NodeVisitor
 {
@@ -116,18 +118,25 @@ public class CodeRefactoring extends NodeVisitor
 			ClassTypeString targetClassType = parseClassType(targetType.toString());
 	
 			for	(Matching match : rawMatching) {
-				String callType = match.getDefPair().first();
-				
-				if (ClassTypeString.classTypeCompare(callType, targetClassType.typeName())) {
-					String srcMethodName = parseMethodInvoke(match.getBlockPair().first());
+				TypeName callTypeName = match.getFirstDefPair().first();
+
+				if (callTypeName.useful() &&
+						ClassTypeString.classTypeCompare(callTypeName.getType(), targetClassType.typeName())) {
+					String srcMethodName = parseMethodInvoke(match.getBlockPair().first().allString());
 				
 					if (node.name().equals(srcMethodName)) {
-						String dstMethodName = parseMethodInvoke(match.getBlockPair().second()); 
+						String dstMethodName = parseMethodInvoke(match.getBlockPair().second().allString()); 
 						outputName = dstMethodName;
 					}
 				}	
 			}
 			node.setOutputName(outputName);
+		
+			System.out.println("This is a CALL! -- " + outputName);
+			for (Object i : node.arguments()) {
+				System.out.println("arg: " + i + " -- " + i.getClass());
+			}
+
 		} catch (SemanticException e) {
 			System.err.println("JL5Call_c Node Type cannot find: " + node.toString());	
 		}
@@ -231,6 +240,8 @@ public class CodeRefactoring extends NodeVisitor
 	}
 
 	protected String parseMethodInvoke(String srcMethod) {
+		System.out.println("invoke --> " + srcMethod);
+		
 		String method = srcMethod.substring(srcMethod.indexOf('.')+1,srcMethod.length());
 
 		ArrayList<String> methodSeq = new ArrayList<String>();

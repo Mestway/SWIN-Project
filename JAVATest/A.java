@@ -22,6 +22,8 @@ public class A {
 		Enumeration ve = v.elements();
 		while (ve.hasMoreElements())
 			print(ve.nextElement());
+	
+		print((new String("diudiu")).toString());
 	}
 }
 

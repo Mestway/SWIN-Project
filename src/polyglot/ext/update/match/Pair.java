@@ -7,24 +7,25 @@ package polyglot.ext.update.match;
 	> Created Time: Wed 23 Apr 2014 08:07:34 AM PDT
  ************************************************************************/
 
-public class Pair {
-	protected String v1 = null, v2 = null;
+public class Pair<T> {
+	protected T v1 = null;
+	protected T v2 = null;
 
 	public Pair() {
 		v1 = null;
 		v2 = null;
 	}
 
-	public Pair(String v1, String v2) {
+	public Pair(T v1, T v2) {
 		this.setPair(v1, v2);
 	}
 
-	public void setPair(String v1, String v2) {
+	public void setPair(T v1, T v2) {
 		this.v1 = v1;
 		this.v2 = v2;
 	}
 	
-	public boolean add(String v) {
+	public boolean add(T v) {
 		if (this.v1 == null) {
 			this.v1 = v;
 			return true;
@@ -34,16 +35,16 @@ public class Pair {
 		} else return false;
 	}
 
-	public String first() {
+	public T first() {
 		return v1;
 	}
 
-	public String second() {
+	public T second() {
 		return v2;
 	}
 	
 	public void print() {
-		System.out.println(v1 + "---" + v2);
+		System.out.println(v1.toString() + "---" + v2.toString());
 	}
 
 }

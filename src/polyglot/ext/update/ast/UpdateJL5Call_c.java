@@ -2,6 +2,7 @@ package polyglot.ext.update.ast;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.ArrayList;
 
 import polyglot.ast.Expr;
 import polyglot.ast.Receiver;
@@ -13,10 +14,16 @@ import polyglot.visit.PrettyPrinter;
 
 public class UpdateJL5Call_c extends JL5Call_c
 {
-	private String outputName = null;
-	
+	protected String outputName = null;
+	protected Boolean printAsNew = false;
+	protected ArrayList<String> argsOutput = new ArrayList<String>();
+
 	public void setOutputName(String name) {
 		outputName = name;
+	}
+
+	public void setPrintAsNew() {
+		printAsNew = true;
 	}
 
 	public UpdateJL5Call_c(Position pos, Receiver target, String name, List arguments, List typeArguments) {
@@ -65,4 +72,8 @@ public class UpdateJL5Call_c extends JL5Call_c
         w.end();
         w.write(")");
     }
+
+	void printAsUpdateJL5New_c(CodeWriter w, PrettyPrinter tr) {
+		
+	}
 }
