@@ -118,10 +118,11 @@ public class CodeRefactoring extends NodeVisitor
 			ReferenceType targetType = node.findTargetType();
 			ClassTypeString targetClassType = parseClassType(targetType.toString());
 	
+			System.out.println("This is a CALL! -- " + node.name());
 			for	(Matching match : rawMatching) {
 				ArrayList<Pair<TypeName>> defPairs = match.getDefPairs();
 				Pair<JavaBody> blockPair = match.getBlockPair();
-				
+			
 				Pair<TypeName> targetPair = match.defLookUp(blockPair.first().getTarget());
 				
 				// if targetPair == null , then this matching must be a JL5New without arguments
@@ -129,27 +130,21 @@ public class CodeRefactoring extends NodeVisitor
 					continue;
 				}
 				
-				TypeName callTypeName = targetPair.first();
+				TypeName callTypeName = targetPair.first();	
 
 				if (ClassTypeString.classTypeCompare(callTypeName.getType(), targetClassType.typeName())) {
 
 					JavaBody srcJavaBody = match.getBlockPair().first();
+					JavaBody dstJavaBody = match.getBlockPair().second();
 					String srcMethodName = srcJavaBody.getMethodName().get(0);
-					//String srcMethodName = parseMethodInvoke(match.getBlockPair().first().allString());
 			
-					// TODO --> move these into the method
 					if (node.name().equals(srcMethodName)) {
-						String dstMethodName = parseMethodInvoke(match.getBlockPair().second().allString()); 
-						outputName = dstMethodName;
+						//String dstMethodName = parseMethodInvoke(match.getBlockPair().second().allString()); 
+						node.setMatch(match);	
 					}
 				}	
 			}
-			node.setOutputName(outputName);
 		
-			System.out.println("This is a CALL! -- " + outputName);
-			for (Object i : node.arguments()) {
-				System.out.println("arg: " + i + " -- " + i.getClass());
-			}
 
 		} catch (SemanticException e) {
 			System.err.println("JL5Call_c Node Type cannot find: " + node.toString());	

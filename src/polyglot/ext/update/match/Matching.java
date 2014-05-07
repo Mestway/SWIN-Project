@@ -88,11 +88,15 @@ public class Matching {
 		/*typePair.print();
 		defPair.print();
 		blockPair.print();
+		*/
 		System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 		for (Pair<TypeName> pair : defPairs) {
 			System.out.println("Wula: " + pair.first());
 			System.out.println("Heis: " + pair.second());
-		}*/
+		}
+		System.out.println("**: " + blockPair.first().getTarget());
+		System.out.println("**: " + blockPair.second().getTarget());
+
 	}
 
 	public Pair<String> getTypePair() {
@@ -109,13 +113,33 @@ public class Matching {
 
 	public Pair<TypeName> defLookUp(String v) {
 		for (Pair<TypeName> pr : defPairs) {
-			System.out.println("DEBUG -- " + pr.first());
 			if (pr.first().getName().equals(v)) {
 				return pr;
 			}
-		}
-		
-		System.err.println("Name does not exist!");
+		}	
 		return null;
+	}
+
+	public int lookUpDstVirtualNo(String vname) {
+		
+		String srcName = null;
+		for (Pair<TypeName> pr : defPairs) {
+			if (pr.second().getName().equals(vname)) {
+				srcName = pr.first().getName();
+				break;
+			}
+		}
+
+		int i = 0;
+		int ans = -1;
+		for (String str : blockPair.first().getArgs().get(0)) {
+			if (str.equals(srcName)) {
+				ans = i;
+				break;
+			}
+			i ++;
+		}
+
+		return ans;
 	}
 }

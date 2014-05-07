@@ -89,14 +89,22 @@ public class JavaBody {
 		}
 
 		String[] nameParts = lastBody.split(" ");
-		if (nameParts.length > 1 && nameParts[0].equals("new")) {
+		
+		ArrayList<String> contactStr = new ArrayList<String>();
+		for (String ppt : nameParts) {
+			if (ppt.equals("") || ppt.equals("\\s*")) 
+				continue;
+			else 
+				contactStr.add(ppt);
+		}
+
+		if (nameParts.length > 1 && contactStr.get(0).equals("new")) {
 			isInvoke = false;
-			target = nameParts[1];
+			target = contactStr.get(1);
 			methodName.add(target);
 		} else {
-			String[] invokeSeq = nameParts[0].split("\\.");
+			String[] invokeSeq = contactStr.get(0).split("\\.");
 			target = invokeSeq[0];
-			System.out.println("tg -- " + target);
 			for (int i = 1; i <= invokeSeq.length - 1; i ++) {
 				methodName.add(invokeSeq[i]);
 			}
