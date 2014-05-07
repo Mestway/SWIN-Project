@@ -23,6 +23,7 @@ import polyglot.types.SemanticException;
 import polyglot.visit.NodeVisitor;
 import polyglot.ext.update.match.TypeName;
 import polyglot.ext.update.match.Pair;
+import polyglot.ext.update.match.JavaBody;
 
 public class CodeRefactoring extends NodeVisitor
 {
@@ -118,12 +119,25 @@ public class CodeRefactoring extends NodeVisitor
 			ClassTypeString targetClassType = parseClassType(targetType.toString());
 	
 			for	(Matching match : rawMatching) {
-				TypeName callTypeName = match.getFirstDefPair().first();
-
-				if (callTypeName.useful() &&
-						ClassTypeString.classTypeCompare(callTypeName.getType(), targetClassType.typeName())) {
-					String srcMethodName = parseMethodInvoke(match.getBlockPair().first().allString());
+				ArrayList<Pair<TypeName>> defPairs = match.getDefPairs();
+				Pair<JavaBody> blockPair = match.getBlockPair();
 				
+				Pair<TypeName> targetPair = match.defLookUp(blockPair.first().getTarget());
+				
+				// if targetPair == null , then this matching must be a JL5New without arguments
+				if (targetPair == null) {
+					continue;
+				}
+				
+				TypeName callTypeName = targetPair.first();
+
+				if (ClassTypeString.classTypeCompare(callTypeName.getType(), targetClassType.typeName())) {
+
+					JavaBody srcJavaBody = match.getBlockPair().first();
+					String srcMethodName = srcJavaBody.getMethodName().get(0);
+					//String srcMethodName = parseMethodInvoke(match.getBlockPair().first().allString());
+			
+					// TODO --> move these into the method
 					if (node.name().equals(srcMethodName)) {
 						String dstMethodName = parseMethodInvoke(match.getBlockPair().second().allString()); 
 						outputName = dstMethodName;

@@ -64,10 +64,13 @@ public class Matching {
 				if (passNo == 0) {
 					Pair<TypeName> onlyOneDef = new Pair<TypeName>();
 					onlyOneDef.add(tpnm);
-					defPairs.add(onlyOneDef);
+					if (tpnm.useful())
+						defPairs.add(onlyOneDef);
 				} else if (passNo == 1) {
-					defPairs.get(secondPassCount).add(tpnm);
-					secondPassCount ++;
+					if (tpnm.useful()) {
+						defPairs.get(secondPassCount).add(tpnm);
+						secondPassCount ++;
+					}
 				}
 			}
 
@@ -82,8 +85,6 @@ public class Matching {
 			passNo ++;
 		}
 	
-		
-
 		/*typePair.print();
 		defPair.print();
 		blockPair.print();
@@ -98,17 +99,23 @@ public class Matching {
 		return typePair;
 	}
 
-	public Pair<TypeName> getFirstDefPair() {
-		if (defPairs.get(0) != null)
-			return defPairs.get(0);
-		else return (new Pair<TypeName>());
-	}
-
 	public ArrayList<Pair<TypeName>> getDefPairs() {
 		return defPairs;
 	}
 
 	public Pair<JavaBody> getBlockPair() {
 		return blockPair;
+	}
+
+	public Pair<TypeName> defLookUp(String v) {
+		for (Pair<TypeName> pr : defPairs) {
+			System.out.println("DEBUG -- " + pr.first());
+			if (pr.first().getName().equals(v)) {
+				return pr;
+			}
+		}
+		
+		System.err.println("Name does not exist!");
+		return null;
 	}
 }
