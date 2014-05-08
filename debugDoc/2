@@ -13,11 +13,3 @@ Integer --- java.lang.Integer
 System --- java.lang.System
 Vector --- java.util.Vector
 ------------- Banned ----------
-Bugs again... void
-Bugs again... java.lang.String[]
-Bugs again... ArrayList<java.lang.Integer>
-Bugs again... ArrayList<java.lang.Integer>
-Bugs again... int
-Bugs again... java.lang.Integer
-Bugs again... Iterator<java.lang.Integer>
-Bugs again... java.lang.System

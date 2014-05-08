@@ -16,15 +16,3 @@ Vector --- java.util.Vector
 Object --- java.lang.Object
 Object[] --- java.lang.Object[]
 ------------- Banned ----------
-Bugs again... void
-Bugs again... Object
-Bugs again... java.lang.System
-Bugs again... void
-Bugs again... java.lang.String[]
-Bugs again... HashMap
-Bugs again... HashMap
-Bugs again... int
-Bugs again... Iterator
-Bugs again... ArrayList
-Bugs again... ArrayList
-Bugs again... Iterator

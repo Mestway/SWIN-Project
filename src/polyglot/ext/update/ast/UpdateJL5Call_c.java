@@ -33,6 +33,15 @@ public class UpdateJL5Call_c extends JL5Call_c
 
 	@Override
 	public void prettyPrint(CodeWriter w, PrettyPrinter tr) {
+		if (match == null || match.getBlockPair().second().isInvoke()) {
+			printAsInvoke(w,tr);
+		} else {
+			System.out.println("Haha, I get here");
+			printAsNew(w,tr);
+		}
+	}
+
+	public void printAsInvoke(CodeWriter w, PrettyPrinter tr) {
         if (!targetImplicit) {
             if (target instanceof Expr) {
                 printSubExpr((Expr) target, w, tr);
@@ -101,7 +110,32 @@ public class UpdateJL5Call_c extends JL5Call_c
 		}
     }
 
-	void printAsUpdateJL5New_c(CodeWriter w, PrettyPrinter tr) {
-		
+	void printAsNew(CodeWriter w, PrettyPrinter tr) {
+		w.write("new ");
+		w.write(match.getBlockPair().second().getTarget());
+
+		ArrayList<String> dstArgs = match.getBlockPair().second().getArgs().get(0);
+		ArrayList<String> srcArgs = match.getBlockPair().first().getArgs().get(0);
+
+		w.write("(");
+		w.begin(0);
+
+		boolean isFirst = true;
+		for (String tempStr : dstArgs) {
+			if (!isFirst) {
+				w.write(",");
+			}
+			isFirst = false;
+			int n = match.lookUpDstVirtualNo(tempStr);
+			if (n == -1) {
+				w.write(tempStr);
+			} else {
+				Expr e = (Expr) arguments.get(n);
+				print(e,w,tr);
+			}
+		}
+
+		w.end();
+		w.write(")");
 	}
 }
