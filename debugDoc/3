@@ -1,0 +1,25 @@
+Compiling File MatchInfo/MatchInfo.in update_test/3.update
+update_test/3.update
+Name Collector Begin
+Code Refactoring Begin
+/home/stw/polyglot/polyglot-1.3.5-src/DONOTUSETHISNAME.DONOTUSETHISNAME
+------------- NameMap ----------
+String[] --- java.lang.String[]
+int --- int
+void --- void
+PrintStream --- java.io.PrintStream
+Enumeration --- java.util.Enumeration
+Integer --- java.lang.Integer
+System --- java.lang.System
+Vector --- java.util.Vector
+------------- Banned ----------
+This is a CALL! -- add
+This is a CALL! -- add
+This is a CALL! -- elements
+This is a CALL! -- hasMoreElements
+This is a CALL! -- elements
+This is a CALL! -- nextElement
+This is a CALL! -- hasMoreElements
+This is a CALL! -- println
+This is a CALL! -- toString
+This is a CALL! -- nextElement

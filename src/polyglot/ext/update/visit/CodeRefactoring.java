@@ -144,8 +144,6 @@ public class CodeRefactoring extends NodeVisitor
 					}
 				}	
 			}
-		
-
 		} catch (SemanticException e) {
 			System.err.println("JL5Call_c Node Type cannot find: " + node.toString());	
 		}
@@ -156,9 +154,20 @@ public class CodeRefactoring extends NodeVisitor
 	protected void newNodeHandler(UpdateJL5New_c node) {
 		String outputName = null;
 		ClassTypeString classType = parseClassType(node.objectType().toString());
+		
+		Matching destinedMatch = null; 
+		for (Matching match : rawMatching) {
+			if (classType.meetMatch(match)) {
+				destinedMatch = match;
+				break;
+			}	
+		}
+
+		node.setMatch(destinedMatch);
 		for (Matching match : rawMatching) {
 			classType = classType.processMatching(match);
 		}
+		
 		outputName = classType.toTypeString();
 		node.setOutputName(outputName);
 	}
@@ -169,25 +178,6 @@ public class CodeRefactoring extends NodeVisitor
 	// e.g. ArrayList<Integer> will be stored in a ClassTypeString
 	protected ClassTypeString parseClassType(String type) {
 		return parseClassType2(type);
-
-	/*	String tempType = type;
-		ClassTypeString classType = new ClassTypeString();
-
-		String tempRegex = "<[^<>]*>";
-		Pattern tempPattern = Pattern.compile(tempRegex);
-		Matcher tempMatcher = tempPattern.matcher(tempType);
-		if (tempMatcher.find()) {
-			String arguments = tempMatcher.group();
-			arguments = arguments.substring(1, arguments.length()-1);
-			String[] parts = arguments.split(",");
-			for (String part : parts) {
-				classType.typeArgs().add(part);
-			}
-			tempType = tempType.substring(0, tempMatcher.start());
-		}
-		classType.typeName(tempType);
-		return classType;
-	*/
 	}
 
 	protected ClassTypeString parseClassType2(String type) {

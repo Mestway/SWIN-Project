@@ -19,7 +19,7 @@ class P {
 }
 
 class Q {
-	B1 k(B1 x2, B2 x) { x.g(); return new B1(); }
+	B1 k(B1 x2, B2 x, B2 y) { x.g(); return new B1(); }
 }
 
 public class testPara {

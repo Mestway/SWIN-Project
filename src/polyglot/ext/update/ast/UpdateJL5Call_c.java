@@ -18,7 +18,6 @@ public class UpdateJL5Call_c extends JL5Call_c
 	protected ArrayList<String> argsOutput = new ArrayList<String>();
 	protected String wholeOutputString = null;
 	protected Matching match = null;
-	protected boolean printAsNew = false;
 
 	public void setMatch(Matching match) {
 		this.match = match;
@@ -26,10 +25,6 @@ public class UpdateJL5Call_c extends JL5Call_c
 
 	public ArrayList<String> getArgsOutput() {
 		return argsOutput;
-	}
-
-	public void setPrintAsNew() {
-		printAsNew = true;
 	}
 
 	public UpdateJL5Call_c(Position pos, Receiver target, String name, List arguments, List typeArguments) {

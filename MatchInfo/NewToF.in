@@ -1,0 +1,2 @@
+[ Q () { new Q() }
+  P.Q1 () { P.newInstance().newQ1() } ]

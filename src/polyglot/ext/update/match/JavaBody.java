@@ -177,4 +177,16 @@ public class JavaBody {
 	public String allString() {
 		return allString;
 	}
+
+	public void print() {
+		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+		System.out.println("Is invoke? " + isInvoke());
+		System.out.println("Target: " + target);
+		for (int i = 0; i < methodName.size(); i ++) {	
+			System.out.println("Method:" + methodName.get(i));
+			for (String j : args.get(i)) {
+				System.out.println("	arg: " + j);
+			}
+		}
+	}
 }

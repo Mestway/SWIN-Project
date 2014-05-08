@@ -75,6 +75,7 @@ public class ClassTypeString {
 	}
 
 	// we need to handle recursive type arguments
+	// This will change the structure of the ClassType with the new matching
 	public ClassTypeString processMatching(Matching match) {
 		if (classTypeCompare(typeName, match.getTypePair().first())) {
 			this.typeName = match.getTypePair().second();	
@@ -95,6 +96,22 @@ public class ClassTypeString {
 
 		this.typeArgs = tempTypeArgs;
 		return this;
+	}
+
+	public boolean meetMatch(Matching match) {
+		if (classTypeCompare(typeName, match.getTypePair().first())) {
+			if (match.getBlockPair().first().isNew()) {
+				if (classTypeCompare(typeName,match.getBlockPair().first().getTarget())) {
+					return true;
+				}
+			
+				System.out.println("FIRST:");
+				match.getBlockPair().first().print();
+				System.out.println("SECOND:");
+				match.getBlockPair().second().print();
+			}	
+		}
+		return false;
 	}
 
 	public void print() {

@@ -1,0 +1,5 @@
+[ P () { P.newInstance() }
+  NoP () { new NoP() } ]
+
+[ P.Q (P x) { x.newQ() }
+  Q (P x) { new Q() } ]
