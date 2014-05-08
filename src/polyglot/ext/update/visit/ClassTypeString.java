@@ -103,12 +103,7 @@ public class ClassTypeString {
 			if (match.getBlockPair().first().isNew()) {
 				if (classTypeCompare(typeName,match.getBlockPair().first().getTarget())) {
 					return true;
-				}
-			
-				System.out.println("FIRST:");
-				match.getBlockPair().first().print();
-				System.out.println("SECOND:");
-				match.getBlockPair().second().print();
+				}	
 			}	
 		}
 		return false;

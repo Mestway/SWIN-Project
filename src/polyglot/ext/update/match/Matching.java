@@ -24,12 +24,11 @@ public class Matching {
 		rawMatching = rawMatching.substring(rawMatching.indexOf("[") + 1, rawMatching.indexOf("]"));
 		
 		// Match the old and new one in a MatchingCommand
-		String pattern = "\\w+\\s+\\([^\\(\\)]*\\)\\s+\\{[^\\{\\}]*\\}";
+		String pattern = "[^\\s]+\\s+\\([^\\(\\)]*\\)\\s+\\{[^\\{\\}]*\\}";
 		Pattern r = Pattern.compile(pattern);
 		Matcher matcher = r.matcher(rawMatching);
 
 		while(matcher.find()) {
-
 			// Parse the block
 			String partString = matcher.group();
 			String tempRegex = "\\{[^\\{\\}]*\\}";
@@ -39,7 +38,7 @@ public class Matching {
 			String block = tempMatcher.group();
 			blockPair.add(new JavaBody(block.substring(1,block.length()-1)));
 			partString = partString.substring(0, tempMatcher.start());
-		
+
 			// Parse the definition
 			tempRegex = "\\([^\\(\\)]*\\)";
 			tempPattern = Pattern.compile(tempRegex);
@@ -75,19 +74,17 @@ public class Matching {
 			}
 
 			partString = partString.substring(0, tempMatcher.start());
-			
 			tempRegex = "\\S+";
 			tempPattern = Pattern.compile(tempRegex);
 			tempMatcher = tempPattern.matcher(partString);
 			tempMatcher.find();
-			typePair.add(tempMatcher.group());
-		
+			String tmgp = tempMatcher.group();
+			typePair.add(tmgp);
+
 			passNo ++;
 		}
 	
 		/*typePair.print();
-		defPair.print();
-		blockPair.print();
 		
 		System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 		for (Pair<TypeName> pair : defPairs) {

@@ -104,6 +104,7 @@ public class CodeRefactoring extends NodeVisitor
 	protected void typeNodeHandler(UpdateJL5CanonicalTypeNode_c node) {
 		String outputName = null;
 		ClassTypeString classType = parseClassType(node.toString());
+		
 		for (Matching match : rawMatching) {
 			classType = classType.processMatching(match);
 		}
@@ -118,7 +119,6 @@ public class CodeRefactoring extends NodeVisitor
 			ReferenceType targetType = node.findTargetType();
 			ClassTypeString targetClassType = parseClassType(targetType.toString());
 	
-			System.out.println("This is a CALL! -- " + node.name());
 			for	(Matching match : rawMatching) {
 				ArrayList<Pair<TypeName>> defPairs = match.getDefPairs();
 				Pair<JavaBody> blockPair = match.getBlockPair();
@@ -239,7 +239,6 @@ public class CodeRefactoring extends NodeVisitor
 	}
 
 	protected String parseMethodInvoke(String srcMethod) {
-		System.out.println("invoke --> " + srcMethod);
 		
 		String method = srcMethod.substring(srcMethod.indexOf('.')+1,srcMethod.length());
 

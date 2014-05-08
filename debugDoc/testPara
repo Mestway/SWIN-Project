@@ -12,8 +12,26 @@ String[] --- java.lang.String[]
 void --- void
 B1 --- B1
 ------------- Banned ----------
-This is a CALL! -- f
-This is a CALL! -- g
-This is a CALL! -- h
-This is a CALL! -- f
-This is a CALL! -- h
+Bugs again... void
+Bugs again... void
+Bugs again... B1
+Bugs again... B2
+Bugs again... B1
+Bugs again... B1
+Bugs again... B1
+Bugs again... B1
+Bugs again... B2
+Bugs again... B2
+Bugs again... B1
+Bugs again... void
+Bugs again... java.lang.String[]
+Bugs again... Q
+Bugs again... Q
+Bugs again... B1
+Bugs again... B1
+Bugs again... B2
+Bugs again... B2
+Bugs again... B2
+Bugs again... B1
+Bugs again... B1
+Bugs again... B1

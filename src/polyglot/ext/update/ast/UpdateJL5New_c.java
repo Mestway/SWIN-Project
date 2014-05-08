@@ -35,7 +35,7 @@ public class UpdateJL5New_c extends JL5New_c {
 		if (match == null || match.getBlockPair().second().isNew())	{
 			printAsNew(w,tr);
 		} else {
-			printAsNew(w,tr);
+			printAsInvoke(w,tr);
 		}
 	}
 
@@ -45,6 +45,9 @@ public class UpdateJL5New_c extends JL5New_c {
 		w.write("new ");
 		
 		if (qualifier != null) {
+			String[] outputSpt = outputName.split("\\.");
+			outputName = outputSpt[outputSpt.length - 1];
+			
 			if (outputName == null)
 				w.write(tn.name());
 			else 
@@ -59,6 +62,7 @@ public class UpdateJL5New_c extends JL5New_c {
 		if (match == null) {
 			printArgs(w,tr);
 		} else {
+			// This will not be a sequence, so we just pick the first one.
 			ArrayList<String> dstArgs = match.getBlockPair().second().getArgs().get(0);
 			ArrayList<String> srcArgs = match.getBlockPair().first().getArgs().get(0);
 
@@ -87,7 +91,44 @@ public class UpdateJL5New_c extends JL5New_c {
 	}
 
 	public void printAsInvoke(CodeWriter w, PrettyPrinter tr) {
-	
+		
+		ArrayList<ArrayList<String>> dstArgs = match.getBlockPair().second().getArgs();
+		ArrayList<ArrayList<String>> srcArgs = match.getBlockPair().first().getArgs();
+		ArrayList<String> dstMethods = match.getBlockPair().second().getMethodName();
+		String dstTargetName = match.getBlockPair().second().getTarget();
+
+		// which one invoke the function.
+		int n = match.lookUpDstVirtualNo(dstTargetName);
+		if (n == -1) {
+			w.write(dstTargetName);
+		} else {
+			Expr e = (Expr) arguments.get(n);
+			print(e,w,tr);
+		}
+		
+		int loop = dstMethods.size();
+		for (int i = 0; i < loop; i ++) {
+			w.write(".");
+			w.write(dstMethods.get(i) + "(");
+			w.begin(0);
+			
+			boolean isFirst = true;
+			for (String tempStr : dstArgs.get(i)) {
+				if (!isFirst) {
+					w.write(",");
+				}
+				isFirst = false;
+				int n2 = match.lookUpDstVirtualNo(tempStr);
+				if (n2 == -1) {
+					w.write(tempStr);
+				} else {
+					Expr e = (Expr) arguments.get(n2);
+					print(e,w,tr);
+				}
+			}
+			w.end();
+			w.write(")");
+		}
 	}
 
 	public void setOutputName(String outputName) {

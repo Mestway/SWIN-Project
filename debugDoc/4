@@ -16,13 +16,15 @@ Vector --- java.util.Vector
 Object --- java.lang.Object
 Object[] --- java.lang.Object[]
 ------------- Banned ----------
-This is a CALL! -- println
-This is a CALL! -- put
-This is a CALL! -- elements
-This is a CALL! -- hasMoreElements
-This is a CALL! -- print
-This is a CALL! -- nextElement
-This is a CALL! -- elements
-This is a CALL! -- hasMoreElements
-This is a CALL! -- print
-This is a CALL! -- nextElement
+Bugs again... void
+Bugs again... Object
+Bugs again... java.lang.System
+Bugs again... void
+Bugs again... java.lang.String[]
+Bugs again... HashMap
+Bugs again... HashMap
+Bugs again... int
+Bugs again... Iterator
+Bugs again... ArrayList
+Bugs again... ArrayList
+Bugs again... Iterator

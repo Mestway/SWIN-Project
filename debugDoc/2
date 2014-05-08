@@ -13,9 +13,11 @@ Integer --- java.lang.Integer
 System --- java.lang.System
 Vector --- java.util.Vector
 ------------- Banned ----------
-This is a CALL! -- add
-This is a CALL! -- elements
-This is a CALL! -- hasMoreElements
-This is a CALL! -- println
-This is a CALL! -- toString
-This is a CALL! -- nextElement
+Bugs again... void
+Bugs again... java.lang.String[]
+Bugs again... ArrayList<java.lang.Integer>
+Bugs again... ArrayList<java.lang.Integer>
+Bugs again... int
+Bugs again... java.lang.Integer
+Bugs again... Iterator<java.lang.Integer>
+Bugs again... java.lang.System
