@@ -125,14 +125,27 @@ public class CodeRefactoring extends NodeVisitor
 			
 				Pair<TypeName> targetPair = match.defLookUp(blockPair.first().getTarget());
 				
-				// if targetPair == null , then this matching must be a JL5New without arguments
-				if (targetPair == null) {
-					continue;
-				}
-				
-				TypeName callTypeName = targetPair.first();	
 
-				if (ClassTypeString.classTypeCompare(callTypeName.getType(), targetClassType.typeName())) {
+				String tttmpS = match.getBlockPair().first().getMethodName().get(0);
+				
+				String srcMatchType = new String();
+
+				// if targetPair == null , then this matching must be a JL5New without arguments
+				// TODO : Bugs is here, no target does not mean it is a new.
+				if (targetPair == null) {
+					System.out.println("Wala? ");
+					System.out.println("Haha!!!! " + tttmpS);
+					if (match.getBlockPair().first().isNew())
+						continue;
+					else {
+						srcMatchType = blockPair.first().getTarget();
+					}
+					
+				} else {
+					srcMatchType = targetPair.first().getType();
+				}
+					
+				if (ClassTypeString.classTypeCompare(srcMatchType, targetClassType.typeName())) {
 
 					JavaBody srcJavaBody = match.getBlockPair().first();
 					JavaBody dstJavaBody = match.getBlockPair().second();
@@ -141,8 +154,8 @@ public class CodeRefactoring extends NodeVisitor
 					if (node.name().equals(srcMethodName)) {
 						//String dstMethodName = parseMethodInvoke(match.getBlockPair().second().allString()); 
 						node.setMatch(match);	
-					}
-				}	
+					}		
+				}
 			}
 		} catch (SemanticException e) {
 			System.err.println("JL5Call_c Node Type cannot find: " + node.toString());	

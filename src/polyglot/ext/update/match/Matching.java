@@ -84,16 +84,18 @@ public class Matching {
 			passNo ++;
 		}
 	
-		/*typePair.print();
-		
+		typePair.print();
 		System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 		for (Pair<TypeName> pair : defPairs) {
 			System.out.println("Wula: " + pair.first());
 			System.out.println("Heis: " + pair.second());
 		}
-		System.out.println("**: " + blockPair.first().getTarget());
-		System.out.println("**: " + blockPair.second().getTarget());
-		*/
+		//System.out.println("**: " + blockPair.first().getTarget());
+		//System.out.println("**: " + blockPair.second().getTarget());
+		blockPair.first().print();
+		System.out.println("   Wait   ");
+		blockPair.second().print();
+		System.out.println("::::::::::::::::::;One Done:::::::::::::::::::");
 	}
 
 	public Pair<String> getTypePair() {

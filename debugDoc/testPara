@@ -3,6 +3,79 @@ update_test/testPara.update
 Name Collector Begin
 Code Refactoring Begin
 /home/stw/polyglot/polyglot-1.3.5-src/DONOTUSETHISNAME.DONOTUSETHISNAME
+A1---B1
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? false
+Target: A1
+Method:A1
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? false
+Target: B1
+Method:B1
+::::::::::::::::::;One Done:::::::::::::::::::
+A2---B2
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? false
+Target: A2
+Method:A2
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? false
+Target: B2
+Method:B2
+::::::::::::::::::;One Done:::::::::::::::::::
+void---void
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Wula: A2 x
+Heis: B2 y
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:f
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: y
+Method:g
+::::::::::::::::::;One Done:::::::::::::::::::
+P---Q
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? false
+Target: P
+Method:P
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? false
+Target: Q
+Method:Q
+::::::::::::::::::;One Done:::::::::::::::::::
+A1---B1
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Wula: P x
+Heis: Q x
+Wula: A1 y
+Heis: B1 y
+Wula: A2 y2
+Heis: B2 y2
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:h
+	arg: y
+	arg: y2
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:k
+	arg: y2
+	arg: y
+	arg: new B2()
+::::::::::::::::::;One Done:::::::::::::::::::
 ------------- NameMap ----------
 A2 --- A2
 A1 --- A1
@@ -12,3 +85,41 @@ String[] --- java.lang.String[]
 void --- void
 B1 --- B1
 ------------- Banned ----------
+Wala? 
+Haha!!!! A1
+Wala? 
+Haha!!!! A2
+Wala? 
+Haha!!!! P
+Wala? 
+Haha!!!! A1
+Wala? 
+Haha!!!! A2
+Wala? 
+Haha!!!! P
+Wala? 
+Haha!!!! A1
+Wala? 
+Haha!!!! A2
+Wala? 
+Haha!!!! P
+Wala? 
+Haha!!!! A1
+Wala? 
+Haha!!!! A2
+Wala? 
+Haha!!!! P
+Wala? 
+Haha!!!! A1
+Wala? 
+Haha!!!! A2
+Wala? 
+Haha!!!! P
+InPrintCall: 1: x
+InPrintCall: 2: y
+InPrintCall: 1: x
+InPrintCall: 2: x
+InPrintCall: 1: x
+InPrintCall: 2: y
+InPrintCall: 1: x
+InPrintCall: 2: x

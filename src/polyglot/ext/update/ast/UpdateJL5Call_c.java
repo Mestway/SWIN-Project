@@ -33,6 +33,12 @@ public class UpdateJL5Call_c extends JL5Call_c
 
 	@Override
 	public void prettyPrint(CodeWriter w, PrettyPrinter tr) {
+		
+		if (match != null) {
+			System.out.println("InPrintCall: 1: " + match.getBlockPair().first().getTarget());
+			System.out.println("InPrintCall: 2: " + match.getBlockPair().second().getTarget());
+		}
+		
 		if (match == null || match.getBlockPair().second().isInvoke()) {
 			printAsInvoke(w,tr);
 		} else {
@@ -42,15 +48,23 @@ public class UpdateJL5Call_c extends JL5Call_c
 	}
 
 	public void printAsInvoke(CodeWriter w, PrettyPrinter tr) {
+		boolean daKaiYanJie = false;
+
         if (!targetImplicit) {
             if (target instanceof Expr) {
                 printSubExpr((Expr) target, w, tr);
-                w.write(".");
+				w.write(".");
             } else if (target != null) {
                 print(target, w, tr);
                 w.write(".");
-            }
+				System.out.println("Dakaiyanjie: " + target.getClass());
+				daKaiYanJie = true;
+			}
         }
+
+		if (daKaiYanJie == true) {
+			System.out.println("HouXu: " + name);
+		}
 
         if (typeArguments.size() != 0) {
             w.write("<");

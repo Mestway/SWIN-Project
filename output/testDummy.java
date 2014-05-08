@@ -1,9 +1,9 @@
 class P {
     private P() { super(); }
     
-    static P newInstance() { return new P(); }
+    static NoP newInstance() { return new NoP(); }
     
-    P.Q1 newQ1() { return this.new Q1(); }
+    Q newQ1() { return this.new Q(); }
     
     class Q1 {
         void f() {  }
@@ -19,10 +19,12 @@ class Q {
     public Q() { super(); }
 }
 
-public class NewToF {
+public class testDummy {
     static void print(java.lang.Object ... x) { for (java.lang.Object e : x) java.lang.System.out.println(e + " "); }
     
-    public static void main(java.lang.String[] args) { Q x = new Q(); }
+    public static void main(java.lang.String[] args) {
+        NoP x = new NoP();
+        Q y = new Q(); }
     
-    public NewToF() { super(); }
+    public testDummy() { super(); }
 }
