@@ -15,20 +15,21 @@ class B2 {
 }
 
 class P {
-	A1 h(A2 x) { x.f(); return new A1(); } 
+	A1 h(A2 x, A1 x2) { x.f(); return new A1(); } 
 }
 
 class Q {
-	B1 k(B2 x) { x.g(); return new B1(); }
+	B1 k(B1 x2, B2 x) { x.g(); return new B1(); }
 }
 
 public class testPara {
 	public static void main(String[] args) {
 		P x = new P();
-		A1 a1 = x.h(new A2());
+		A1 a1 = x.h(new A2(), new A1());
 		A2 a2 = new A2();
+		A1 a111 = new A1();
 		a2.f();
-		A1 a11 = x.h(a2);
+		A1 a11 = x.h(a2, a111);
 	}
 }
 

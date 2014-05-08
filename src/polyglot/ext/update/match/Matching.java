@@ -88,7 +88,7 @@ public class Matching {
 		/*typePair.print();
 		defPair.print();
 		blockPair.print();
-		*/
+		
 		System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 		for (Pair<TypeName> pair : defPairs) {
 			System.out.println("Wula: " + pair.first());
@@ -96,7 +96,7 @@ public class Matching {
 		}
 		System.out.println("**: " + blockPair.first().getTarget());
 		System.out.println("**: " + blockPair.second().getTarget());
-
+		*/
 	}
 
 	public Pair<String> getTypePair() {

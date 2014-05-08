@@ -26,7 +26,7 @@ public class JavaBody {
 
 	public JavaBody(String javaBody) {
 		allString = javaBody;
-		parseJavaBody(javaBody);
+		parseJavaBody(javaBody);		
 	}
 
 	public void setNew() { isInvoke = false; }
@@ -47,47 +47,24 @@ public class JavaBody {
 	}
 
 	public void parseJavaBody(String javaBody) {
-		
-		String regex = "\\([^\\(\\)]*\\)";
-		Pattern pattern = Pattern.compile(regex);
-		Matcher matcher = pattern.matcher(javaBody);
-		
-		String argString = null;
-		String lastBody = new String();
-		int lastEnd = 0;
-		// Match the arguments e.g.(a,b,c)
-		while (matcher.find()) {
-			argString = matcher.group();
-			lastBody += javaBody.substring(lastEnd, matcher.start());
-			lastEnd = matcher.end();
 
-			String[] argsParts = argString.substring(1, argString.length()-1).split(",");
+		SplitString splitJavaBody = splitByBracket(javaBody);
+		
+		String lastBody = splitJavaBody.getRemaining();
+		
+		for (String argPart : splitJavaBody.getParts()) {
+			ArrayList<String> functionArg = new ArrayList<String>();
 			
-			ArrayList<String> ag = new ArrayList<String>();
-			for (String i : argsParts) {
-				if (!i.equals("")) {
-					int first = 0;
-					int last = i.length() - 1;
-					while (first <= last) {
-						if (i.charAt(first )== ' ')
-							first ++;
-						else break;
-					}
-
-					while (last >= first) {
-						if (i.charAt(last) == ' ') {
-							last --;
-						} else {
-							break;
-						}
-					}
-
-					ag.add(i.substring(first, last + 1));
-				}
+			SplitString eachArg = splitByComma(argPart);	
+			for (String oneArg : eachArg.getParts()) {
+				if (!oneArg.equals("")) {
+					String realArg = removeHeadTailBlank(oneArg);	
+					functionArg.add(realArg);
+				}	
 			}
-			args.add(ag);
+			args.add(functionArg);
 		}
-
+		
 		String[] nameParts = lastBody.split(" ");
 		
 		ArrayList<String> contactStr = new ArrayList<String>();
@@ -111,8 +88,93 @@ public class JavaBody {
 		}
 	}
 
+	protected SplitString splitByBracket(String input) {
+		SplitString result = new SplitString();
+		result.setOriginal(input);
+		
+		int layers = 0;
+		int bracketCount = -1;
+		String remaining = new String();
+
+		for (int i = 0; i < input.length(); i ++) {
+			if (layers == 0 && input.charAt(i) != '(') {
+				remaining += input.charAt(i);
+			}
+			
+			if (input.charAt(i) == '(') {
+				layers ++;
+				if (layers == 1) {
+					result.getBegins().add(i);
+					bracketCount ++;
+				}
+			} else if (input.charAt(i) == ')') {
+				layers --;
+				if (layers == 0) {
+					result.getEnds().add(i);
+					result.getParts().add(input.substring(result.getBegins().get(bracketCount) + 1, 
+														result.getEnds().get(bracketCount)));
+				}
+			}
+		}
+		
+		result.setRemaining(remaining);
+		return result;
+	}
+
+	protected SplitString splitByComma(String input) {
+		SplitString result = new SplitString();
+		result.setOriginal(input);
+		
+		int layers = 0;
+		int lastIndex = 0;
+		int unitCount = 0;
+
+		for (int i = 0; i < input.length(); i ++) {
+			if (input.charAt(i) == '(') {
+				layers ++;
+			} else if (input.charAt(i) == ')') {
+				layers --;
+			} else if (input.charAt(i) == ',') {
+				if (layers == 0){
+					result.getBegins().add(lastIndex);
+					result.getEnds().add(i-1);
+					result.getParts().add(input.substring(lastIndex, i));
+					lastIndex = i + 1;
+				}
+			}
+		}
+
+		result.getBegins().add(lastIndex);
+		result.getEnds().add(input.length()-1);
+		result.getParts().add(input.substring(lastIndex, input.length()));
+	
+		return result;
+	}
+
+	protected String removeHeadTailBlank(String input) {
+		int first = 0;
+		int last = input.length()-1;
+
+		if (input.equals(""))
+			return "";
+
+		while (first <= last) {
+			if (input.charAt(first) == ' ')
+				first ++;
+			else break;
+		}
+		while (last >= first) {
+			if (input.charAt(last) == ' ') {
+				last --;
+			} else {
+				break;
+			}
+		}
+
+		return input.substring(first,last + 1);
+	}
+
 	public String allString() {
 		return allString;
 	}
-
 }

@@ -10,6 +10,6 @@
 [ P () { new P() }
   Q () { new Q() } ]
 
-[ A1 (P x, A2 y) { x.h(y) }
-  B1 (Q x, B2 y) { x.k(y) } ]
+[ A1 (P x, A1 y, A2 y2) { x.h(y,y2) }
+  B1 (Q x, B1 y, B2 y2) { x.k(y2,y) } ]
 
