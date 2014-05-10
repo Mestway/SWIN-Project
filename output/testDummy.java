@@ -1,9 +1,10 @@
+class NoP {public NoP() { }};
 class P {
     private P() { super(); }
     
-    static NoP newInstance() { return new NoP(); }
+    static P newInstance() { return new P(); }
     
-    Q newQ1() { return this.new Q(); }
+    Q1 newQ1() { return this.new Q1(); }
     
     class Q1 {
         void f() {  }

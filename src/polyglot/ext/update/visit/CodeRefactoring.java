@@ -16,10 +16,8 @@ import polyglot.ast.Node;
 import polyglot.ast.NodeFactory;
 import polyglot.ext.update.ast.*;
 import polyglot.ext.update.match.Matching;
-import polyglot.frontend.Job;
-import polyglot.types.Context;
-import polyglot.types.ReferenceType;
-import polyglot.types.SemanticException;
+import polyglot.frontend.*;
+import polyglot.types.*;
 import polyglot.visit.NodeVisitor;
 import polyglot.ext.update.match.TypeName;
 import polyglot.ext.update.match.Pair;
@@ -32,9 +30,20 @@ public class CodeRefactoring extends NodeVisitor
 	ArrayList<Matching> rawMatching = new ArrayList<Matching>();
 	Context context;
 
-	public CodeRefactoring(Job job, NodeFactory nf) {	
+	// This is used for the TypedTranslator
+	TypeSystem ts;
+	TargetFactory tf;
+	UpdateTypedTranslator updateTypedTranslator = null;
+	// put the dummy classes into the list
+	ArrayList<String> dummyClasses = new ArrayList<String>();
+
+	public CodeRefactoring(Job job, TypeSystem ts, NodeFactory nf, TargetFactory tf) {	
 		this.context = job.context();
 		this.nf = nf;
+		this.ts = ts;
+		this.tf = tf;
+
+		updateTypedTranslator = new UpdateTypedTranslator(job, ts, nf, tf);
 		
 		System.out.println("Code Refactoring Begin");
 		
@@ -43,6 +52,7 @@ public class CodeRefactoring extends NodeVisitor
 		System.out.println(file.getAbsolutePath());
 	
 		String inputString = new String();
+		String dummyString = new String();
 
 		try {
 			reader = new BufferedReader(new FileReader(file));
@@ -50,8 +60,12 @@ public class CodeRefactoring extends NodeVisitor
 			String tempString = null;
 			
 			while ((tempString = reader.readLine()) != null) {
-				inputString += tempString;
-				//rawMatching.add(new Matching(tempString));
+				if (tempString.startsWith("#"))
+					dummyString += tempString;
+				else if (tempString.startsWith("//"))
+					continue;
+				else
+					inputString += tempString;
 			}
 			reader.close();
 		} catch (IOException e) {
@@ -66,10 +80,34 @@ public class CodeRefactoring extends NodeVisitor
 			rawMatching.add(new Matching(oneMatching));	
 		}
 
+		pattern = "#[^#]++";
+		r = Pattern.compile(pattern);
+		matcher = r.matcher(dummyString);
+		while (matcher.find()) {
+			String tmpStr = matcher.group();
+			dummyClasses.add(tmpStr.substring(1,tmpStr.length()));
+		}	
+		
+		for (Matching iMatch : rawMatching) {
+			for (String iDummy : dummyClasses) {
+				if (iMatch.getTypePair().second().equals(iDummy)) {
+					if (iMatch.getBlockPair().second().isNew()) {
+						ArrayList<String> dummyArgs = new ArrayList<String>();
+						for (String iArg : iMatch.getBlockPair().second().getArgs().get(0)) {
+							Pair<TypeName> pr = iMatch.defLookupDst(iArg);
+							dummyArgs.add(pr.second().getType());
+						}
+						updateTypedTranslator.addDummy(iDummy, dummyArgs);
+					}
+				}
+			}
+		}
+
+		//updateTypedTranslator.printDummy();
 	}
 
-	protected void MatchProcessing(){
-			
+	public UpdateTypedTranslator getTranslator() {
+		return updateTypedTranslator;
 	}
 
 	@Override
@@ -130,11 +168,9 @@ public class CodeRefactoring extends NodeVisitor
 				
 				String srcMatchType = new String();
 
-				// if targetPair == null , then this matching must be a JL5New without arguments
-				// TODO : Bugs is here, no target does not mean it is a new.
+				// if targetPair == null , then this matching may be a JL5New without arguments
+				//							or a Class as the argument(just copy it)
 				if (targetPair == null) {
-					System.out.println("Wala? ");
-					System.out.println("Haha!!!! " + tttmpS);
 					if (match.getBlockPair().first().isNew())
 						continue;
 					else {

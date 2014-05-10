@@ -7,6 +7,7 @@ import polyglot.ext.update.ast.*;
 import polyglot.ext.update.types.*;
 import polyglot.ext.update.visit.CodeRefactoring;
 import polyglot.ext.update.visit.NameCollector;
+import polyglot.ext.update.visit.UpdateTypedTranslator;
 
 import polyglot.ast.*;
 import polyglot.types.*;
@@ -57,14 +58,17 @@ public class ExtensionInfo extends polyglot.ext.jl5.ExtensionInfo {
 		beforePass(passes, Pass.OUTPUT,
 					new VisitorPass(API_UPDATE,job, 
 					new NameCollector(job, nf)));
-		
+
+
+		CodeRefactoring codeRefactoringPass = new CodeRefactoring(job, ts, nf, targetFactory());
 		beforePass(passes, Pass.OUTPUT,
 					new VisitorPass(API_UPDATE,job, 
-					new CodeRefactoring(job, nf)));
+					codeRefactoringPass));
 
 		//removeCheckings(passes);
+
 		replacePass(passes, Pass.OUTPUT, new OutputPass(Pass.OUTPUT,job,
-					new TypedTranslator(job, ts, nf, targetFactory())));
+					codeRefactoringPass.getTranslator()));
 		return passes;
     }
 
@@ -78,5 +82,4 @@ public class ExtensionInfo extends polyglot.ext.jl5.ExtensionInfo {
 		removePass(passes, GENERIC_TYPE_HANDLER);
 		removePass(passes, APPLICATION_CHECK);
 	}
-
 }

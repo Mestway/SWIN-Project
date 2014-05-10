@@ -3,83 +3,6 @@ update_test/2.update
 Name Collector Begin
 Code Refactoring Begin
 /home/stw/polyglot/polyglot-1.3.5-src/DONOTUSETHISNAME.DONOTUSETHISNAME
-Vector---ArrayList
-<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Is invoke? false
-Target: Vector
-Method:Vector
-   Wait   
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Is invoke? false
-Target: ArrayList
-Method:ArrayList
-::::::::::::::::::;One Done:::::::::::::::::::
-Enumeration---Iterator
-<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-Wula: Vector v
-Heis: ArrayList a
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Is invoke? true
-Target: v
-Method:elements
-   Wait   
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Is invoke? true
-Target: a
-Method:iterator
-::::::::::::::::::;One Done:::::::::::::::::::
-boolean---boolean
-<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-Wula: Enumeration e
-Heis: Iterator i
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Is invoke? true
-Target: e
-Method:hasMoreElements
-   Wait   
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Is invoke? true
-Target: i
-Method:hasNext
-::::::::::::::::::;One Done:::::::::::::::::::
-Object---Object
-<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-Wula: Enumeration e
-Heis: Iterator i
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Is invoke? true
-Target: e
-Method:nextElement
-   Wait   
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Is invoke? true
-Target: i
-Method:next
-::::::::::::::::::;One Done:::::::::::::::::::
-A1---A2
-<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-Wula: B b
-Heis: C c
-Wula: B1 b1
-Heis: C1 c1
-Wula: B2 b2
-Heis: C2 c2
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Is invoke? true
-Target: b
-Method:f
-	arg: b1
-	arg: b2
-   Wait   
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Is invoke? true
-Target: c
-Method:g)
-	arg: c1
-	arg: c2
-	arg: new ArrayList<d>()
-::::::::::::::::::;One Done:::::::::::::::::::
 ------------- NameMap ----------
 String[] --- java.lang.String[]
 int --- int
@@ -90,18 +13,6 @@ Integer --- java.lang.Integer
 System --- java.lang.System
 Vector --- java.util.Vector
 ------------- Banned ----------
-Wala? 
-Haha!!!! Vector
-Wala? 
-Haha!!!! Vector
-Wala? 
-Haha!!!! Vector
-Wala? 
-Haha!!!! Vector
-Wala? 
-Haha!!!! Vector
-Wala? 
-Haha!!!! Vector
 InPrintCall: 1: v
 InPrintCall: 2: a
 InPrintCall: 1: e

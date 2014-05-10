@@ -84,6 +84,8 @@ public class Matching {
 			passNo ++;
 		}
 	
+		
+		/*
 		typePair.print();
 		System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 		for (Pair<TypeName> pair : defPairs) {
@@ -96,6 +98,7 @@ public class Matching {
 		System.out.println("   Wait   ");
 		blockPair.second().print();
 		System.out.println("::::::::::::::::::;One Done:::::::::::::::::::");
+		*/
 	}
 
 	public Pair<String> getTypePair() {
@@ -110,12 +113,22 @@ public class Matching {
 		return blockPair;
 	}
 
+	// input a name, this will return the pair of name plus type
 	public Pair<TypeName> defLookUp(String v) {
 		for (Pair<TypeName> pr : defPairs) {
 			if (pr.first().getName().equals(v)) {
 				return pr;
 			}
 		}	
+		return null;
+	}
+
+	public Pair<TypeName> defLookupDst(String name) {
+		for (Pair<TypeName> pr : defPairs) {
+			if (pr.second().getName().equals(name)) {
+				return pr;
+			}
+		}
 		return null;
 	}
 
