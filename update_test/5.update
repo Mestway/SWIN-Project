@@ -1,6 +1,6 @@
 class P {
 	private P() { }
-	static P newInstance(int a) { a ++; return new P(); }
+	static P newInstance(int a, int b) { a ++; b--; return new P(); }
 	Q1 newQ1() { return new Q1(); }
 	class Q1 {
 		void f() { }
@@ -17,7 +17,7 @@ public class testDummy {
 			System.out.println(e + " ");
 	}
 	public static void main(String[] args) {
-		P x = P.newInstance(3);
+		P x = P.newInstance(3, 7);
 		P.Q1 y = x.newQ1();
 	}
 }
