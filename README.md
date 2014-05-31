@@ -1,4 +1,4 @@
-This is an implementation of Java Update Calculus based on polyglot-1.3.5 with JL5 extension. 
+This is an implementation of SWIN adaptation framework  based on polyglot-1.3.5 with JL5 extension. 
 
 Build
 =====================================================================

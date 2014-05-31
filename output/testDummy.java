@@ -1,14 +1,10 @@
-class NoP {public NoP(int a0,int a1) { }};
+class NoP {public NoP() { }};
 class P {
     private P() { super(); }
     
-    static P newInstance(int a, int b) {
-        a++;
-        b--;
-        return new P();
-    }
+    static NoP newInstance() { return new NoP(); }
     
-    Q1 newQ1() { return this.new Q1(); }
+    Q newQ1() { return this.new Q(); }
     
     class Q1 {
         void f() {  }
@@ -28,7 +24,7 @@ public class testDummy {
     static void print(java.lang.Object ... x) { for (java.lang.Object e : x) java.lang.System.out.println(e + " "); }
     
     public static void main(java.lang.String[] args) {
-        NoP x = new NoP(7,3);
+        NoP x = new NoP();
         Q y = new Q(); }
     
     public testDummy() { super(); }

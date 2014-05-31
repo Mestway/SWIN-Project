@@ -22,6 +22,7 @@ import polyglot.visit.NodeVisitor;
 import polyglot.ext.update.match.TypeName;
 import polyglot.ext.update.match.Pair;
 import polyglot.ext.update.match.JavaBody;
+import polyglot.ext.update.match.MatchChecker;
 
 public class CodeRefactoring extends NodeVisitor
 {
@@ -87,7 +88,8 @@ public class CodeRefactoring extends NodeVisitor
 			String tmpStr = matcher.group();
 			dummyClasses.add(tmpStr.substring(1,tmpStr.length()));
 		}	
-		
+	
+		// Fill in the dummy classes with their arguments type list
 		for (Matching iMatch : rawMatching) {
 			for (String iDummy : dummyClasses) {
 				if (iMatch.getTypePair().second().equals(iDummy)) {
@@ -102,6 +104,10 @@ public class CodeRefactoring extends NodeVisitor
 				}
 			}
 		}
+
+		// check if the matching rules are qualified
+		MatchChecker matchChecker = new MatchChecker(rawMatching);
+		matchChecker.setDummyClasses(updateTypedTranslator.getDummyClasses(), updateTypedTranslator.getDummyArgs());
 
 		//updateTypedTranslator.printDummy();
 	}

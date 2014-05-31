@@ -83,9 +83,11 @@ public class Matching {
 
 			passNo ++;
 		}
-	
 		
-		/*
+		//this.printMatching();
+	}
+
+	public void print() {
 		typePair.print();
 		System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 		for (Pair<TypeName> pair : defPairs) {
@@ -98,7 +100,6 @@ public class Matching {
 		System.out.println("   Wait   ");
 		blockPair.second().print();
 		System.out.println("::::::::::::::::::;One Done:::::::::::::::::::");
-		*/
 	}
 
 	public Pair<String> getTypePair() {
@@ -154,4 +155,5 @@ public class Matching {
 
 		return ans;
 	}
+
 }

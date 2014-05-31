@@ -35,6 +35,14 @@ public class UpdateTypedTranslator extends TypedTranslator {
 		}
 	}
 
+	public ArrayList<String> getDummyClasses() {
+		return dummyClasses;
+	}
+
+	public ArrayList<ArrayList<String>> getDummyArgs() {
+		return dummyArgs;
+	}
+
 	public void addDummy(String name, ArrayList<String> args) {
 		dummyClasses.add(name);
 		dummyArgs.add(args);
