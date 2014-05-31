@@ -18,7 +18,7 @@ To run a example, you need two inputs:
 
 1. MatchInfo.in (This is the match info you wished to update your client code)
 
-    The matching grammar consists of three parts:
+    The matching syntax is defined as:
 	
         [T1 (D1) {B1} T2 (D2) {B2}]
 
@@ -26,7 +26,7 @@ To run a example, you need two inputs:
 
 2. Input source code
 
-       This can be put anywhere, but the input source file should have the suffix .update, e.g.
+       This can be put anywhere, but the input source file should have a suffix of .update, e.g.
         
         TestCase.update
 
