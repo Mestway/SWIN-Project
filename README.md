@@ -13,20 +13,23 @@ Input
 ============================================================================
 To run a example, you need two inputs:
 
-        1. MatchInfo.in
+        1. SWINCode.sw
         2. input source code
 
-1. MatchInfo.in (This is the match info you wished to update your client code)
+1. SWINCode.sw (This is the SWIN program you wish to transform Java code)
 
-    The matching syntax is defined as:
+    The syntax of SWIN is defined as:
 	
-        [T1 (D1) {B1} T2 (D2) {B2}]
+	{(x:A->>B) [x.f():C -> x.g():D]}
 
-    e.g.  [Enumeration (Vector v) {v.elements()} Iterator (ArrayList a) {a.iterator()}]
+    e.g.  {
+			(x:Vector->>ArrayList)
+			[x.elements():Enumeration -> x.iterator():Iterator]
+		  }
 
 2. Input source code
 
-       This can be put anywhere, but the input source file should have a suffix of .update, e.g.
+       The input source file should have a suffix of .update, e.g.
         
         TestCase.update
 
@@ -34,12 +37,12 @@ To run a example, you need two inputs:
 Run
 ============================================================================
 
-To run the test case, you need to use ./test in the base directory. The grammar is like the following:
+To run a test case, use ./test in the base directory. e.g.
 
         ./test yourmatchinfo input1.update input2.update input3.update .......
 
-Note that **input1.update** specifies the file path you wish to update.
-And that **yourmatchinfo** specifies the path for you update calculus file.
+**input1.update** specifies the file path you wish to update.
+And **yourmatchinfo** specifies the path for your SWIN program.
 
 Output
 ============================================================================

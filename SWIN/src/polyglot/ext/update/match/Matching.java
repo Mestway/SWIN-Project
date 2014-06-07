@@ -218,7 +218,11 @@ public class Matching {
 		typePair.setSecond(rightType);
 
 		blockPair.setFirst(new JavaBody(leftBody));
+		
+		//TODO:Continue Debugging here!!
+		//(new Weibo()):Object --> problem
 		blockPair.setSecond(new JavaBody(rightBody));
+		
 	}
 
 

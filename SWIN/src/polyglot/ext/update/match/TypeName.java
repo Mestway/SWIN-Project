@@ -63,8 +63,8 @@ public class TypeName {
 		String nClass = tail.substring(tail.indexOf("->>")+3, tail.length());
 		//System.out.println("HD: " + head + " -- " + "TL: " + oClass + "#" + nClass);
 
-		src.setTypeName(head, Common.removeHeadTailBlank(oClass));
-		dst.setTypeName(head, Common.removeHeadTailBlank(nClass));
+		src.setTypeName(Common.removeHeadTailBlank(oClass), head);
+		dst.setTypeName(Common.removeHeadTailBlank(nClass), head);
 
 		return new Pair<TypeName,TypeName>(src,dst);
 	}
