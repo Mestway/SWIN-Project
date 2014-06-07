@@ -21,6 +21,14 @@ public class Matching {
 	private int secondPassCount = 0;
 
 	public Matching(String rawMatching) {
+		System.out.println("~~~~~~BEGIN~~~~~~");
+		System.out.println(rawMatching);
+		System.out.println("~~~~~~END~~~~~~~");
+		parse(rawMatching.substring(1, rawMatching.length()-1));
+	}
+	
+
+	public void processOld(String rawMatching) {
 		rawMatching = rawMatching.substring(rawMatching.indexOf("[") + 1, rawMatching.indexOf("]"));
 		
 		// Match the old and new one in a MatchingCommand
@@ -35,7 +43,7 @@ public class Matching {
 			Pattern tempPattern = Pattern.compile(tempRegex);
 			Matcher tempMatcher = tempPattern.matcher(partString);
 			tempMatcher.find();
-			String block = tempMatcher.group();
+			String block = tempMatcher.group();	
 			blockPair.add(new JavaBody(block.substring(1,block.length()-1)));
 			partString = partString.substring(0, tempMatcher.start());
 
@@ -85,11 +93,12 @@ public class Matching {
 		}
 		
 		//this.printMatching();
+		//print();
 	}
 
 	public void print() {
-		typePair.print();
 		System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+		typePair.print();
 		for (Pair<TypeName> pair : defPairs) {
 			System.out.println("Wula: " + pair.first());
 			System.out.println("Heis: " + pair.second());
@@ -133,6 +142,8 @@ public class Matching {
 		return null;
 	}
 
+	// given the name of a meta-variable,
+	// lookup the index of the variable in the src pattern
 	public int lookUpDstVirtualNo(String vname) {
 		
 		String srcName = null;
@@ -156,4 +167,67 @@ public class Matching {
 		return ans;
 	}
 
+	protected void parse(String input) {
+		String pattern = "\\[[^\\[\\]]*\\]";
+		Pattern r = Pattern.compile(pattern);
+		Matcher matcher = r.matcher(input);
+
+		// parse body
+		if (matcher.find()) {
+			String body = matcher.group();
+			parseBody(body);
+			input = input.substring(0, matcher.start());
+		} else {
+			parseError("SWIN body not well defined");
+		}
+
+		// parse def
+		pattern = "\\([^\\(\\)]*\\)";
+		r = Pattern.compile(pattern);
+		matcher = r.matcher(input);
+		if (matcher.find()) {
+			String def = matcher.group();
+			parseDef(def);
+		} else {
+			parseError("SWIN def not well defined");
+		}	
+	}
+
+	// TODO: Deal with parse def
+	protected void parseDef(String input) {
+		System.out.println("THE DEF: " + input);	
+	}
+
+	// TODO: Deal with parse body
+	protected void parseBody(String input) {
+	
+	}
+
+	protected String removeHeadTailBlank(String input) {
+		int first = 0;
+		int last = input.length()-1;
+
+		if (input.equals(""))
+			return "";
+
+		while (first <= last) {
+			if (input.charAt(first) == ' ')
+				first ++;
+			else break;
+		}
+		while (last >= first) {
+			if (input.charAt(last) == ' ') {
+				last --;
+			} else {
+				break;
+			}
+		}
+
+		return input.substring(first,last + 1);
+	}
+
+	private void parseError(String str) {
+		System.err.println("[Parse Error]" + str);
+		System.exit(-1);
+	}
 }

@@ -73,7 +73,7 @@ public class CodeRefactoring extends NodeVisitor
 			e.printStackTrace();
 		}
 
-		String pattern = "\\[[^\\[\\]]*\\]";
+		String pattern = "\\{[^\\{\\}]*\\}";
 		Pattern r = Pattern.compile(pattern);
 		Matcher matcher = r.matcher(inputString);
 		while (matcher.find()) {
@@ -152,6 +152,7 @@ public class CodeRefactoring extends NodeVisitor
 		for (Matching match : rawMatching) {
 			classType = classType.processMatching(match);
 		}
+
 		outputName = classType.toTypeString();
 		node.setOutputName(outputName);
 	}
