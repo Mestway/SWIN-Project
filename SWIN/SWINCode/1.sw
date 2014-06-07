@@ -25,6 +25,6 @@
 
 {
 (x: Vector ->> ArrayList)
-	[x.elements():Enumeration -> a.iterator():Iterator]
+	[x.elements():Enumeration -> x.iterator():Iterator]
 }
 
