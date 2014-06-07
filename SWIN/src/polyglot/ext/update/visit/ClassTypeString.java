@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
 import polyglot.ext.update.match.*;
+import polyglot.ext.update.util.Pair;
 
 /*************************************************************************
 	> File Name: visit/ClassTypeString.java
@@ -77,15 +78,15 @@ public class ClassTypeString {
 	// we need to handle recursive type arguments
 	// This will change the structure of the ClassType with the new matching
 	public ClassTypeString processMatching(Matching match) {
-		if (classTypeCompare(typeName, match.getTypePair().first())) {
-			this.typeName = match.getTypePair().second();	
+		if (classTypeCompare(typeName, match.getTypePair().getFirst())) {
+			this.typeName = match.getTypePair().getSecond();	
 		}
 
 		ArrayList<Object> tempTypeArgs = new ArrayList<Object>();
 		for (Object str : this.typeArgs) {
 			if (str instanceof String) {
-				if (classTypeCompare((String)str, match.getTypePair().first())) {	
-					tempTypeArgs.add(match.getTypePair().second());
+				if (classTypeCompare((String)str, match.getTypePair().getFirst())) {	
+					tempTypeArgs.add(match.getTypePair().getSecond());
 				} else {
 					tempTypeArgs.add((String)str);
 				}
@@ -99,9 +100,9 @@ public class ClassTypeString {
 	}
 
 	public boolean meetMatch(Matching match) {
-		if (classTypeCompare(typeName, match.getTypePair().first())) {
-			if (match.getBlockPair().first().isNew()) {
-				if (classTypeCompare(typeName,match.getBlockPair().first().getTarget())) {
+		if (classTypeCompare(typeName, match.getTypePair().getFirst())) {
+			if (match.getBlockPair().getFirst().isNew()) {
+				if (classTypeCompare(typeName,match.getBlockPair().getFirst().getTarget())) {
 					return true;
 				}	
 			}	

@@ -6,6 +6,8 @@
  ************************************************************************/
 package polyglot.ext.update.match;
 
+import polyglot.ext.update.util.Common;
+import polyglot.ext.update.util.Pair;
 
 public class TypeName {
 	protected String type = null;
@@ -48,5 +50,22 @@ public class TypeName {
 		} else {
 			return true;
 		}
+	}
+
+	public static Pair<TypeName,TypeName> fromSWINDef(String str) {
+		TypeName src = new TypeName();
+		TypeName dst = new TypeName();
+		
+		String head = Common.removeHeadTailBlank(str.substring(0, str.indexOf(":")));
+		String tail = str.substring(str.indexOf(":") + 1, str.length());
+
+		String oClass = tail.substring(0, tail.indexOf("->>"));
+		String nClass = tail.substring(tail.indexOf("->>")+3, tail.length());
+		//System.out.println("HD: " + head + " -- " + "TL: " + oClass + "#" + nClass);
+
+		src.setTypeName(head, Common.removeHeadTailBlank(oClass));
+		dst.setTypeName(head, Common.removeHeadTailBlank(nClass));
+
+		return new Pair<TypeName,TypeName>(src,dst);
 	}
 }

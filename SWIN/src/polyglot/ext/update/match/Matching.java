@@ -1,5 +1,8 @@
 package polyglot.ext.update.match;
 
+import polyglot.ext.update.util.Common;
+import polyglot.ext.update.util.Pair;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.ArrayList;
@@ -13,22 +16,19 @@ import java.util.ArrayList;
 
 public class Matching {
 	
-	protected Pair<String> typePair =  new Pair<String>();	
-	protected ArrayList<Pair<TypeName>> defPairs = new ArrayList<Pair<TypeName>>();
-	protected Pair<JavaBody> blockPair = new Pair<JavaBody>();
+	protected Pair<String,String> typePair =  new Pair<String,String>();	
+	protected ArrayList<Pair<TypeName,TypeName>> defPairs = new ArrayList<Pair<TypeName,TypeName>>();
+	protected Pair<JavaBody,JavaBody> blockPair = new Pair<JavaBody,JavaBody>();
 
 	private int passNo = 0;
 	private int secondPassCount = 0;
 
 	public Matching(String rawMatching) {
-		System.out.println("~~~~~~BEGIN~~~~~~");
-		System.out.println(rawMatching);
-		System.out.println("~~~~~~END~~~~~~~");
 		parse(rawMatching.substring(1, rawMatching.length()-1));
 	}
 	
 
-	public void processOld(String rawMatching) {
+	/*public void processOld(String rawMatching) {
 		rawMatching = rawMatching.substring(rawMatching.indexOf("[") + 1, rawMatching.indexOf("]"));
 		
 		// Match the old and new one in a MatchingCommand
@@ -94,48 +94,48 @@ public class Matching {
 		
 		//this.printMatching();
 		//print();
-	}
+	}*/
 
 	public void print() {
 		System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 		typePair.print();
-		for (Pair<TypeName> pair : defPairs) {
-			System.out.println("Wula: " + pair.first());
-			System.out.println("Heis: " + pair.second());
+		for (Pair<TypeName,TypeName> pair : defPairs) {
+			System.out.println("Wula: " + pair.getFirst());
+			System.out.println("Heis: " + pair.getSecond());
 		}
 		//System.out.println("**: " + blockPair.first().getTarget());
 		//System.out.println("**: " + blockPair.second().getTarget());
-		blockPair.first().print();
+		blockPair.getFirst().print();
 		System.out.println("   Wait   ");
-		blockPair.second().print();
+		blockPair.getSecond().print();
 		System.out.println("::::::::::::::::::;One Done:::::::::::::::::::");
 	}
 
-	public Pair<String> getTypePair() {
+	public Pair<String,String> getTypePair() {
 		return typePair;
 	}
 
-	public ArrayList<Pair<TypeName>> getDefPairs() {
+	public ArrayList<Pair<TypeName,TypeName>> getDefPairs() {
 		return defPairs;
 	}
 
-	public Pair<JavaBody> getBlockPair() {
+	public Pair<JavaBody,JavaBody> getBlockPair() {
 		return blockPair;
 	}
 
 	// input a name, this will return the pair of name plus type
-	public Pair<TypeName> defLookUp(String v) {
-		for (Pair<TypeName> pr : defPairs) {
-			if (pr.first().getName().equals(v)) {
+	public Pair<TypeName,TypeName> defLookUp(String v) {
+		for (Pair<TypeName,TypeName> pr : defPairs) {
+			if (pr.getFirst().getName().equals(v)) {
 				return pr;
 			}
 		}	
 		return null;
 	}
 
-	public Pair<TypeName> defLookupDst(String name) {
-		for (Pair<TypeName> pr : defPairs) {
-			if (pr.second().getName().equals(name)) {
+	public Pair<TypeName,TypeName> defLookupDst(String name) {
+		for (Pair<TypeName,TypeName> pr : defPairs) {
+			if (pr.getSecond().getName().equals(name)) {
 				return pr;
 			}
 		}
@@ -147,16 +147,16 @@ public class Matching {
 	public int lookUpDstVirtualNo(String vname) {
 		
 		String srcName = null;
-		for (Pair<TypeName> pr : defPairs) {
-			if (pr.second().getName().equals(vname)) {
-				srcName = pr.first().getName();
+		for (Pair<TypeName,TypeName> pr : defPairs) {
+			if (pr.getSecond().getName().equals(vname)) {
+				srcName = pr.getFirst().getName();
 				break;
 			}
 		}
 
 		int i = 0;
 		int ans = -1;
-		for (String str : blockPair.first().getArgs().get(0)) {
+		for (String str : blockPair.getFirst().getArgs().get(0)) {
 			if (str.equals(srcName)) {
 				ans = i;
 				break;
@@ -175,7 +175,7 @@ public class Matching {
 		// parse body
 		if (matcher.find()) {
 			String body = matcher.group();
-			parseBody(body);
+			parseBody(body.substring(1, body.length()-1));
 			input = input.substring(0, matcher.start());
 		} else {
 			parseError("SWIN body not well defined");
@@ -187,44 +187,40 @@ public class Matching {
 		matcher = r.matcher(input);
 		if (matcher.find()) {
 			String def = matcher.group();
-			parseDef(def);
+			parseDef(def.substring(1, def.length()-1));
 		} else {
 			parseError("SWIN def not well defined");
 		}	
+		print();
 	}
 
-	// TODO: Deal with parse def
 	protected void parseDef(String input) {
-		System.out.println("THE DEF: " + input);	
+		//System.out.println("THE DEF: " + input);
+		ArrayList<String> segs = Common.splitByComma(input);
+		for (String s : segs) {
+			defPairs.add(TypeName.fromSWINDef(s));
+		}
 	}
 
-	// TODO: Deal with parse body
 	protected void parseBody(String input) {
-	
+		String left = input.substring(0, input.indexOf("->"));
+		String right = input.substring(input.indexOf("->") + 2, input.length());
+		left = Common.removeHeadTailBlank(left);
+		right = Common.removeHeadTailBlank(right);
+
+		String leftBody = left.substring(0, left.indexOf(":"));
+		String leftType = left.substring(left.indexOf(":") + 1, left.length());
+
+		String rightBody = right.substring(0,right.indexOf(":"));
+		String rightType = right.substring(right.indexOf(":") + 1, right.length());
+
+		typePair.setFirst(leftType);
+		typePair.setSecond(rightType);
+
+		blockPair.setFirst(new JavaBody(leftBody));
+		blockPair.setSecond(new JavaBody(rightBody));
 	}
 
-	protected String removeHeadTailBlank(String input) {
-		int first = 0;
-		int last = input.length()-1;
-
-		if (input.equals(""))
-			return "";
-
-		while (first <= last) {
-			if (input.charAt(first) == ' ')
-				first ++;
-			else break;
-		}
-		while (last >= first) {
-			if (input.charAt(last) == ' ') {
-				last --;
-			} else {
-				break;
-			}
-		}
-
-		return input.substring(first,last + 1);
-	}
 
 	private void parseError(String str) {
 		System.err.println("[Parse Error]" + str);

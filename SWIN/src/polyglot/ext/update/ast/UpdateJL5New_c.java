@@ -32,7 +32,7 @@ public class UpdateJL5New_c extends JL5New_c {
 
 	@Override
 	public void prettyPrint(CodeWriter w, PrettyPrinter tr) {
-		if (match == null || match.getBlockPair().second().isNew())	{
+		if (match == null || match.getBlockPair().getSecond().isNew())	{
 			printAsNew(w,tr);
 		} else {
 			printAsInvoke(w,tr);
@@ -63,8 +63,8 @@ public class UpdateJL5New_c extends JL5New_c {
 			printArgs(w,tr);
 		} else {
 			// This will not be a sequence, so we just pick the first one.
-			ArrayList<String> dstArgs = match.getBlockPair().second().getArgs().get(0);
-			ArrayList<String> srcArgs = match.getBlockPair().first().getArgs().get(0);
+			ArrayList<String> dstArgs = match.getBlockPair().getSecond().getArgs().get(0);
+			ArrayList<String> srcArgs = match.getBlockPair().getFirst().getArgs().get(0);
 
 			w.write("(");
 			w.begin(0);
@@ -92,10 +92,10 @@ public class UpdateJL5New_c extends JL5New_c {
 
 	public void printAsInvoke(CodeWriter w, PrettyPrinter tr) {
 		
-		ArrayList<ArrayList<String>> dstArgs = match.getBlockPair().second().getArgs();
-		ArrayList<ArrayList<String>> srcArgs = match.getBlockPair().first().getArgs();
-		ArrayList<String> dstMethods = match.getBlockPair().second().getMethodName();
-		String dstTargetName = match.getBlockPair().second().getTarget();
+		ArrayList<ArrayList<String>> dstArgs = match.getBlockPair().getSecond().getArgs();
+		ArrayList<ArrayList<String>> srcArgs = match.getBlockPair().getFirst().getArgs();
+		ArrayList<String> dstMethods = match.getBlockPair().getSecond().getMethodName();
+		String dstTargetName = match.getBlockPair().getSecond().getTarget();
 
 		// which one invoke the function.
 		int n = match.lookUpDstVirtualNo(dstTargetName);

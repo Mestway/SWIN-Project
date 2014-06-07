@@ -35,11 +35,11 @@ public class UpdateJL5Call_c extends JL5Call_c
 	public void prettyPrint(CodeWriter w, PrettyPrinter tr) {
 		
 		if (match != null) {
-			System.out.println("InPrintCall: 1: " + match.getBlockPair().first().getTarget());
-			System.out.println("InPrintCall: 2: " + match.getBlockPair().second().getTarget());
+			System.out.println("InPrintCall: 1: " + match.getBlockPair().getFirst().getTarget());
+			System.out.println("InPrintCall: 2: " + match.getBlockPair().getSecond().getTarget());
 		}
 		
-		if (match == null || match.getBlockPair().second().isInvoke()) {
+		if (match == null || match.getBlockPair().getSecond().isInvoke()) {
 			printAsInvoke(w,tr);
 		} else {
 			System.out.println("Haha, I get here");
@@ -92,10 +92,10 @@ public class UpdateJL5Call_c extends JL5Call_c
 			w.end();
 			w.write(")");
 		} else {
-			int loop = match.getBlockPair().second().getMethodName().size();
-			ArrayList<String> methodName = match.getBlockPair().second().getMethodName();
-			ArrayList<ArrayList<String>> dstArgs = match.getBlockPair().second().getArgs();
-			ArrayList<ArrayList<String>> srcArgs = match.getBlockPair().first().getArgs();
+			int loop = match.getBlockPair().getSecond().getMethodName().size();
+			ArrayList<String> methodName = match.getBlockPair().getSecond().getMethodName();
+			ArrayList<ArrayList<String>> dstArgs = match.getBlockPair().getSecond().getArgs();
+			ArrayList<ArrayList<String>> srcArgs = match.getBlockPair().getFirst().getArgs();
 
 			for (int i = 0; i < loop; i ++) {
 				if (i > 0) 
@@ -126,10 +126,10 @@ public class UpdateJL5Call_c extends JL5Call_c
 
 	void printAsNew(CodeWriter w, PrettyPrinter tr) {
 		w.write("new ");
-		w.write(match.getBlockPair().second().getTarget());
+		w.write(match.getBlockPair().getSecond().getTarget());
 
-		ArrayList<String> dstArgs = match.getBlockPair().second().getArgs().get(0);
-		ArrayList<String> srcArgs = match.getBlockPair().first().getArgs().get(0);
+		ArrayList<String> dstArgs = match.getBlockPair().getSecond().getArgs().get(0);
+		ArrayList<String> srcArgs = match.getBlockPair().getFirst().getArgs().get(0);
 
 		w.write("(");
 		w.begin(0);

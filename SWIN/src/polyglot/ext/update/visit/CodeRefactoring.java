@@ -20,9 +20,9 @@ import polyglot.frontend.*;
 import polyglot.types.*;
 import polyglot.visit.NodeVisitor;
 import polyglot.ext.update.match.TypeName;
-import polyglot.ext.update.match.Pair;
 import polyglot.ext.update.match.JavaBody;
 import polyglot.ext.update.match.MatchChecker;
+import polyglot.ext.update.util.Pair;
 
 public class CodeRefactoring extends NodeVisitor
 {
@@ -92,12 +92,12 @@ public class CodeRefactoring extends NodeVisitor
 		// Fill in the dummy classes with their arguments type list
 		for (Matching iMatch : rawMatching) {
 			for (String iDummy : dummyClasses) {
-				if (iMatch.getTypePair().second().equals(iDummy)) {
-					if (iMatch.getBlockPair().second().isNew()) {
+				if (iMatch.getTypePair().getSecond().equals(iDummy)) {
+					if (iMatch.getBlockPair().getSecond().isNew()) {
 						ArrayList<String> dummyArgs = new ArrayList<String>();
-						for (String iArg : iMatch.getBlockPair().second().getArgs().get(0)) {
-							Pair<TypeName> pr = iMatch.defLookupDst(iArg);
-							dummyArgs.add(pr.second().getType());
+						for (String iArg : iMatch.getBlockPair().getSecond().getArgs().get(0)) {
+							Pair<TypeName,TypeName> pr = iMatch.defLookupDst(iArg);
+							dummyArgs.add(pr.getSecond().getType());
 						}
 						updateTypedTranslator.addDummy(iDummy, dummyArgs);
 					}
@@ -124,10 +124,10 @@ public class CodeRefactoring extends NodeVisitor
 			ClassTypeString.printMap();
 			ClassTypeString.Visited = true;
 			for (Matching match : rawMatching) {
-				if (ClassTypeString.bannedName().contains(match.getTypePair().first())
-				||	ClassTypeString.bannedName().contains(match.getTypePair().second())) {
+				if (ClassTypeString.bannedName().contains(match.getTypePair().getFirst())
+				||	ClassTypeString.bannedName().contains(match.getTypePair().getSecond())) {
 					System.err.println("ShortName unable to identify");
-					System.err.println(match.getTypePair().first() + " + " + match.getTypePair().second());
+					System.err.println(match.getTypePair().getFirst() + " + " + match.getTypePair().getSecond());
 					System.exit(-1);
 				}
 			}
@@ -165,33 +165,33 @@ public class CodeRefactoring extends NodeVisitor
 			ClassTypeString targetClassType = parseClassType(targetType.toString());
 	
 			for	(Matching match : rawMatching) {
-				ArrayList<Pair<TypeName>> defPairs = match.getDefPairs();
-				Pair<JavaBody> blockPair = match.getBlockPair();
+				ArrayList<Pair<TypeName,TypeName>> defPairs = match.getDefPairs();
+				Pair<JavaBody,JavaBody> blockPair = match.getBlockPair();
 			
-				Pair<TypeName> targetPair = match.defLookUp(blockPair.first().getTarget());
+				Pair<TypeName,TypeName> targetPair = match.defLookUp(blockPair.getFirst().getTarget());
 				
 
-				String tttmpS = match.getBlockPair().first().getMethodName().get(0);
+				String tttmpS = match.getBlockPair().getFirst().getMethodName().get(0);
 				
 				String srcMatchType = new String();
 
 				// if targetPair == null , then this matching may be a JL5New without arguments
 				//							or a Class as the argument(just copy it)
 				if (targetPair == null) {
-					if (match.getBlockPair().first().isNew())
+					if (match.getBlockPair().getFirst().isNew())
 						continue;
 					else {
-						srcMatchType = blockPair.first().getTarget();
+						srcMatchType = blockPair.getFirst().getTarget();
 					}
 					
 				} else {
-					srcMatchType = targetPair.first().getType();
+					srcMatchType = targetPair.getFirst().getType();
 				}
 					
 				if (ClassTypeString.classTypeCompare(srcMatchType, targetClassType.typeName())) {
 
-					JavaBody srcJavaBody = match.getBlockPair().first();
-					JavaBody dstJavaBody = match.getBlockPair().second();
+					JavaBody srcJavaBody = match.getBlockPair().getFirst();
+					JavaBody dstJavaBody = match.getBlockPair().getSecond();
 					String srcMethodName = srcJavaBody.getMethodName().get(0);
 			
 					if (node.name().equals(srcMethodName)) {

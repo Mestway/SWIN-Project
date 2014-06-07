@@ -7,6 +7,7 @@
 
 package polyglot.ext.update.match;
 
+import polyglot.ext.update.util.Common;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -58,7 +59,7 @@ public class JavaBody {
 			SplitString eachArg = splitByComma(argPart);	
 			for (String oneArg : eachArg.getParts()) {
 				if (!oneArg.equals("")) {
-					String realArg = removeHeadTailBlank(oneArg);	
+					String realArg = Common.removeHeadTailBlank(oneArg);	
 					functionArg.add(realArg);
 				}	
 			}
@@ -149,29 +150,6 @@ public class JavaBody {
 		result.getParts().add(input.substring(lastIndex, input.length()));
 	
 		return result;
-	}
-
-	protected String removeHeadTailBlank(String input) {
-		int first = 0;
-		int last = input.length()-1;
-
-		if (input.equals(""))
-			return "";
-
-		while (first <= last) {
-			if (input.charAt(first) == ' ')
-				first ++;
-			else break;
-		}
-		while (last >= first) {
-			if (input.charAt(last) == ' ') {
-				last --;
-			} else {
-				break;
-			}
-		}
-
-		return input.substring(first,last + 1);
 	}
 
 	public String allString() {
