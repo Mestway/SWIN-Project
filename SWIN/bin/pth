@@ -4,7 +4,7 @@
 JAVA='/usr/lib/jvm/java-7-openjdk-amd64/jre/bin/java'
 FILE_SEP='/'
 PATH_SEP=':'
-TOP='/home/stw/polyglot/polyglot-1.3.5-src'
+TOP='/home/stw/polyglot/polyglot-1.3.5-src/SWIN'
     while true; do
     case "$1" in
         "") break;;

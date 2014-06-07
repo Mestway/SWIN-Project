@@ -1,8 +1,12 @@
-class NoP {public NoP() { }};
+class NoP {public NoP(int a0,int a1) { }};
 class P {
     private P() { super(); }
     
-    static NoP newInstance() { return new NoP(); }
+    static NoP newInstance(int a, int b) {
+        a++;
+        b--;
+        return new NoP();
+    }
     
     Q newQ1() { return this.new Q(); }
     
@@ -24,7 +28,7 @@ public class testDummy {
     static void print(java.lang.Object ... x) { for (java.lang.Object e : x) java.lang.System.out.println(e + " "); }
     
     public static void main(java.lang.String[] args) {
-        NoP x = new NoP();
+        NoP x = new NoP(7,3);
         Q y = new Q(); }
     
     public testDummy() { super(); }
