@@ -103,7 +103,7 @@
 
 {
 	(x: BaseEventEntry.EventStatus ->> Event) 
-	[ x.getValue():String -> x.getStatus() ]
+	[ x.getValue():String -> x.getStatus():String ]
 }
 
 {
@@ -329,7 +329,7 @@
 {
 	(event: CalendarEventEntry ->> Event) 
 	[ event.isGuestsCanInviteOthers():boolean
-         -> event.getGuestsCanInviteOthers:boolean ]
+         -> event.getGuestsCanInviteOthers():boolean ]
 }
 
 {

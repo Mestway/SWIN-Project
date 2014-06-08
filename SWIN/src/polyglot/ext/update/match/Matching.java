@@ -203,6 +203,7 @@ public class Matching {
 	}
 
 	protected void parseBody(String input) {
+
 		String left = input.substring(0, input.indexOf("->"));
 		String right = input.substring(input.indexOf("->") + 2, input.length());
 		left = Common.removeHeadTailBlank(left);
@@ -213,14 +214,15 @@ public class Matching {
 
 		String rightBody = right.substring(0,right.indexOf(":"));
 		String rightType = right.substring(right.indexOf(":") + 1, right.length());
+		
+		rightBody = Common.removeBracket(rightBody);
+		leftBody = Common.removeBracket(leftBody);
+
 
 		typePair.setFirst(leftType);
 		typePair.setSecond(rightType);
 
 		blockPair.setFirst(new JavaBody(leftBody));
-		
-		//TODO:Continue Debugging here!!
-		//(new Weibo()):Object --> problem
 		blockPair.setSecond(new JavaBody(rightBody));
 		
 	}

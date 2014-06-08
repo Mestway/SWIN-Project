@@ -1,5 +1,1103 @@
-Compiling File SWINProgram/twitter_to_weibo_rules.sw JavaCode/1.update
+Compiling File SWINProgram/gCalendar_v2_to_v3_rules.sw JavaCode/1.update
 JavaCode/1.update
 Name Collector Begin
 Code Refactoring Begin
 /home/stw/polyglot/polyglot-1.3.5-src/SWIN/DONOTUSETHISNAME.DONOTUSETHISNAME
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+CalendarEventEntry Event
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? false
+Target: CalendarEventEntry
+Method:CalendarEventEntry
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? false
+Target: Event
+Method:Event
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+List<Person> Event.Creator
+Wula: CalendarEventEntry event
+Heis: Event event
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+Method:getAuthors
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+Method:getCreator
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Person event.Creator
+Wula: List<Person> x
+Heis: event.Creator x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:get
+	arg: 0
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: Person x
+Heis: event.Creator x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getName
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getDisplayName
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: Person x
+Heis: event.Creator x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getEmail
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getEmail
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: CalendarEventEntry event
+Heis: Event event
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+Method:getId
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+Method:getId
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String NoString
+Wula: String x
+Heis: NoString x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:substring
+	arg: _
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? false
+Target: NoString
+Method:NoString
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+DateTime EventDateTime
+Wula: CalendarEventEntry event
+Heis: Event event
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+Method:getPublished
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+Method:getPublished
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+DateTime EventDateTime
+Wula: CalendarEventEntry event
+Heis: Event event
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+Method:getUpdated
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+Method:getUpdated
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: CalendarEventEntry event
+Heis: Event event
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+Method:getKind
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+Method:getKind
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: CalendarEventEntry event
+Heis: Event event
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+Method:getPlainTextContent
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+Method:getDescription
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Link Event
+Wula: CalendarEventEntry event
+Heis: Event event
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+Method:getHtmlLink
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: Link x
+Heis: Event x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getHref
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getHtmlLink
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+TextConstruct Event
+Wula: CalendarEventEntry event
+Heis: Event event
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+Method:getTitle
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: TextConstruct x
+Heis: Event x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getPlainText
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getSummary
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+BaseEventEntry.EventStatus Event
+Wula: CalendarEventEntry event
+Heis: Event event
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+Method:getStatus
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: BaseEventEntry.EventStatus x
+Heis: Event x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getValue
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getStatus
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+OriginalEvent Event
+Wula: CalendarEventEntry event
+Heis: Event event
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+Method:getOriginalEvent
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: OriginalEvent x
+Heis: Event x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getOriginalId
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getRecurringEventId
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+When Event
+Wula: OriginalEvent x
+Heis: Event x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getOriginalStartTime
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: When x
+Heis: Event x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getStartTime
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getOriginalStartTime
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Recurrence Event
+Wula: CalendarEventEntry event
+Heis: Event event
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+Method:getRecurrence
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String List
+Wula: Recurrence x
+Heis: Event x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getValue
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getRecurrence
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+CalendarEventEntry.Transparency Event
+Wula: CalendarEventEntry event
+Heis: Event event
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+Method:getTransparency
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: CalendarEventEntry.Transparency x
+Heis: Event x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getValue
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getTransparency
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+CalendarEventEntry.Visibility Event
+Wula: CalendarEventEntry event
+Heis: Event event
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+Method:getVisibility
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: CalendarEventEntry.Visibility x
+Heis: Event x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getValue
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getVisibility
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+List<When> Event
+Wula: CalendarEventEntry event
+Heis: Event event
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+Method:getTimes
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+When Event
+Wula: List<When> x
+Heis: Event x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:get
+	arg: 0
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+DateTime EventDateTime
+Wula: When x
+Heis: Event x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getStartTime
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getStart
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+DateTime EventDateTime
+Wula: When x
+Heis: Event x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getEndTime
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getEnd
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Reminder EventReminder
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? false
+Target: Reminder
+Method:Reminder
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? false
+Target: EventReminder
+Method:EventReminder
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Reminder EventReminder
+Wula: CalendarEventEntry event
+Heis: Event event
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+Method:getReminders
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+Method:getReminders
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+int int
+Wula: Reminder x
+Heis: EventReminder x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getMinutes
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getMinutes
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+List<Where> Event
+Wula: CalendarEventEntry event
+Heis: Event event
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+Method:getLocations
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Where Event
+Wula: List<Where> x
+Heis: Event x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:get
+	arg: 0
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: Where x
+Heis: Event x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getValueString
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getLocation
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+EventWho EventAttendee
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? false
+Target: EventWho
+Method:EventWho
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? false
+Target: EventAttendee
+Method:EventAttendee
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+EventWho EventAttendee
+Wula: EventWho x
+Heis: EventAttendee x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getParticipants
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getAttendees
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String		 String
+Wula: EventWho x
+Heis: EventAttendee x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getValueString
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getDisplayName
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: EventWho x
+Heis: EventAttendee x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getEmail
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getEmail
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: EventWho x
+Heis: EventAttendee x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getAttendeeStatus
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getResponseStatus
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+int int
+Wula: CalendarEventEntry event
+Heis: Event event
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getSequence
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getSequence
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: CalendarEventEntry event
+Heis: Event event
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getIcalUID
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getCalUID
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+WebContent EventGadget
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? false
+Target: WebContent
+Method:WebContent
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? false
+Target: EventGadget
+Method:EventGadget
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+WebContent EventGadget
+Wula: CalendarEventEntry event
+Heis: Event event
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+Method:getWebContent
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+Method:getGadget
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: WebContent x
+Heis: EventGadget x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getIcon
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getIcon
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: WebContent x
+Heis: EventGadget x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getTitle
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getTitle
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: WebContent x
+Heis: EventGadget x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getType
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getType
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: WebContent x
+Heis: EventGadget x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getUrl
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getUrl
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: WebContent x
+Heis: EventGadget x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getWidth
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getWidth
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: WebContent x
+Heis: EventGadget x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getHeight
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getHeight
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Map.Entry<String, String> Map.Entry<String, String>
+Wula: WebContent x
+Heis: EventGadget x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getGadgetPrefs
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getPreferences
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getKey
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getKey
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getValue
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getValue
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+boolean boolean
+Wula: CalendarEventEntry event
+Heis: Event event
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+Method:isGuestsCanModify
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+Method:getGuestsCanModify
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+boolean boolean
+Wula: CalendarEventEntry event
+Heis: Event event
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+Method:isGuestsCanInviteOthers
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+Method:getGuestsCanInviteOthers
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+boolean boolean
+Wula: CalendarEventEntry event
+Heis: Event event
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+Method:isGuestsCanSeeGuests
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: event
+Method:getGuestsCanSeeOtherGuests
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+CalendarEntry Calendar
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? false
+Target: CalendarEntry
+Method:CalendarEntry
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? false
+Target: Calendar
+Method:Calendar
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: CalendarEntry c
+Heis: Calendar c
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: c
+Method:getEtag
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: c
+Method:getEtag
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: CalendarEntry c
+Heis: Calendar c
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: c
+Method:getKind
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: c
+Method:getKind
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: CalendarEntry c
+Heis: Calendar c
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: c
+Method:getId
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: c
+Method:getId
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+TextConstruct Calendar
+Wula: CalendarEntry c
+Heis: Calendar c
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: c
+Method:getTitle
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: c
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: TextConstruct x
+Heis: Calendar x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getPlainText
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getSummary
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+TextConstruct Calendar
+Wula: CalendarEntry c
+Heis: Calendar c
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: c
+Method:getSummary
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: c
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: TextConstruct x
+Heis: Calendar x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getPlainText
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getDescription
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+List<Where> Calendar
+Wula: CalendarEntry c
+Heis: Calendar c
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: c
+Method:getLocations
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: c
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Where Calendar
+Wula: List<Where> x
+Heis: Calendar x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:get
+	arg: 0
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: Where x
+Heis: Calendar x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getValueString
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getLocation
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+TimeZoneProperty Calendar
+Wula: CalendarEntry c
+Heis: Calendar c
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: c
+Method:getTimeZone
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: c
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: TimeZoneProperty x
+Heis: Calendar x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getValue
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getTimeZone
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+AclEntry AclRule
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? false
+Target: AclEntry
+Method:AclEntry
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? false
+Target: AclRule
+Method:AclRule
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: AclEntry a
+Heis: AclRule a
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: a
+Method:getEtag
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: a
+Method:getEtag
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: AclEntry a
+Heis: AclRule a
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: a
+Method:getKind
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: a
+Method:getKind
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: AclEntry a
+Heis: AclRule a
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: a
+Method:getId
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: a
+Method:getId
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+AclRole AclRule
+Wula: AclEntry a
+Heis: AclRule a
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: a
+Method:getRole
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: a
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: AclRole x
+Heis: AclRule x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: a
+Method:getValue
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: a
+Method:getRole
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+AclScope AclRule.Scope
+Wula: AclEntry a
+Heis: AclRule a
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: a
+Method:getScope
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: a
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+AclScope.Type String
+Wula: AclScope x
+Heis: AclRule.Scope x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getType
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getType
+::::::::::::::::::;One Done:::::::::::::::::::
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+String String
+Wula: AclScope x
+Heis: AclRule.Scope x
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getValue
+   Wait   
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Is invoke? true
+Target: x
+Method:getValue
+::::::::::::::::::;One Done:::::::::::::::::::
+------------- NameMap ----------
+String[] --- java.lang.String[]
+int --- int
+void --- void
+PrintStream --- java.io.PrintStream
+ArrayList --- java.util.ArrayList
+Integer --- java.lang.Integer
+System --- java.lang.System
+------------- Banned ----------

@@ -61,4 +61,32 @@ public class Common {
 		return input.substring(first,last + 1);
 	}
 
+	public static String removeBracket(String input) {
+		while (findMatchedBracket(input)) {
+			input = input.substring(1, input.length()-1);
+		}
+		return input;
+	}
+
+	private static boolean findMatchedBracket(String input) {
+		
+		if (input.charAt(0) != '(')
+			return false;
+
+		int level = 0;
+		for (int i = 0; i < input.length() ; i ++) {
+			if (input.charAt(i) == '(') 
+				level ++;
+			else if (input.charAt(i) == ')') {
+				level --;
+				if (level == 0) {
+					if (i == input.length() - 1)
+						return true;
+					else return false;
+				}
+			}
+		}
+		return false;
+	}
+
 }
