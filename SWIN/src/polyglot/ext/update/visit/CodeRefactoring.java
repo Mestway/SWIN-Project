@@ -26,7 +26,6 @@ import polyglot.ext.update.util.Pair;
 import polyglot.ext.update.util.Common;
 
 
-// TODO: MOVE functions from constructor to enter();
 public class CodeRefactoring extends NodeVisitor
 {
 	NodeFactory nf;
@@ -48,20 +47,24 @@ public class CodeRefactoring extends NodeVisitor
 	// API name list
 	String APIFileList = "APIFILE.APIFILE";
 	ArrayList<String> APIList = new ArrayList<String>();
-	
-	public CodeRefactoring(Job job, TypeSystem ts, NodeFactory nf, TargetFactory tf, String srcFileName) {
-		
-		this.srcFileName = srcFileName;
-		System.out.println("Hahah: " + this.srcFileName);
 
+	// SWIN initiation flag
+	Boolean SWINInitiated = false;
+
+	public CodeRefactoring(Job job, TypeSystem ts, NodeFactory nf, TargetFactory tf) {
+		
 		this.context = job.context();
 		this.nf = nf;
 		this.ts = ts;
 		this.tf = tf;
 
 		updateTypedTranslator = new UpdateTypedTranslator(job, ts, nf, tf);
+		//updateTypedTranslator.printDummy();
+	}
+
+	public void initSWIN() {
 		
-		System.out.println("Code Refactoring Begin");
+		System.out.println("Code Refactoring Begin: " + srcFileName);
 		
 		File file = new File(fileName);
 		BufferedReader reader = null;
@@ -101,6 +104,12 @@ public class CodeRefactoring extends NodeVisitor
 		 *	If it is a client code, we do transform it
 		 */
 		readAPIFileList();
+		for (String i : APIList) {
+			if (this.srcFileName.indexOf(i) != -1) {
+				rawMatching = new ArrayList<Matching>();
+				System.out.println("A HAHAHAHAHAHAHAHAHAHAHA");
+			}
+		}
 
 		pattern = "#[^#]++";
 		r = Pattern.compile(pattern);
@@ -129,8 +138,10 @@ public class CodeRefactoring extends NodeVisitor
 		// check if the matching rules are qualified
 		MatchChecker matchChecker = new MatchChecker(rawMatching);
 		matchChecker.setDummyClasses(updateTypedTranslator.getDummyClasses(), updateTypedTranslator.getDummyArgs());
+	}
 
-		//updateTypedTranslator.printDummy();
+	public void setSourceFileName(String srcFileName) {
+		this.srcFileName = srcFileName;
 	}
 
 	public UpdateTypedTranslator getTranslator() {
@@ -139,7 +150,12 @@ public class CodeRefactoring extends NodeVisitor
 
 	@Override
 	public NodeVisitor enter(Node n) {
-		
+	
+		if (!SWINInitiated) {
+			initSWIN();
+			SWINInitiated = true;
+		}
+
 		// Check if the typeNames presented in mathcing is ambiguious.
 		if (ClassTypeString.Visited == false) {
 			ClassTypeString.printMap();

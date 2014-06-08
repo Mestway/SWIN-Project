@@ -39,10 +39,11 @@ Run
 
 To run a test case, use ./test in the base directory. e.g.
 
-        ./test yourmatchinfo input1.update input2.update input3.update .......
+        ./test yourmatchinfo APIList.api input1.update input2.update input3.update .......
 
-**input1.update** specifies the file path you wish to update.
-And **yourmatchinfo** specifies the path for your SWIN program.
+1.**input1.update** specifies the file path you wish to update.
+2.**APIList** specifies which files in the input are APIs (which need not to be transformed). 
+3.And **yourmatchinfo** specifies the path for your SWIN program.
 
 Output
 ============================================================================

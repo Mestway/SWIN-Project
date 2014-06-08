@@ -23,7 +23,7 @@ import java.io.*;
  */
 public class ExtensionInfo extends polyglot.ext.jl5.ExtensionInfo {
     
-	String srcFileName = null;
+	CodeRefactoring codeRefactoringPass;
 	
 	static {
         // force Topics to load
@@ -42,8 +42,8 @@ public class ExtensionInfo extends polyglot.ext.jl5.ExtensionInfo {
         Lexer lexer = new Lexer_c(reader, source.name(), eq);
         Grm grm = new Grm(lexer, ts, nf, eq);
 		
-		srcFileName = source.name();
-		System.out.println("I'm HERE!");
+		/* Set the sourceFileName for the refactoring pass */
+		codeRefactoringPass.setSourceFileName(source.name());
 
 		return new CupParser(grm, source, eq);
     }
@@ -61,15 +61,14 @@ public class ExtensionInfo extends polyglot.ext.jl5.ExtensionInfo {
 
     public List passes(Job job) {
 
-		System.out.println("I'm in Passes!");
-
         List passes = super.passes(job);
 		
 		beforePass(passes, Pass.OUTPUT,
 					new VisitorPass(API_UPDATE,job, 
 					new NameCollector(job, nf)));
 
-		CodeRefactoring codeRefactoringPass = new CodeRefactoring(job, ts, nf, targetFactory(), srcFileName);
+		codeRefactoringPass = new CodeRefactoring(job, ts, nf, targetFactory());
+		
 		beforePass(passes, Pass.OUTPUT,
 					new VisitorPass(API_UPDATE,job, 
 					codeRefactoringPass));
