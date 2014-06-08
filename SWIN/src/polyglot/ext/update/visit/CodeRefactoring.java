@@ -23,22 +23,37 @@ import polyglot.ext.update.match.TypeName;
 import polyglot.ext.update.match.JavaBody;
 import polyglot.ext.update.match.MatchChecker;
 import polyglot.ext.update.util.Pair;
+import polyglot.ext.update.util.Common;
 
+
+// TODO: MOVE functions from constructor to enter();
 public class CodeRefactoring extends NodeVisitor
 {
 	NodeFactory nf;
 	String fileName = "DONOTUSETHISNAME.DONOTUSETHISNAME";
 	ArrayList<Matching> rawMatching = new ArrayList<Matching>();
 	Context context;
+	
+	// Source file name of this code
+	String srcFileName = new String();
 
 	// This is used for the TypedTranslator
 	TypeSystem ts;
 	TargetFactory tf;
 	UpdateTypedTranslator updateTypedTranslator = null;
+	
 	// put the dummy classes into the list
 	ArrayList<String> dummyClasses = new ArrayList<String>();
+	
+	// API name list
+	String APIFileList = "APIFILE.APIFILE";
+	ArrayList<String> APIList = new ArrayList<String>();
+	
+	public CodeRefactoring(Job job, TypeSystem ts, NodeFactory nf, TargetFactory tf, String srcFileName) {
+		
+		this.srcFileName = srcFileName;
+		System.out.println("Hahah: " + this.srcFileName);
 
-	public CodeRefactoring(Job job, TypeSystem ts, NodeFactory nf, TargetFactory tf) {	
 		this.context = job.context();
 		this.nf = nf;
 		this.ts = ts;
@@ -80,6 +95,12 @@ public class CodeRefactoring extends NodeVisitor
 			String oneMatching = matcher.group();
 			rawMatching.add(new Matching(oneMatching));	
 		}
+
+		/*Check:
+		 *	If it is an API usage, we should not transform it
+		 *	If it is a client code, we do transform it
+		 */
+		readAPIFileList();
 
 		pattern = "#[^#]++";
 		r = Pattern.compile(pattern);
@@ -270,7 +291,6 @@ public class CodeRefactoring extends NodeVisitor
 	}
 
 	
-
 	// input a string and return an arrayList without comma outside 
 	protected ArrayList<String> splitByComma(String input) {
 		int count = 0;
@@ -320,6 +340,29 @@ public class CodeRefactoring extends NodeVisitor
 		outputName += methodSeq.get(methodSeq.size()-1);
 	
 		return outputName;
+	}
+
+	protected void readAPIFileList() {
+		File file = new File(APIFileList);
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new FileReader(file));
+			String temp = null;
+
+			while ((temp = reader.readLine()) != null) {
+				if (temp.equals(""))
+					continue;
+				else if (temp.startsWith("//"))
+					continue;
+				else {
+					APIList.add(temp);
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	
+		Common.printList(APIList);
 	}
 
 }

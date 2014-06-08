@@ -15,17 +15,25 @@ then
 	flag=0
 	filename=$1
 	cp $filename "DONOTUSETHISNAME.DONOTUSETHISNAME"
+	if [ $# -gt 2 ]
+	then
+		APIFileName=$2
+		cp $APIFileName "APIFILE.APIFILE"
+	else
+		touch "APIFILE.APIFILE"
+	fi
 	for i in $@;do
-		if [ $flag -gt 0 ]
+		if [ $flag -gt 1 ]
 		then 
 			Compile=$Compile" "$i
 		else
-			flag=1
+			let "flag=$flag+1"
 		fi
 	done
 	echo $Compile
 	bin/jlc -d output/ -ext update $Compile
 	rm "DONOTUSETHISNAME.DONOTUSETHISNAME"
+	rm "APIFILE.APIFILE"
 else
 	echo "An error occured. Seems arguments are not right"
 fi

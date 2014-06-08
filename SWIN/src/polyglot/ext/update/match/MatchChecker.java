@@ -9,6 +9,7 @@ package polyglot.ext.update.match;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import polyglot.ext.update.util.Pair;
 
 public class MatchChecker {
 	
@@ -34,11 +35,11 @@ public class MatchChecker {
 
 	protected void collectClassMapping() {
 		for (Matching match : matchList) {
-			String src = match.getTypePair().first();
-			String dst = match.getTypePair().second();
+			String src = match.getTypePair().getFirst();
+			String dst = match.getTypePair().getSecond();
 
 			if (classMap.get(src) != null && !classMap.get(src).equals(dst)) {
-				System.err.println("Match Check Failed: Not one-one corresponding");
+				System.err.println("[SWIN ERROR]Match Check Failed: Not one-one corresponding");
 				System.exit(-1);
 			} else {
 				classMap.put(src,dst);

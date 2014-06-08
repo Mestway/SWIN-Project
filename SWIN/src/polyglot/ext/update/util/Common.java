@@ -61,6 +61,15 @@ public class Common {
 		return input.substring(first,last + 1);
 	}
 
+	public static void printList(ArrayList list) {
+		System.out.println("Start Print List:");
+		for (Object i : list) {
+			System.out.println("	" + i);
+		}
+		System.out.println("End Print List");
+	}
+
+
 	public static String removeBracket(String input) {
 		while (findMatchedBracket(input)) {
 			input = input.substring(1, input.length()-1);

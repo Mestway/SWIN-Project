@@ -191,7 +191,7 @@ public class Matching {
 		} else {
 			parseError("SWIN def not well defined");
 		}	
-		print();
+		//print();
 	}
 
 	protected void parseDef(String input) {
