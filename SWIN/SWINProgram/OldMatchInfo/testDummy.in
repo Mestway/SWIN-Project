@@ -1,9 +1,0 @@
-[ P () { P.newInstance() }
-  NoP () { new NoP() } ]
-
-
-// This does not harm?
-[ P.Q1 (P x) { x.newQ1() }
-  Q (P x) { new Q() } ]
-
-#NoP

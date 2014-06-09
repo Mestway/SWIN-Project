@@ -1,7 +1,0 @@
-[ P (int v, int u) { P.newInstance(v,u) }
-  NoP (int a, int b) { new NoP(b,a) } ]
-
-[ P.Q1 (P x) { x.newQ1() }
-  Q (P x) { new Q() } ]
-
-#NoP
