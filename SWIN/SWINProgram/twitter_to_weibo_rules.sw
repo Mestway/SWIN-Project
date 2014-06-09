@@ -42,7 +42,7 @@
 {
 	(x: Status ->> Status) 
 	[ x.getUser():User
-        -> x.getUser():Uesr ]
+        -> x.getUser():User ]
 }
 
 {
@@ -63,7 +63,7 @@
 {
 	(x: Twitter ->> Weibo) 
 	[ x.getUserTimeline():List<Status>
-         -> x.getUesrTimeline():List<Status> ]
+         -> x.getUserTimeline():List<Status> ]
 }
 
 {

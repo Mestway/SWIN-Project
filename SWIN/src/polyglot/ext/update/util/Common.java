@@ -46,12 +46,12 @@ public class Common {
 			return "";
 
 		while (first <= last) {
-			if (input.charAt(first) == ' ')
+			if (input.charAt(first) == ' ' || input.charAt(first) == '\t')
 				first ++;
 			else break;
 		}
 		while (last >= first) {
-			if (input.charAt(last) == ' ') {
+			if (input.charAt(last) == ' ' || input.charAt(last) == '\t') {
 				last --;
 			} else {
 				break;

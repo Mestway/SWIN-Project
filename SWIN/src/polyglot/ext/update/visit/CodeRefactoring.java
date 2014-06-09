@@ -107,7 +107,7 @@ public class CodeRefactoring extends NodeVisitor
 		for (String i : APIList) {
 			if (this.srcFileName.indexOf(i) != -1) {
 				rawMatching = new ArrayList<Matching>();
-				System.out.println("A HAHAHAHAHAHAHAHAHAHAHA");
+				System.out.println("[ API ]This is an API code, no need to transform.");
 			}
 		}
 

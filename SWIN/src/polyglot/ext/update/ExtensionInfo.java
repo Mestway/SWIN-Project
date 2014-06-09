@@ -31,7 +31,7 @@ public class ExtensionInfo extends polyglot.ext.jl5.ExtensionInfo {
     }
 
     public String defaultFileExtension() {
-        return "update";
+        return "java";
     }
 
     public String compilerName() {

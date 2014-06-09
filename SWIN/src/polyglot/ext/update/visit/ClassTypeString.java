@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Map.Entry;
 import polyglot.ext.update.match.*;
 import polyglot.ext.update.util.Pair;
+import polyglot.ext.update.util.Common;
 
 /*************************************************************************
 	> File Name: visit/ClassTypeString.java
@@ -82,8 +83,10 @@ public class ClassTypeString {
 			this.typeName = match.getTypePair().getSecond();	
 		}
 
+		System.out.println("[PcM]" + match.getTypePair().getFirst() + "  " + typeName);
+
 		ArrayList<Object> tempTypeArgs = new ArrayList<Object>();
-		for (Object str : this.typeArgs) {
+		for (Object str : this.typeArgs) {	
 			if (str instanceof String) {
 				if (classTypeCompare((String)str, match.getTypePair().getFirst())) {	
 					tempTypeArgs.add(match.getTypePair().getSecond());
@@ -120,10 +123,15 @@ public class ClassTypeString {
 
 	public static String getShortName(String fullName) {
 		String[] parts = fullName.split("\\.");
-		return parts[parts.length - 1];
+		String result = parts[parts.length - 1];
+		
+		result = Common.removeHeadTailBlank(result);
+
+		return result;
 	}
 
 	public static boolean classTypeCompare(String first, String second) {
+		
 		if (first.equals(second)) 
 			return true;
 		else if (!bannedName.contains(getShortName(first)) && !bannedName.contains(getShortName(second))
