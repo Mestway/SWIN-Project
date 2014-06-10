@@ -1,0 +1,12 @@
+[Hashtable () {new Hashtable()}  
+	HashMap () {new HashMap()}]
+[Enumeration (Hashtable v) {v.elements()} 
+	Iterator (HashMap a) {a.values().iterator()}]
+[boolean (Enumeration e) {e.hasMoreElements()} 
+	boolean (Iterator i) {i.hasNext()}]
+[Object (Enumeration e) {e.nextElement()}  
+	Object (Iterator i) {i.next()}]
+[Vector () {new Vector()} 
+	ArrayList () {new ArrayList()}]
+[Enumeration (Vector v) {v.elements()}
+	Iterator (ArrayList a) {a.iterator()}]
