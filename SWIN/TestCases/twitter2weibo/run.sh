@@ -7,7 +7,9 @@
 #!/bin/bash
 
 rm output/*.*
+touch APIFILE.APIFILE
 cp twitter_to_weibo_rules.sw DONOTUSETHISNAME.DONOTUSETHISNAME
 cp weibo4j.jar output/weibo4j.jar
-../../bin/jlc -ext update -classpath twitter4j.jar GetHomeTimeline_twitter.java -d output
+../../bin/jlc -c -ext update -classpath twitter4j.jar GetHomeTimeline_twitter.java -d output
 rm DONOTUSETHISNAME.DONOTUSETHISNAME
+rm APIFILE.APIFILE

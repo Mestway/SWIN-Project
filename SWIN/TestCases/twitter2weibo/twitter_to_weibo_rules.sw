@@ -30,13 +30,18 @@
 {
 	(x: User ->> User) 
 	[ x.getScreenName():String
-     -> x.getScreeName():String ]
+     -> x.getScreenName():String ]
 }
 
 {
 	(x: Status ->> Status) 
 	[ x.getText():String
         -> x.getText():String ]
+}
+
+{
+	()
+	[ (new Status()):Status -> (new Status()):Status]
 }
 
 {

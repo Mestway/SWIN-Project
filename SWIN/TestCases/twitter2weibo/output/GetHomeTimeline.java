@@ -6,10 +6,10 @@ public class GetHomeTimeline {
         try {
             Weibo twitter = new Weibo();
             User user = twitter.verifyCredentials();
-            java.util.List<twitter4j.Status> statuses = twitter.getHomeTimeline();
-            java.lang.System.out.println("Showing @" + user.getScreeName() + "\'s home timeline.");
-            for (twitter4j.Status status : statuses) {
-                java.lang.System.out.println("@" + status.getUser().getScreeName() + " - " + status.getText()); }
+            java.util.List<Status> statuses = twitter.getHomeTimeline();
+            java.lang.System.out.println("Showing @" + user.getScreenName() + "\'s home timeline.");
+            for (Status status : statuses) {
+                java.lang.System.out.println("@" + status.getUser().getScreenName() + " - " + status.getText()); }
         }
         catch (WeiboException te) {
             te.printStackTrace();
