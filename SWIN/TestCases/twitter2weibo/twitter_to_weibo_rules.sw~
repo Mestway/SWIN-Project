@@ -9,15 +9,13 @@
 
 {
 	(x: TwitterFactory ->> NoF) 
-	[ x.getInstance():Twitter -> (new Weibo()):Weibo ]
+	[ f.getInstance():Twitter -> (new Weibo()):Weibo ]
 }
 
 {
 	(x: TwitterFactory ->> NoF) 
-	[ x.getSingleton():Twitter -> (new Weibo()):Weibo ]
+	[ f.getSingleton():Twitter -> (new Weibo()):Weibo ]
 }
-
-#NoF
 
 {
 	(x: Twitter ->> Weibo) 

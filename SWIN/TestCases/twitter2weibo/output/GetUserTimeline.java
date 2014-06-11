@@ -1,13 +1,13 @@
-//import twitter4j.Status;
-//import twitter4j.Twitter;
-//import twitter4j.TwitterException;
-//import twitter4j.TwitterFactory;
-import weibo4j.*;
+import twitter4j.Status;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
 import java.util.List;
 
+class NoF {public NoF() { }};
 public class GetUserTimeline {
     public static void main(java.lang.String[] args) {
-        Weibo twitter = new twitter4j.TwitterFactory().getInstance();
+        Weibo twitter = new Weibo();
         try {
             java.util.List<Status> statuses;
             String user;

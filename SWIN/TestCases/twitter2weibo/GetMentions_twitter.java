@@ -1,4 +1,3 @@
-package twitter4j.examples.timeline;
 
 import twitter4j.*;
 //import weibo4j.Weibo;

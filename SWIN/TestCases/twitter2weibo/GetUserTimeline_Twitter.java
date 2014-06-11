@@ -10,8 +10,10 @@ import java.util.List;
 
 public class GetUserTimeline {
     public static void main(String[] args) {
+        //TwitterFactory twitterFac = new TwitterFactory();
+		//Twitter twitter = twitterFac.getInstance();
         Twitter twitter = new TwitterFactory().getInstance();
-        try {
+		try {
             List<Status> statuses;
             String user;
             if (args.length == 1) {
