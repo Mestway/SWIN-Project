@@ -84,7 +84,9 @@ public class CallArgs {
 	@Override
 	public String toString() {
 		String str = "";
-		str += "(" + caller.toString() + ")";
+		
+
+		str += "" + caller.toString() + "";
 
 		str += "." + methodName;
 

@@ -236,8 +236,9 @@ public class CodeRefactoring extends NodeVisitor
 					JavaBody dstJavaBody = match.getBlockPair().getSecond();
 					String srcMethodName = srcJavaBody.getMethodName().get(0);
 			
-					if (node.name().equals(srcMethodName)) {
+					if (node.name().equals(srcMethodName) && node.arguments().size() == match.getBlockPair().getFirst().getArgs().size()) {
 						//String dstMethodName = parseMethodInvoke(match.getBlockPair().second().allString()); 
+						System.out.println("[" + node.name() + "]" + node.arguments().size() + " " + match.getBlockPair().getFirst().getArgs().size());						
 						node.setMatch(match);	
 					}		
 				}
