@@ -12,6 +12,7 @@ import polyglot.util.CodeWriter;
 import polyglot.util.Position;
 import polyglot.visit.PrettyPrinter;
 import polyglot.ext.update.match.*;
+import polyglot.ext.update.util.*;
 
 public class UpdateJL5Call_c extends JL5Call_c
 {
@@ -106,16 +107,29 @@ public class UpdateJL5Call_c extends JL5Call_c
 
 				boolean isFirst = true;
 				for (String tempStr : dstArgs.get(i)) {
+					/*System.out.println("[BattleShip] " + tempStr);
 					if (!isFirst) {
 						w.write(",");
 					}
 					int n = match.lookUpDstVirtualNo(tempStr);
 					if (n == -1) {
+						System.out.println("[Cruiser] " + tempStr);
 						w.write(tempStr);
 					} else {
 						Expr e = (Expr) arguments.get(n);
 						print(e,w,tr);
 					}
+					isFirst = false;*/
+					
+					Object ca = CallArgs.getCallArgs(tempStr);
+					if (ca instanceof CallArgs)
+						((CallArgs)ca).substitution(match, arguments);
+					if (!isFirst) {
+						w.write(",");
+					}
+						
+					System.out.println("[BG]" + ca.toString());
+					w.write(ca.toString());
 					isFirst = false;
 				}
 				w.end();

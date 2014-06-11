@@ -10,6 +10,13 @@ rm output/*.*
 touch APIFILE.APIFILE
 cp twitter_to_weibo_rules.sw DONOTUSETHISNAME.DONOTUSETHISNAME
 cp weibo4j.jar output/weibo4j.jar
-../../bin/jlc -c -ext update -classpath twitter4j.jar GetHomeTimeline_twitter.java -d output
+if [ $# -gt 0 ]
+then
+	filename=$1
+else
+	filename="GetHomeTimeline_twitter.java"
+fi
+echo $filename
+../../bin/jlc -c -ext update -classpath twitter4j.jar $filename -d output
 rm DONOTUSETHISNAME.DONOTUSETHISNAME
 rm APIFILE.APIFILE

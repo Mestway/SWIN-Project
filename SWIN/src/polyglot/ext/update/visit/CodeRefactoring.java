@@ -24,7 +24,7 @@ import polyglot.ext.update.match.JavaBody;
 import polyglot.ext.update.match.MatchChecker;
 import polyglot.ext.update.util.Pair;
 import polyglot.ext.update.util.Common;
-
+import polyglot.ext.update.util.CallArgs;
 
 public class CodeRefactoring extends NodeVisitor
 {
@@ -60,6 +60,11 @@ public class CodeRefactoring extends NodeVisitor
 
 		updateTypedTranslator = new UpdateTypedTranslator(job, ts, nf, tf);
 		//updateTypedTranslator.printDummy();
+	
+		String ss = "String().valueOf(y)";
+		Object ca = (CallArgs.getCallArgs(ss));
+		System.out.println("[TST]" + ca.toString());
+	
 	}
 
 	public void initSWIN() {

@@ -83,8 +83,6 @@ public class ClassTypeString {
 			this.typeName = match.getTypePair().getSecond();	
 		}
 
-		System.out.println("[PcM]" + match.getTypePair().getFirst() + "  " + typeName);
-
 		ArrayList<Object> tempTypeArgs = new ArrayList<Object>();
 		for (Object str : this.typeArgs) {	
 			if (str instanceof String) {

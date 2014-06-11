@@ -1,11 +1,10 @@
-package twitter4j.examples.timeline;
-
+//package twitter4j.examples.timeline;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
-import weibo4j.Weibo;
-import weibo4j.WeiboException;
+//import weibo4j.Weibo;
+//import weibo4j.WeiboException;
 
 import java.util.List;
 
