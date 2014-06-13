@@ -105,6 +105,9 @@ public class Common {
 
 	private static boolean findMatchedBracket(String input) {
 		
+		if (input.equals("")) 
+			return false;
+
 		if (input.charAt(0) != '(')
 			return false;
 
