@@ -1,0 +1,470 @@
+\documentclass[letterpaper]{article}
+\usepackage{bussproofs}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{color}
+\usepackage{listings}
+\usepackage{verbatim}
+\usepackage{bera}
+\usepackage{proof,amssymb,enumerate}
+\usepackage{amsmath,amsthm}
+\usepackage[top=1in, bottom=1in, left=1.25in, right=1.25in]{geometry}
+
+% This is the "centered" symbol
+\def\fCenter{{\mbox{\Large$\rightarrow$}}}
+
+\newcommand{\blue}[1] {\textcolor{blue}{#1}}
+\newcommand\type[1]{\mathsf{Type}(#1)}
+\newcommand{\mychange}{\textcolor{red}{NEW}}
+\newcommand{\indentspace}{~~~~~~~~}
+
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{definition}{Definition}
+\newtheorem{property}{Property}
+
+\usepackage[framemethod=tikz,xcolor=true]{mdframed}
+
+% Optional to turn on the short abbreviations
+\EnableBpAbbreviations
+
+% \alwaysRootAtTop  % makes proofs upside down
+% \alwaysRootAtBottom % -- this is the default setting
+
+%\pagestyle{fancy}
+
+\begin{document}
+\title{Formal Definition of SWIN language}
+\author{Chenglong Wang \and Jun Li \and Yingfei Xiong \and Zhenjiang Hu}
+\date{\today}
+\maketitle
+
+\section{Featherweight Java}
+\subsection{Syntax}
+\begin{align*}
+  & \mbox{Class Declaration}\\
+  & \qquad\tt CL\ ::=\  \tt class\ C\ extends\ C \{\bar{C}\ \bar{f}; K\ \bar{M}\}\\
+  & \mbox{Constructor Declaration}\\
+  & \qquad\tt K \ ::=\  \tt C\ (\bar{C}\ \bar{f})\ \{ super(\bar{f}); this.\bar{f}=\bar{f}\}\\
+  & \mbox{Method Declaration}\\
+  & \qquad\tt M \ ::=\  \tt C\ m(\bar{C}\ \bar{x})\ \{ return\ t;\}\\
+  & \mbox{Term}\\
+  & \qquad\tt t \ ::=\  \tt x\ |\ t.f\ |\ t.m(\bar{t})\ |\ new\ C(\bar{t})\ |\ (C)\ t
+\end{align*}
+\subsection{Type System}
+\subsubsection{Subtyping}
+\[
+\begin{array}{c c}
+\infer[\text{(S-SELF)}]
+  {\tt C<:C}
+  {}
+~~~~~~~~~~~~~~~
+\infer[\text{(S-TRANS)}]
+  {\tt C<:E}
+  {\tt C<:D
+  &\tt D<:E
+  }
+\end{array}
+\]
+
+\[
+\begin{array}{c}
+
+\infer[\text{(S-DEF)}]
+  {\tt C<:D}
+  {\tt \mathit{CT}(C)=class~C~extends~D~\{...\}
+  }
+
+\end{array}
+\]
+
+\subsubsection{Auxiliary Functions}
+\[
+  \begin{array}{c}
+    \infer[\text{FIELD-OBJECT}]
+    {\tt fields(Object)=\{\}}
+    {}
+  \end{array}
+\]
+
+\[
+  \begin{array}{c}
+    \infer[\text{(FIELD-LOOKUP)}]
+    {\tt fields(C)=\bar{D}\ \bar{g},~ \bar{C}\ \bar{f}}
+    {\begin{array}{c}
+      \tt \mathit{CT}(C)=class\ C\ extends\ D\ \{\bar{C}\ \bar{f};\ K\ \bar{M}\} \\
+      \tt fields(D)=\bar{D}\ \bar{g}
+      \end{array}
+    }
+  \end{array}
+\]
+
+\[
+  \begin{array}{c}
+    \infer[\text{(METHOD-LOOKUP1)}]
+    {\tt mtype(m,C)=\bar{B}\rightarrow B}
+    {
+      \begin{array}{c}
+        \tt \mathit{CT}(C)=class\ C\ extends\ D\ \{\bar{C}\ \bar{f};\ K\ \bar{M}\}\\
+        \tt B\ m\ (\bar{B}\ \bar{x})\ \{return\ t;\} \in \bar{M}
+      \end{array}
+    }
+  \end{array}
+\]
+
+\[
+  \begin{array}{c}
+    \infer[\text{(METHOD-LOOPUP2)}]
+    {\tt mtype(m,C)=mtype(m,D)}
+    {
+      \begin{array}{c}
+        \tt CT(C)=class\ C\ extends\ D\ \{\bar{C}\ \bar{f};\ K\ \bar{M}\}\\
+        \text{$\tt m$ is not defined in $\tt\bar{M}$}
+      \end{array}
+    }
+  \end{array}
+\]
+
+\[
+  \begin{array}{c}
+    \infer[\text{(OVERRIDE)}]
+    {\tt override(m,D,\bar{C}\rightarrow C_0)}
+    {\tt mtype(m,D)=\bar{D}\rightarrow D_0\ implies\ \bar{C}=\bar{D}\ and\ C_0=D_0}
+  \end{array}
+\]
+\subsubsection{Typing}
+\begin{center}
+\AXC{$\tt x:C\in\Gamma$}
+\RightLabel{~(FJ-VAR)}
+\UIC{$\tt \Gamma\vdash x:C$}
+\DP
+\end{center}
+\vspace{3pt}
+
+\begin{center}
+\AXC{$\tt \Gamma\vdash t_0:C_0$}
+\AXC{$\tt fields(C_0)=\bar{C}\ \bar{f}$}
+\RightLabel{~(FJ-FIELD)}
+\BIC{$\tt \Gamma\vdash t_0.f_i:C_i$}
+\DP
+\end{center}
+\vspace{3pt}
+
+\begin{center}
+\AXC{$\tt \Gamma\vdash t_0:C_0$}
+\AXC{$\tt mtype(m, C_0)=\bar{D}\rightarrow C$}
+\noLine
+\BIC{~~~~~~~~~~~~~~~~$\tt \Gamma\vdash \bar{t}:\bar{C}$\qquad$\tt \bar{C}<:\bar{D}$~~~~~~~~~~~~~~~~}
+\RightLabel{~(FJ-INVK)}
+\UIC{$\tt \Gamma\vdash t_0.m(\bar{t}):C$}
+\DP
+\end{center}
+\vspace{3pt}
+
+\begin{center}
+\AXC{$\tt fields(C)=\bar{D}\ \bar{f}$}
+\AXC{$\tt \Gamma\vdash \bar{t}:\bar{C}$}
+\AXC{$\tt \bar{C}<:\bar{D}$}
+\RightLabel{~(FJ-NEW)}
+\TIC{$\tt \Gamma\vdash new\ C(\bar{t}):C$}
+\DP
+\end{center}
+\vspace{3pt}
+
+\begin{center}
+\AXC{$\tt \Gamma\vdash t_0:D$}
+\AXC{$\tt D<:C$}
+\RightLabel{~(FJ-UCAST)}
+\BIC{$\tt \Gamma\vdash (C)t_0:C$}
+\DP
+\end{center}
+\vspace{3pt}
+
+\begin{center}
+\AXC{$\tt \Gamma\vdash t_0:D$}
+\AXC{$\tt C<:D$}
+\AXC{$\tt C\neq D$}
+\RightLabel{~(FJ-DCAST)}
+\TIC{$\tt \Gamma\vdash (C)t_0:C$}
+\DP
+\end{center}
+\vspace{3pt}
+
+\begin{center}
+\AXC{$\tt \Gamma\vdash t_0:D$ \qquad $\tt C\nless:D$ \qquad $\tt D\nless:C$}
+\noLine
+\UIC{~~~~~~~~~~~~~~~~${\textrm stupid\ warning}$~~~~~~~~~~~~~~~~}
+\RightLabel{~(FJ-SCAST)}
+\UIC{$\tt \Gamma\vdash (C)t_0:C$}
+\DP
+\end{center}
+\vspace{3pt}
+
+\begin{center}
+\AXC{$\tt \bar{x}:\bar{C}, this:C\vdash t_0:E_0$ \qquad $\tt E_0<:C_0$}
+\noLine
+\UIC{$\tt CT(C)=class\ C\ extends\ D\ \{...\}$}
+\noLine
+\UIC{~~~~~~~~~~~$\tt override(m,D,\bar{C}\rightarrow C_0)$~~~~~~~~~~~}
+\RightLabel{~(FJ-M-OK)}
+\UIC{$\tt C_0\ m\ (\bar{C}\ \bar{x})\ \{return\ t_0;\}\ OK\ in\ C$}
+\DP
+\end{center}
+\vspace{3pt}
+
+\begin{center}
+\AXC{$\tt K=C\ (\bar{C}\ \bar{f}) \{super(\bar{f});\ this.\bar{f}=\bar{f}\}$}
+\noLine
+\UIC{$\tt fields(D)=\bar{D}\ \bar{g}$\qquad $\tt \bar{M}\ OK\ in\ C$}
+\RightLabel{~(FJ-C-OK)}
+\UIC{$\tt class\ C\ extends\ D\ \{\bar{C}\ \bar{f}; K\ \bar{M}\}\ OK$}
+\DP
+\end{center}
+
+
+\section{SWIN}
+\subsection{Syntax}
+\begin{align*}
+  \tt \Pi \quad ::=\quad  &\tt  \{\bar{\pi}\}                     & \text{SWIN program}\\
+  \tt \pi \quad ::=\quad  &\tt  (\bar{d})\ [l:C_l\ \rightarrow\ r:C_r]    & \text{rule}\\
+  \tt d   \quad ::=\quad  &\tt  x:C_1\hookrightarrow C_2          & \text{variable declaration}\\
+  \tt l   \quad ::=\quad  &\tt  x.f ~ | ~ new\ C(\bar{x}) ~|~ x.m(\bar{x})  &\text{code pattern}\\
+  \tt r   \quad ::=\quad  &\tt  t                                 & \text{FJ term}
+\end{align*}
+
+\subsection{Environment}
+\begin{align*}
+ \tt API ~ ::=&\tt ~ \{ ~ \overline{CL} ~ \}       & \text{API definition}\\
+ \tt E ~   ::=&\tt ~ \{~ \overline{x:C_1\hookrightarrow C_2}~\}     & \text{SWIN typing context}\\
+\end{align*}
+
+
+\subsection{Evaluation Rules}
+\begin{center}
+\AXC{$\tt CL=class\ C_{1}\ extends\ C_2\ \{\ \bar{C}_i\ \bar{f}_i;\ K\ \bar{M}\ \}$}                             \RightLabel{~(E-DECLARATION)}
+\UIC{$\tt \Pi(CL)= class\ \Pi(C_1)\ extends\ \Pi(C_2)\ \{\ \Pi(\bar{C}_i)\ \bar{f}_i;\ \Pi(K)\  \overline{\Pi(M)}\ \}$}
+\DP
+\end{center}
+\vspace{2pt}
+
+\begin{center}
+\AXC{$\tt K=C_1\ (\bar{C}_2\ \bar{f}_2)\ \{super(\bar{f}_3);\ this.\bar{f}_i=\bar{f}_j\}$}                             \RightLabel{~(E-CONSTRUCTOR)}
+\UIC{$\tt \Pi(K)=\Pi(C_1)\ (\Pi(\bar{C}_2)\ \bar{f}_2)\ \{super(\bar{f}_3);\ this.\bar{f}_i=\bar{f}_j\}$}
+\DP
+\end{center}
+\vspace{2pt}
+
+\begin{center}
+\AXC{$\tt M=C_1\ m(\bar{C}_m\ \bar{x})\ \{return\ t;\}$}                             
+\RightLabel{~(E-METHOD)}
+\UIC{$\tt\Pi(M)=\Pi(C_1)\ m(\Pi(\bar{C}_m)\ \bar{x})\ \{return\ \Pi(t);\}$}
+\DP
+\end{center}
+\vspace{2pt}
+
+\begin{center}
+\AXC{$\tt C_0\hookrightarrow C_1\in \mathbf{TypeMapping}(\Pi)$}                             
+\RightLabel{~(E-CLASS)}
+\UIC{$\tt \Pi(C_0)=C_1$}
+\DP
+\end{center}
+\vspace{2pt}
+
+\begin{center}
+\AXC{$\tt \forall C.~C_0\hookrightarrow C\notin \mathbf{TypeMapping}(\Pi)$}
+\RightLabel{~(E-ALTER-CLASS)}
+\UIC{$\tt \Pi(C_0)=C_0$}
+\DP
+\end{center}
+\vspace{2pt}
+
+\begin{center}
+\AXC{}                 \RightLabel{~(E-T-VALUE)}
+\UIC{$\tt \Pi(x)=x$}
+\DP
+\end{center}
+\vspace{2pt}
+
+\begin{center}
+\AXC{$\tt (x:C_1\hookrightarrow C_2)[~x.f:C_l\ \rightarrow\ r:C_r~]\in \Pi$ ~~~~ $\tt\type{t} < C_l$}                 \RightLabel{~(E-T-FIELD)}
+\UIC{$\tt \Pi(t.f)=\tt[~x\rightarrow \Pi(t)~]r$}
+\DP
+\end{center}
+\vspace{2pt}
+
+\begin{center}
+\AXC{}      \RightLabel{~(E-T-CAST)}
+\UIC{$\tt \Pi((C)\ t)=(\Pi(C))\ \Pi(t)$}
+\DP
+\end{center}
+\vspace{2pt}
+
+\begin{center}
+\AXC{$\tt (\bar{d})[\ new\ C_0(\ \bar{x}\ ):C_l\ \rightarrow\ r:C_r]\in \Pi$}
+\noLine
+\UIC{$\tt\quad\quad \{~\bar{x}:\overline{C_1\hookrightarrow C_2}~\}\subseteq \bar{d} \quad\quad  \type{\bar{t}_u}<:\bar{C}_1$}               
+\RightLabel{~(E-T-NEW)}
+\UIC{$\tt \Pi(new\ C_0(\bar{t}_u))=[~\bar{x}\rightarrow \overline{\Pi(t_u)}~](r)$}
+\DP
+\end{center}
+
+\begin{center}
+\AXC{$\tt  (\bar{d})[\ x_0.m_0(\ \overline{y}\ ):C_l\ \rightarrow\ r:C_r]\in\Pi$}
+\noLine
+\UIC{$\tt \{\bar{y}:\overline{C_1\hookrightarrow C_2},\ x_0:C_3\hookrightarrow C_4\} \subseteq \bar{d} \quad\quad\type{t_0}<:C_3\quad\quad \type{\bar{t}_u}<:\bar{C}_1$}\RightLabel{~(E-T-INVOKE)}
+\UIC{$\tt \Pi(t_0.m_0(\bar{t}_u))=[~x_0\rightarrow \Pi(t_0),\ \bar{y}\rightarrow \overline{\Pi(t_u)}~](r)$}
+\DP
+\end{center}
+\vspace{2pt}
+
+\begin{center}
+\AXC{$\mbox{\tt no other inference rule can be applied}$}   
+\RightLabel{~(E-ALTER-NEW)}
+\UIC{$\tt \Pi(new\ C_0(\bar{t}_u))=new\ C_0(~\overline{\Pi(t_u)}~)$}
+\DP
+\end{center}
+\vspace{2pt}
+
+\begin{center}
+\AXC{$\mbox{\tt no other inference rule can be applied}$}   
+\RightLabel{~(E-ALTER-INVOKE)}
+\UIC{$\tt \Pi(t_0.m_0(\bar{t}_u))=\Pi(t_0).m(~\overline{\Pi(t_u)}~)$}
+\DP
+\end{center}
+\vspace{2pt}
+
+\begin{center}
+\AXC{$\mbox{\tt no other inference rule can be applied}$}                 \RightLabel{~(E-ALTER-FIELD)}
+\UIC{$\tt \Pi(t.f)=\tt\Pi(t).f$}
+\DP
+\end{center}
+
+
+\subsection{Auxiliary Functions}
+\begin{align*}  
+&\tt \mathbf{TypeMapping}([(~\bar{x}:\overline{C_1\hookrightarrow C_2}~)\ [l:C_l\ \rightarrow\ r:C_r]]) = \{C_l\hookrightarrow C_r\}\cup\{~\overline{C_1\hookrightarrow C_2}~\}\\
+&\tt \mathbf{TypeMapping}(\{\bar{\pi}\}) = \bigcup_{\pi}~(\mathbf{TypeMapping}(\pi)) ~~~~~~ \text{(Extract type migration information)}\\
+&\tt \mathbf{Decl}(class~C~extends~D~\{...\}) = C   ~~~~~~ \text{(Extract the declared class name)}
+\end{align*}
+
+
+\subsection{Type Checking Rules}
+
+\[
+  \begin{array}{c}
+    \infer[\text{(T-L1)}]
+    {\tt E\vdash_l x.m(\bar{y}):C_d}
+    {
+      \begin{array}{c}
+          \tt x:C_1\hookrightarrow C'_1,~\bar{y}:\overline{C_2\hookrightarrow C'_2}~ \in E ~~~~~~ \tt class\ C_1\ extends\ D \{\bar{C}\ \bar{f}; K\ \bar{M}\}\in API_s\\
+          \tt \tt C_d\ m(\bar{C}_s\ \bar{u})\{...\} \in \bar{M} ~~~~~~ \bar{C}_2<:\bar{C}_s
+      \end{array}
+    }
+  \end{array}
+\]
+
+\begin{center}
+\AXC{$\tt class\ C\ \{\ \bar{C}\ \bar{f}; C(~\bar{C}_s\ \bar{u}~) \{...\}\ \bar{M}\}\in API_s$}
+\AXC{$\tt
+  \bar{x}:\overline{C_1\hookrightarrow C'_1} \in E$}
+\AXC{$\tt \bar{C}_1<:\bar{C}_s$}                                    \RightLabel{~(T-L2)}
+\TIC{$\tt E\vdash_l new\ C(\bar{x}):C$}
+\DP
+\end{center}
+\vspace{2pt}
+
+\begin{center}
+\AXC{$\tt
+  E=\{\bar{x}:\overline{C\hookrightarrow D}\}$}
+\AXC{$\tt \{~\bar{x}:\bar{D}~\}\vdash_{FJ}^{API_d} t:C_d$}
+\RightLabel{~(T-R)}
+\BIC{$\tt E\vdash_r t:C_d$}
+\DP
+\end{center}
+
+\begin{center}
+\AXC{$\tt \{~\bar{x}:\overline{C\hookrightarrow D}~\}\vdash_l l:C_1,\
+  \{~\bar{x}:\overline{C\hookrightarrow D}~\}\vdash_r r:C_2$}             
+\RightLabel{~(T-$\tt\pi$)}
+\UIC{$\tt [\{~\bar{x}:\overline{C\hookrightarrow D}~\}\ l:C_1\rightarrow r:C_2]~\mathit{ok}$}
+\DP
+\end{center}
+
+\begin{align*}
+\tt \mathbf{RuleOK} &\tt(\Pi) = \forall~\pi. (\pi\in\Pi \Rightarrow \pi~\mathit{ok})\\
+\tt \mathbf{ConstrCover}&\tt(\Pi, API_s, API_d) =\\
+                  &\tt \forall~C_1,\bar{C}. (class\ C_1\ extends\ \_~\{ C_1(\bar{C}\ \bar{\_})~...~\}\in (API_s-API_d) \\
+                  &\tt \indentspace\Rightarrow~ \exists~C_2,\bar{C}',\bar{x},r.((~\bar{x}:\overline{C\hookrightarrow C'}~)[new\ C_1(\bar{x}):C_1\rightarrow r:C_2]\in\Pi))\\
+\tt \mathbf{MethCover}&\tt(\Pi, API_s, API_d) =\\ 
+                  &\tt \forall~C_1,C_2,m,\bar{C}.(class\ C_1\ extends\ \_~\{~C_2\ m(~\bar{C}\ \bar{\_}~)\{...\}~...~\}\in (API_s-API_d) \\
+                  &\tt \indentspace\Rightarrow~ \exists~x,\bar{y},C'_1,C'_2,\bar{C}',r.((x:C_1\hookrightarrow C'_1,\ ~\bar{y}:\overline{C\hookrightarrow C'}~)[x.m(\bar{y}):C_2\rightarrow r:C'_2] \in \Pi))\\
+\tt \mathbf{FieldCover}&\tt(\Pi, API_s, API_d) =\\ 
+                  &\tt \forall~C_1,C_2,f.(class\ C_1\ extends\ \_~\{C\ f;...\}\in (API_s-API_d) \\
+                  &\tt \indentspace \Rightarrow~ \exists~x,C'_1,C'_2.((x:C_1\hookrightarrow C'_1~)[x.f:C_2\rightarrow r:C'_2] \in \Pi))                           \\
+\tt \mathbf{MapChecking}&\tt(\Pi, API_s, API_d) =\\
+                  &\tt \forall~C,D.(C\hookrightarrow D\in \mathbf{TypeMapping}(\Pi)\\
+                  &\tt \indentspace\Rightarrow~ (\exists~CL\in API_s \cap API_d. (\mathbf{Decl}(CL)=C \land D = C))\\
+                  &\tt \indentspace\indentspace \lor (\exists~CL\in API_s-API_d. (\mathbf{Decl}(CL)=C)))\\
+\tt \mathbf{Subtyping}&\tt(\Pi, API_s, API_d) = \\
+                      &\tt\forall~C_i,D_i,C_j,D_j.( C_i\hookrightarrow D_i, C_j\hookrightarrow D_j \in \mathbf{TypeMapping}(\Pi) ~~\Rightarrow~~ (C_i <: C_j\Rightarrow D_i<:D_j))\\
+\tt \mathbf{TypeSafe} &\tt(\Pi, API_s, API_d) = \\
+                      &\tt \mathbf{RuleOK}(\Pi) \land \mathbf{ConstrCover}(\Pi, API_s, API_d) \land \mathbf{MethCover}(\Pi, API_s, API_d)\\
+                      &\tt \land \mathbf{FieldCover}(\Pi, API_s, API_d) \land \mathbf{MapChecking}(\Pi, API_s, API_d) \land \mathbf{Subtyping}(\Pi, API_s, API_d)
+\end{align*}
+
+\section{Metatheory}
+\begin{lemma}[Typing Context]
+Given a SWIN program $\tt\Pi$ acting on $\tt API_s$ to $\tt API_d$, suppose the typing context for a term $\tt t$ is $\tt\Gamma_s = \bar{x}:\bar{C}$ , then the typing context for $\tt\Pi(t)$ is $\tt\Gamma_d=\bar{x}:\overline{\Pi(C)}$.
+\end{lemma}
+\begin{proof}
+According to the FJ typing rules, the typing context will not change once it is created in the rule FJ-M-OK. For the typing context $\tt\Gamma$, except the variable $\tt this$,  all other variables in the typing context are bounded in the definition of a method $\tt M$.
+
+Induction on $\tt\Gamma$. Suppose $\tt\Gamma = \bar{y}:\bar{D}, x:C = \Gamma_1, x:C$, then $\tt\Pi(\Gamma_1)=\bar{y}:\overline{\Pi(D)}$.
+
+There are two cases for $\tt x:C$
+\begin{itemize}
+\item $\tt x=this$ in $\tt\Gamma$. The type $\tt C$ is a client defined class type, so $\tt C\notin \mathbf{TypeMapping}(\Pi)$. According to the rule E-ALTER-CLASS, $\tt \Pi(C)=C$, then we have $\tt\Pi(\Gamma)=\Pi(\Gamma_0), x:\Pi(C) = \bar{y}:\overline{\Pi(D)}, this:C$.
+\item $\tt x$ is an argument in method declaration. According to the rule E-METHOD, after transformation, the type of $\tt x$ in the definition is $\tt\Pi(C)$, thus $\tt\Gamma=\Pi(\Gamma_0), x:\Pi(C) = \bar{y}:\overline{\Pi(D)}, x:\Pi(C)$. 
+\end{itemize}
+
+With these two cases proved, the lemma is proved.
+\end{proof}
+
+\begin{lemma}[Subtyping]
+Suppose $\tt \Pi$ passes SWIN type checking rules, and it transforms an FJ program with $\tt API_s$ to a new program with $\tt API_d$, then:\par
+$\tt C_1<: C_2 $ in old program ~~$\Longrightarrow$~~ $\tt\Pi(C_1)<:\Pi(C_2)$ in the transformed program.
+\end{lemma}
+\begin{proof}
+First, we suppose $\tt C_1 <: C_2$, in which $\tt C_1 \neq C_2$ and $\tt\nexists~C$, s.t. $\tt C_1<:C'<:C_2$ and $\tt C'\neq C_1, C'\neq C_2$. 
+ 
+Consider the two possibilities for $\tt C_1$:
+\begin{itemize}
+\item case-1: class $\tt C_1$ is defined in client code.
+
+In this case, the declaration of $\tt C_1$ should be $\tt CL = class~C_1~extends~C_2~\{...\}$. According to the rule $\tt E-DECLARATION$, we have $\tt \Pi(CL)=class~\Pi(C_1)~extends~\Pi(C_2)~\{...\}$. Thus we have $\tt\Pi(C_1)<:\Pi(C_2)$.
+
+\item case-2: class $\tt C_1$ is defined in API. 
+
+In this case we have $\tt C_2$ is also a API defined class according to the definition of API in FJ. According to the checking rule $\mathbf{ConstrCover}$, these exists $\tt C_1\hookrightarrow D_1, C_2\hookrightarrow D_2 \in \mathbf{TypeMapping}(\Pi)$. By the checking rule $\mathbf{Subtyping}$ and the fact that $\tt C_1<:C_2$, we have $\tt D_1 = \Pi(C_1)<:D_2=\Pi(C_2)$.
+\end{itemize}
+With this case proved, for any $\tt C_1 <: C_2$, it can be split into $\tt C_1<: C' <: ... <: C_2$. Applying the proof on each step by induction, the lemma is proved.
+\end{proof}
+
+\begin{lemma}[Variable Substitution]
+Suppose that an FJ term $\tt t$ is well typed under context $\tt \Gamma=\Gamma_1,\{\bar{x}:\bar{C}_x\}$, i.e. $\tt \Gamma\vdash_{FJ} t:C_t$, then after substituting terms $\tt \bar{t}_v$ for variables $\tt \bar{x}$ , with the property that $\tt\Gamma_1\vdash_{FJ}\bar{t}_v:\bar{C}_v$ and $\tt\bar{C}_v <: \bar{C}_x$, $\tt t$ can be typed to $\tt C_t$ or a sub-class of $\tt C_t$. Namely,
+$$\tt \Gamma_1,\{\bar{x}:\bar{C}_x\} \vdash_{FJ} t:C_t \Longrightarrow \Gamma_1\vdash_{FJ} [\bar{x}\rightarrow\bar{t}_u]t: C'_t,\ C'_t <: C_t$$
+\end{lemma}
+\begin{proof}
+By induction on the derivition on an FJ term $\tt t$, there are five cases to discuss:
+\begin{itemize}
+\item case-1 $\tt t = x, \Gamma_{FJ} t:C_t, x:C_t$.
+
+In this case, we substitue an FJ term $\tt t_u$ for $\tt x$, where $\tt \Gamma_1\vdash_{FJ} t_u:C_u$ and $\tt C_u <: C_t$
+\end{itemize}
+
+\end{proof}
+
+\end{document}

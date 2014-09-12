@@ -1,0 +1,53 @@
+\section{Conclusion and Future Work}
+\label{sec:conclusionsandfutruework}
+In this paper, we have proposed a type-safe transformation language
+SWIN for program adaptation in the scope of API switching and API
+updating. Different from the existing language Twinning, SWIN provides
+a full type-safe guarantee, more flexible rule matching, and formal
+semantics of its core part. The type safety of core SWIN is proved
+about formally in Featherweight Java, and the case studies show that
+SWIN is expressive enough to handle many useful transformations in
+practice and is as expressive as Twinning on the cases.
+
+In future, the inability of SWIN to handle the three method splitting
+changes as discussed in Section~\ref{sec:results} needs to be
+addressed. This could possibly be handled by adding the dataflow
+information into SWIN to handle many-to-many mapping, adding semantic
+conditions to allow semantic checking, and loosing the restriction on
+the type mapping to allow one-to-many type mapping.
+
+
+% SWIN is mainly based on a simple and expressive update language \textit{twinning} with a minor modification.
+% In our paper, first, we given an formal syntax and semantics of SWIN, and
+% then presented four properties that rules of SWIN should satisfy with.
+% Finally, we proved that the rules of SWIN satisfying with these properties
+% can preserve type-safety of programs while doing program adaptation.
+% Although SWIN is more restrict than twinning, our case study showed
+% that SWIN is also powerful in real program adaptation as twinning. 
+
+% As we showed in section 
+% \todo{ref case study}, there are still have rooms to improve of SWIN.
+% First, SWIN can only match one statement 
+% at a time, however, in some case, 
+% we need to collect information from more than one statements to
+% generate new statements.
+% Under this case, we may extends SWIN with ability of matching several statements once.
+% By the support of the control-flow and data-flow information of programs
+% need to be transformed, we can assure
+% the correctness of matching with code in the program,  as well as the generation of 
+% the new program.
+% Another problem is class splitted, for we require that the type
+% mapping in rules of SWIN should be a function. In real cases, 
+% a class may be splitted into more than one classes in the evolution of
+% the API, for it can improve the structure of programs.
+% In this case, we can extend the rule matching with conditions,
+% and while a rule matching the code block and the condition of the match
+% is true, the transformation will be done. By adding this, 
+% rules can decide which splitted class does a class map to while this class was splitted
+% into more than one classes.
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "pepm-15"
+%%% End: 

@@ -1,0 +1,102 @@
+\begin{section}{From Core SWIN to Full SWIN% Extending to Full Java
+  }
+\label{sec:extension}
+
+In this section, we present the way to extend core SWIN on
+Featherweight Java to full SWIN on full Java language formally.
+Generally, the extension is based on the term extension and type
+extension. By extending source code pattern and target code pattern to
+a term in full Java and extending types to full Java in variable
+declaration part of update rules, we are able to match a Java term and
+then transform it to a term with new API by meta-variable
+substitution.
+\par
+Extending SWIN to full SWIN, we need some special treatments of the following key points :
+
+\paragraph{Package} % In full Java, $\tt import$ command allows us to
+                    % import a package at the head of a program and
+                    % use classes in the package without using the
+                    % full name. In this case, when we update APIs in
+                    % the package, we will match the short name if it
+                    % is not ambiguous and transform it to a short
+                    % name in target API, and then generate a $\tt
+                    % import$ command in the head of target client
+                    % code.
+Full Java supports the \code{package} and \code{import} commands for name organization. To ease the writing
+of transformation rules, we also support \code{import} command in
+SWIN, yet all internal processing is based on fully qualified names.
+
+%<<<<<<< .mine
+%\paragraph{Assignment} 
+%When we extend SWIN to full Java with assignment, we need to consider the problem with side effect.
+%To keep the update process still holding type safety, we need to distinguish the difference the application of $\tt\Pi$ on a L-value between that on a R-value.
+%We need to check that an update rule will not transform a L-value to a R-value. And when we apply SWIN on an assignment expression, we simply apply it on both sides. 
+%=======
+\paragraph{Field and Assignment} 
+%When we extend SWIN to full Java with assignment, we need to consider
+%the problem with side effect.
+FJ has no assignment statements and all fields are read-only. When assignments are introduced, expressions in Java can be
+distinguished into L-value and R-value. To ensure type safety, we need
+to ensure the transformation does not change an L-value into an
+R-value. The most common L-value is field access. For example, given ``\code{a.x = b}'', if a transformation rule
+transforms ``\code{a.x}'' into ``\code{new A()}'', the new code will fail to
+compile because ``\code{new A()}'' is not a L-value. This check can be
+implemented by applying the Java rules for distinguishing L-value and
+R-value on the source patterns and the destination patterns.
+%>>>>>>> .r506
+
+% To keep the update process still holding safety property, we need to distinguish the difference the application of $\tt\Pi$ on a L-value between that on a R-value.
+% We need to check that an update rule will not transform a L-value to a R-value. And when we apply SWIN on an assignment expression, we simply apply it on both sides. 
+
+\paragraph{Static Method Access} In full Java, a method can be defined
+as a static method, and we can access it by $\tt C.m(a,b,...)$. 
+We treat the application of full SWIN on static method access as a normal method invoke, except that we 
+need to apply the term directly on the class identifier. As the transformation of a class definition is 
+by class name replacement, type safety can be guaranteed.
+
+\paragraph{Overload} % Method overloading in full Java may lead to problems in the matching process.
+% As we allow a meta-variable $\tt x$ of type $\tt A$ in source code
+% pattern matches a term $\tt t$ with a subtype of $\tt A$, this may
+% lead a piece of client code match more than one update rules. And this
+% ambiguity can be resolved if we define a matching order on a FJ term
+% with subtyping relation: we will always choose one with closest
+% subtyping relation to match the term.  For
+% example, if we have a relationship $\tt A<:B<:C$, and in class $\tt
+% D$, we have methods $\tt f(B\ x)$ and $\tt f(C\ x)$. Then $\tt(new\ D()).f(new\
+% A())$ will be matched to the first pattern as they have a closer
+% subtyping relationship.
+When method overloading is considered, we need to match a method not
+only using its name, but also the type of its input parameters. Also,
+the subtyping relation should be considered in the same way as Java:
+when there are several overloaded methods that can be matched, we
+choose the one with the closest subtyping relation on the parameters. For
+example, if we have a relationship $\tt A<:B<:C$, and in class $\tt
+D$, we have methods $\tt f(B\ x)$ and $\tt f(C\ x)$. Then $\tt(new\ D()).f(new\
+A())$ is a call to the first method as they have a closer
+subtyping relationship. A pattern matching $\tt f(C\ x)$ should not match
+this term.
+
+\paragraph{Generics} Generics in full Java affects the evaluation rules E-CLASS
+and E-T-NEW. We have two extending rules to solve this problem.
+\begin{enumerate}
+    \item During pattern matching, a rule matches a generic type without considering
+        parameterized types.
+    \item After performing transformation on the generic type, 
+        our rules recursively visit the parameterized types.
+\end{enumerate}
+% These two rules can assure the well-typedness of a term with parameterized types during transformation.
+% The limitation of this way is that the generic class should not changes the number of
+% type parameters during evolution which is reasonable in real APIs evolution.
+The type safety is guaranteed because we require the preservation of
+subtyping relation, and thus the constraints on generic parameters
+will not be broken. The limitation of this method is that the number
+of type parameters in a generic class cannot change from the source
+API to the target API. However, we have never observe this kind of
+change in practice.
+\end{section}
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "pepm-15"
+%%% End: 

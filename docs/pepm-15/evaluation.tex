@@ -1,0 +1,386 @@
+\section{Case Studies}
+\label{sec:evaluation}
+\subsection{Research Questions}
+Since SWIN puts two more conditions on the replacement rules than
+Twinning, a natural question to ask is whether these two additional
+conditions confine the expressiveness of the language. In other words,
+there are programs that can be written in Twinning but not in SWIN,
+but are these programs useful in practice? Furthermore, beyond
+Twinning, we also want to understand the expressiveness of SWIN in
+general. These considerations lead to two research questions.
+\begin{enumerate}
+\item Does the extra conditions confine the expressiveness of SWIN
+  compared with Twinning? %How much expressive is SWIN compared with Twinning?
+\item In general, how much expressive is SWIN?
+\end{enumerate}
+
+\subsection{Study Setup}
+To answer the two research questions, we perform three case
+studies. To answer the first research question, we need to compare
+SWIN with Twinning. To do this, we repeat a case study in Twinning
+that migrate programs from Crimson v1.1.3\footnote{\url{http://xml.apache.org/crimson/}}
+to dom4j v1.6.1\footnote{\url{http://www.dom4j.org/}}. Crimson and
+dom4j are both Java libraries for manipulating XML files, but Crimson
+is no longer supported. Thus, developers may want to migrate programs
+from Crimson to dom4j.
+
+To answer the second research question, we further perform two more
+case studies, one is about migration from one API to another API, the
+other one is to upgrade clients for incompatible API upgrade. More
+concretely, we chose the program migration from Twitter4J v4.0.1\footnote{\url{https://github.com/yusuke/twitter4j/}}
+to
+Sina Weibo Java API v2\footnote{\url{https://code.google.com/p/weibo4j/}}, 
+and the client upgrade from Google Calendar
+API\footnote{\url{https://developers.google.com/google-apps/calendar/}}
+v2 to v3. Twitter4J is a Java wrapper for the RESTful Twitter
+API. Sina Weibo is the Chinese counterpart of Twitter, and it provides
+an official Java library for accessing its web API. Google Calendar
+API is the official Java library for accessing the data in Google
+Calendar.
+
+The two case studies of program migration (from Crimson to dom4j, from
+Twitter4J to Sina Weibo API) both involve large APIs, and it is
+difficult for us to cover the full APIs. In the case study from
+Crimson to dom4j, the Twinning authors~\cite{twinning} chose a client
+(log4j v1.2.14\footnote{\url{http://logging.apache.org/log4j/1.2/}}) 
+and only wrote transformations for the part of the API
+covered by the client. We followed the same step as their case
+study. In the case study from Twitter4J to Sina Weibo API, we consider
+three example clients on manipulating the timeline provided in the example
+directory in the Twitter4J source package, and cover only the part of
+the API used in these examples.
+
+To perform the case studies, we implemented SWIN in Java using
+the Polyglot compiler framework~\cite{glot}. Both our
+implementation and all evaluation data are available at the project
+web site\footnote{\url{https://github.com/Mestway/SWIN-Project}}.
+
+\subsection{Results}\label{sec:results}
+
+
+\subsubsection{General Expressiveness}
+In total, we wrote 94 rules for the three case studies, each
+transforming a method call to the old API into an expression using the
+new API. Our rules cover 97\% of the total API methods that needed to
+be transformed in the three case studies. This results indicate that,
+though our approach deals only with one-to-many mappings, it is able
+to perform a significant portion of program adaptation tasks in
+practice.
+
+\subsubsection{Comparison with Twinning}
+The only uncovered API changes are three method changes in
+Google Calendar API, consisting of 3\% of the total API methods that
+needs to be transformed. In the three uncovered method changes, one
+method splits into several methods, and we need to decide which
+new method to replace the original one based on the calling context,
+which is not supported in SWIN.
+
+More concretely, method ``\code{EventWho.getAttendeeType()}'' in
+Google Calendar v2 returns a string that may contain either
+``attendee'' or ``organizer''. Google Calender v3 replaces this method
+with two methods: ``\code{boolean getSelf()}'' which returns true when
+ ``attendee'' should be returned and ``\code{boolean getOrganizer()}'' which
+returns true when ``organizer'' should be returned. To migrate the
+client, we may need to transform the code as follows, where
+``\code{getSelf()}'' is a client-written method to test whether the
+argument is equal to ``attendee'',
+\begin{lstlisting}
+String attendeeType = attendee.getAttendeeType();
+boolean isSelf = isAttendee(attendeeType);  
+\end{lstlisting}
+into the code as follows.
+\begin{lstlisting}
+boolean isSelf = attendee.getSelf();  
+\end{lstlisting}
+
+This example shows two fundamental limitations of SWIN. First, to
+perform the above transformation, we need to match a sequence of
+statements and transform them into one method calls. This requires
+many-to-one mapping and is not supported by SWIN. Second, we need to
+perform a semantic analysis on the implementation code of
+\code{isAttendee} to decide whether to transform the code into
+\code{getSelf()} or \code{getOrganizer()}. This kind of conditional
+transformation is not supported by SWIN.
+
+Clearly, Twinning also has these limitations and cannot handle the
+three split methods in Google Calendar API as well. This result
+indicates that SWIN is as expressive as Twinning on our three case
+studies. Please note that many API classes have sub classes, and thus
+the SWIN programs should be much shorter than Twinning, as in Twinning
+we need to repeat the rules for the parent class also on each sub
+class. % The result also indicates that SWIN is expressive in general,
+% being able to handle the transformation of the majority (97\%) of the
+% methods in our case studies.
+
+\subsubsection{Interesting Transformation Patterns}
+In the implementation of the three case studies, we also found that
+many transformations are not direct method replacement, but can still
+be expressed in SWIN by flexible use of the transformation rules. We
+summarize three patterns below.
+
+\smalltitle{Method $\leftrightarrow$ Constructor} We may need to
+map between class constructors and methods, and in SWIN we can
+directly specify such a replacement. For example, in the case from
+Crimson to dom4j, we write the following piece of code. This program
+is in the text form of SWIN, where we use \texttt{->>} to denote $\hookrightarrow$
+and \texttt{->} to denote $\rightarrow$.
+\begin{lstlisting}
+(f : DocumentBuilderFactory ->> DocumentFactory)
+[ (f.newDocumentBuilder()):DocumentBuilder ->
+    (new SAXReader(f)):SAXReader ]
+\end{lstlisting}
+
+\smalltitle{Type Merging} Sometimes a set of classes in the old API
+become one class in the new API. In class \texttt{CalendarEvent} in
+Google Calendar v2, there is a method \texttt{getTitle()}. Developers
+can use this method to acquire the title of a source, but the type of
+the title is \texttt{TextConstruct}.  Class \texttt{TextConstruct} is
+a wrapper of a string, and there is a method \texttt{getPlainText()}
+which returns the internal string. In Google Calendar v3, the class
+\texttt{CalendarEvent} becomes \code{Event}, which directly contains a
+method \code{getSummary()} to return the string of title. As a result,
+we may need to transform a sequence of method invocations
+``\code{x.getTitle().getPlainText()}'' into a single invocation ``\code{x.getSummary()}''.
+
+Although such a transformation implies a many-to-many mapping%  seems similar to the many-to-one
+% mapping mentioned above
+, it can be implemented in SWIN because
+\code{TextConstruct} is only used in the return type of
+\code{getTitle()} in Google Calendar API. We can consider the API
+upgrade as merging classes \code{CalendarEvent} and \code{TextConstruct} into
+\code{Event} and merging methods \code{getTitle()} and
+\code{getPlainText()} into \code{getSummary()}. As a result, we can
+remove the call to \code{getPlainText()} and replace
+\code{getPlainText()} with \code{getSummary()}. The rules are as
+follows.
+
+\begin{lstlisting}
+(x : CalendarEvent ->> Event) 
+    [ (x.getTitle()):TextConstruct -> x:Event ]
+(l : TextConstruct ->> Event) 
+    [ (l.getPlainText()):String 
+        -> (l.getSummary()):String ]
+\end{lstlisting}
+
+This pattern indicates that though SWIN is design for one-to-many
+mappings, many-to-many mappings can also be supported in a limited
+form from the flexibility of the rules.
+
+\smalltitle{Type Deletion} A class in the old API may become totally
+useless in the new API. In twitter4j, a \code{Twitter} object can be
+obtained by first creating a factory \code{TwitterFactory} and then
+invoking the \code{getInstance()} method, but in Sina Weibo API class
+\code{Weibo}, the counterpart of \code{Twitter}, can be directly
+created. In other words, the class \code{TwitterFactory} is
+deleted. Similar to the previous case, we may need to merge a sequence
+of method invocations ``\code{new TwitterFactory().getInstance()}''
+into one single invocation ``\code{new Weibo()}''.
+
+To implement this transformation in SWIN, we use the dummy class
+method~\cite{twinning}. We introduce a dummy class \code{NoF} into the
+client code to represent the deleted \code{TwitterFactory}. This
+dummy class has no class body and can be added to the client code
+before the transformation. In this way we can delete a class while
+maintaining the type safety. The transformation rules are as follows.
+\begin{lstlisting}
+()[ (new TwitterFactory()):TwitterFactory 
+    -> (new NoF()):NoF ]
+(f : TwitterFactory ->> NoF) 
+    [ (f.getInstance()):Twitter
+     -> (new Weibo()):Weibo ]
+\end{lstlisting}
+% % In the original publication of Twinning
+% % \cite{twinning}, two case studies are performed: (1) adapting programs
+% % from Crimson to Dom4j, and (2) adapting programs from Twitter4j to
+% % Fb4j. To compare with Twinning, we repeat the first case study on
+% % SWIN, and perform 
+
+% % In our paper, we present an type-safe update language for Java:
+% % SWIN. In this section, first, we will show powerful expressiveness of
+% % using SWIN to update client programs from three real APIs alternative
+% % or update.  Second, because we added some constraints on rules to
+% % forbid the unsafe rules. The question is whether we expel the useful
+% % rules? In this section, we will declare that SWIN is as powerful as
+% % twinning in real program adaptation.  Finally, in our experience, we
+% % found that there were some typical cases that SWIN cannot solve, and
+% % twinning cannot solve either. We will explain these cases in
+% % \ref{limofswin}.
+
+% % \subsection{Expressiveness of SWIN}
+% % Twinning\cite{twinning} chose two pairs of APIs to do experiment, including 
+% % Crimson and Dom4j, as well as Twitter4j and Fb4j. 
+% % The former two APIs are Java XML parser, 
+% % others are web APIs about social network.
+% % In order to explain the ability of SWIN comparing twinning, 
+% % we chose Crimson and Dom4j as our experimental subjects.
+% % We chose Sina Weibo API as a substitution of Fb4j for the source code of
+% % Fb4j is no longer available. 
+% % These two pairs of APIs are about API alternative, and 
+% % we chose Google calendar API version 2 and version 3 to explain 
+% % the ability of SWIN to perform program adaptation in the scope of API update.
+
+% \subsection{From Crimson to dom4j}
+% Crimson and dom4j are both large APIs, and it is difficult to write a
+% transformation cover both API in full. In the case study off Twinning
+% \cite{twinning}, the authors chose a client (log4j v1.2.14) and only
+% wrote transformation for the part of API covered by the client. We
+% followed the same step as their case study.
+
+% In this case study, we found that each type and method in Crimson has
+% exactly one counter part in dom4j, and the transformation can be fully
+% expressed in SWIN. A particularly interesting point is that we need to
+% map between type constructors and method calls, and in SWIN we can specify
+% such a transformation as follows.
+% % The same as twinning, we also chose APIs Crimson and Dom4j as our experiment subjects. 
+% % We chose log4j logging API (1.2.14) which uses API Crimson, and twinning also chose
+% % this client in its experience. 
+% % For twinning does not show other clients in the paper, we chose classes that can 
+% % parser a XML completely including \textit{IO} classes and nodes processing class.
+% % We find all the methods in these classes can be written the update rules easily 
+% % from API Crimson to Dom4j with the support of SWIN. 
+% % A complex example is in class DocumentBuilder of API Dom4j that
+% % a instance of class \texttt{DocumentBuilderFactory} becomes to a parameter of 
+% % the constructor of class \texttt{SAXReader}, and this transformation is allowed in SWIN. 
+% % The rule is:
+% \begin{verbatim}
+% (f : DocumentBuilderFactory ->> DocumentFactory)
+% [ (f.newDocumentBuilder()):DocumentBuilder ->
+%     (new SAXReader(f)):SAXReader ]
+% \end{verbatim}
+
+% \subsection{Sina weibo vs. Twitter}
+% Twitter4j is an Java wrapper of Twitter official API 
+% which can acquire the data of Twitter inc., and users can
+% easily develop their own tool related to tweet.
+% Weibo is supposed to be Chinese Twitter, and the functionalities of Weibo API is smiliar with
+% Twitter API. Sina Weibo also provided a Java wrapper of its web API, and we chose the
+% Weibo Java API (in our paper, Weibo API is the same as Weibo Java API) as 
+% an alternative of Twitter4j. 
+% For these two APIs are huge, we chose all class about "timeline" in the APIs 
+% to do our case study. 
+% We find that
+% most of the updates about the \textit{timeline} methods
+% from TWitter4j to Weibo API can be directly written by the support of SWIN.
+% All the update rules about \textit{timeline} methods are considered valid in
+% according the properties of SWIN.
+% Next, we will list some of interesting rules 
+% in our experiment to show the expressiveness of SWIN.
+
+% In Twitter4j, the instances of a class \textit{Twitter} is produced by 
+% a factory class \textit{TwitterFactory}.
+% The corresponding class of \textit{Twitter} Weibo API is class \textit{Weibo},
+% there is no such a factory class to produce the instances of class \textit{Weibo}.
+% The update rule from class Twitter instance to class Weibo instance will be a 
+% method invoke to a constructor, that is:
+
+% \begin{verbatim}
+% ()[ (TwitterFactory.getInstance()):Twitter 
+%     -> (new Weibo()):Weibo ]
+% \end{verbatim}
+
+% Give this example, we want to show the style of terms can be changed without
+% influent the type-safety of programs. Next, we will should part of the
+% class deletions are allowed in SWIN.
+% As we mentioned above, users can call the static method \textit{getInstance} to 
+% get a instance of class \textit{Twitter}. In other way, 
+% they can also get an instance of
+% class \textit{TwitterFactory} first and use it to get an instance of class
+% \textit{Twitter}. Because there is no corresponding class in Weibo API which mapping
+% to class \textit{TwitterFactory}, we should delete this class first and transform
+% the Twitter instance to Weibo instance. In order to delete this class,
+% we may introduce an dummy class NOTwFactory mapping to deleting class. 
+% Dummy class will be removed after updated, and these do not influent the
+% type-safety of programs. The rules are:
+
+% \begin{verbatim}
+% ()[ (new TwitterFactory()):TwitterFactory 
+%     -> (new NoF()):NoF ]
+% (f : TwitterFactory ->> NoF) 
+%     [ (f.getInstance()):Twitter
+%      -> (new Weibo()):Weibo ]
+% \end{verbatim}
+
+% From these rules, we can see there are two statements in Twitter4j client mapping
+% to one statement in Weibo client, and
+% introducing dummy classes make SWIN can
+% solve simple m-to-1 mapping. These transformations are more powerful than refactoring.
+% SWIN allows the parameters of a method addition and deletion.
+% Both in Twitter4j and Weibo API, there is a method named \textit{getUserTimeline}, but the parameters of these
+% methods are not the same. Method \textit{getUserTimeline} in Twitter4j needs two parameters,
+% one of type Twitter and another of type long.
+% The similar method in Weibo API needs three parameters of type Weibo, String and Paging. 
+% In this case, first, we should add an transformation from type long to String, then
+% we should add a default value of extra parameter of type Paging to method \textit{getUserTimeline} in Weibo API.
+% The update rule for this method:
+% \begin{verbatim}
+% (x : Twitter ->> Weibo, id : long ->> long)
+% [ (x.getUserTimeline(id)):ResponseList ->
+%     x.getUserTimeline(String.valueOf(id), 
+%         new Paging()):List ]
+% \end{verbatim}
+
+
+% \subsubsection{Google Calendar v2 vs. v3}
+% Google calendar open API is provided for users to process the data in google calendar. 
+% For some reason, Google update Calendar API version2 to version3. 
+% We inspect its
+% client library for Java, in total, 59 classes and methods changed in the evolution from 
+% v2 to v3. Using SWIN, we can solve 56 changes of them, it means
+% more than 95\% classes and methods change can be write as rules in SWIN.  
+% The left three changes are about a variable with String type changes to several
+% variables with boolean type, and these are hard to be transformed. We find an interesting
+% case while doing the experience. 
+% In class \textit{CalendarEvent}, there is a method named \textit{getTitle}. Developers can use
+% this method to acquire the title of a source, but the type of the title is \textit{TextConstruct}.     
+% Class \textit{TextConstruct} is a wrapper of String, and there is a method \textit{getPlainText}
+% which can acquire the String of the tile of a source. First, we want to use the \textit{No Class}
+% trick to solve this problem, but it will violate the type mapping as a function. Then, we find a 
+% more trick approach that make the deleting class \textit{Link} mapping to required class \textit{Event}, 
+% and assign the value of class \textit{Event} to variable of class \textit{Link}. The rules are:
+
+% \begin{verbatim}
+% (x : CalendarEvent ->> Event) 
+%     [ (x.getTitle()):Link -> x:Event ]
+% (l : Link ->> Event) 
+%     [ (l.getPlainText()):String 
+%         -> (l.getSummary()):String ]
+% \end{verbatim}
+
+% \subsection{Limitations of SWIN}
+% \label{limofswin}
+% From experience presented above, we can see
+% SWIN is as powerful as twinning.
+% All the rules of these three experiments can be find in \todo{cite update calculus}.
+% While doing the experience from Crimson to Dom4j, except migrating clients used in
+% twinning, we also inspect other clients. In this process, we find a
+% typical case that SWIN cannot slove, certainly neither do twinning. This case is mainly
+% about context-sensitive.
+
+% In API Crimson, there is a factory class
+% \textit{DocumentBuilderFactory} that produce the instance of class
+% \textit{DocumentBuilder}. Class \textit{DocumentBuilderFactory} also
+% set some field of DocumentBuilder. However, in API Dom4j, the
+% corresponding class of \textit{DocumentBuilder} is class
+% \textit{SAXReader}, but there is no factory class to produce the
+% instance of this class. Developers should use constructor of
+% SAXReader, and set the some field like class
+% \textit{DocumentBuilderFactory} in constructor. Thereby, while we
+% transforming class \textit{DocumentBuilder} to class
+% \textit{SAXReader}, we should also get the information of field set up
+% by class \textit{DocumentBuilderFactory}. However, SWIN can only match
+% one statements at a time according the definition, so we cannot solve
+% these context-sensitive cases by SWIN.
+
+% %     \item \textbf{Class splitting}
+% %             A class was divided into more than two classes, however, SWIN require that
+% %         the type mapping is a function, the same as twinning. Class splitting will
+% %         break this property of SWIN.
+% % \end{itemize}
+% % In our experience, these three cases dominates no more than 10\% of all program updates, so
+% % SWIN is still a useful update language in real program update.
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "pepm-15"
+%%% End: 

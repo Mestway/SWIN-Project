@@ -1,0 +1,191 @@
+\begin{section}{Feather Weight Java}
+\label{sec:FJTyping}
+
+\begin{subsection}{Syntax}
+This part presents the syntax for FJ.
+\begin{align*}
+\tt CL\ ::=&\tt\ class\ C\ extends\ C\ \{\bar{C}\ \bar{f};\ K\ \bar{M}\}\\
+\tt K\ ::=&\tt\ C(\bar{C}\ \bar{f})\{super(\bar{f});\ this.\bar{f}=\bar{f};\}\\
+\tt M\ ::=&\tt\ C\ m(\bar{C}\ \bar{x}) \{return\ t;\}\\
+\tt t\ ::=&\tt x\ |\ t.f\ |\ t.m(\bar{t})\ |\ new\ C(\bar{t})\ |\ (C)\ t\\
+\tt v\ ::=&\tt new\ C(\bar{v}) 
+\end{align*}
+\end{subsection}
+
+\begin{subsection}{Subtyping}
+This part presents the derivation of subtype relation in FJ.
+\begin{center}
+\AXC{}
+\RightLabel{~(S-SELF)}
+\UIC{$\tt C<:C$}
+\DP
+\end{center}
+
+\begin{center}
+\AXC{$\tt C<:D$}
+\AXC{$\tt D<:E$}
+\RightLabel{~(S-TRANS)}
+\BIC{$\tt C<:E$}
+\DP
+\end{center}
+
+\begin{center}
+\AXC{$\tt CL\ =\ class\ C\ extends\ D\ \{...\}$}
+\RightLabel{~(S-DEF)}
+\UIC{$\tt C<:D$}
+\DP
+\end{center}
+
+\end{subsection}
+
+\begin{subsection}{Typing Rules}
+The following present the typing rules for FJ term and FJ class
+declaration obtained from \cite{tpl}.
+\par
+Note that CAST rule in FJ type system is divided into three rules. FJ-UCAST and FJ-DCAST are for cast between two classes with subtype relation while FJ-SCAST is the typing rule for cast between two irrelevant classes, which will generate a ``stupid warning'' in the typing progress.
+
+\vspace{3pt}
+\begin{center}
+\AXC{$\tt x:C\in\Gamma$}
+\RightLabel{~(FJ-VAR)}
+\UIC{$\tt \Gamma\vdash x:C$}
+\DP
+\end{center}
+\vspace{3pt}
+
+\begin{center}
+\AXC{$\tt \Gamma\vdash t_0:C_0$}
+\AXC{$\tt fields(C_0)=\bar{C}\ \bar{f}$}
+\RightLabel{~(FJ-FIELD)}
+\BIC{$\tt \Gamma\vdash t_0.f_i:C_i$}
+\DP
+\end{center}
+\vspace{3pt}
+
+\begin{center}
+\AXC{$\tt \Gamma\vdash t_0:C_0$}
+\AXC{$\tt mtype(m, C_0)=\bar{D}\rightarrow C$}
+\noLine
+\BIC{~~~~~~~~~~~~~~~~$\tt \Gamma\vdash \bar{t}:\bar{C}$\qquad$\tt \bar{C}<:\bar{D}$~~~~~~~~~~~~~~~~}
+\RightLabel{~(FJ-INVK)}
+\UIC{$\tt \Gamma\vdash t_0.m(\bar{t}):C$}
+\DP
+\end{center}
+\vspace{3pt}
+
+\begin{center}
+\AXC{$\tt fields(C)=\bar{D}\ \bar{f}$}
+\AXC{$\tt \Gamma\vdash \bar{t}:\bar{C}$}
+\AXC{$\tt \bar{C}<:\bar{D}$}
+\RightLabel{~(FJ-NEW)}
+\TIC{$\tt \Gamma\vdash new\ C(\bar{t}):C$}
+\DP
+\end{center}
+\vspace{3pt}
+
+\begin{center}
+\AXC{$\tt \Gamma\vdash t_0:D$}
+\AXC{$\tt D<:C$}
+\RightLabel{~(FJ-UCAST)}
+\BIC{$\tt \Gamma\vdash (C)t_0:C$}
+\DP
+\end{center}
+\vspace{3pt}
+
+\begin{center}
+\AXC{$\tt \Gamma\vdash t_0:D$}
+\AXC{$\tt C<:D$}
+\AXC{$\tt C\neq D$}
+\RightLabel{~(FJ-DCAST)}
+\TIC{$\tt \Gamma\vdash (C)t_0:C$}
+\DP
+\end{center}
+\vspace{3pt}
+
+\begin{center}
+\AXC{$\tt \Gamma\vdash t_0:D$ \qquad $\tt C\nless:D$ \qquad $\tt D\nless:C$}
+\noLine
+\UIC{~~~~~~~~~~~~~~~~${\textrm stupid\ warning}$~~~~~~~~~~~~~~~~}
+\RightLabel{~(FJ-SCAST)}
+\UIC{$\tt \Gamma\vdash (C)t_0:C$}
+\DP
+\end{center}
+\vspace{3pt}
+
+\begin{center}
+\AXC{$\tt \bar{x}:\bar{C}, this:C\vdash t_0:E_0$ \qquad $\tt E_0<:C_0$}
+\noLine
+\UIC{$\tt CT(C)=class\ C\ extends\ D\ \{...\}$}
+\noLine
+\UIC{~~~~~~~~~~~$\tt override(m,D,\bar{C}\rightarrow C_0)$~~~~~~~~~~~}
+\RightLabel{~(FJ-M-OK)}
+\UIC{$\tt C_0\ m\ (\bar{C}\ \bar{x})\ \{return\ t_0;\}\ OK\ in\ C$}
+\DP
+\end{center}
+\vspace{3pt}
+
+\begin{center}
+\AXC{$\tt K=C\ (\bar{C}\ \bar{f}) \{super(\bar{f});\ this.\bar{f}=\bar{f}\}$}
+\noLine
+\UIC{$\tt fields(D)=\bar{D}\ \bar{g}$\qquad $\tt \bar{M}\ OK\ in\ C$}
+\RightLabel{~(FJ-C-OK)}
+\UIC{$\tt class\ C\ extends\ D\ \{\bar{C}\ \bar{f}; K\ \bar{M}\}\ OK$}
+\DP
+\end{center}
+\end{subsection}
+
+\begin{subsection}{Auxiliary Definition}
+This part presents the auxiliary functions used in FJ typing rules.
+
+\begin{center}
+\AXC{}\RightLabel{~(FIELD-OBJECT)}
+\UIC{$\tt fields(Object)=\{\}$}
+\DP
+\end{center}
+\vspace{3pt}
+
+\begin{center}
+\AXC{$\tt CT(C)=class\ C\ extends\ D\ \{\bar{C}\ \bar{f};\ K\ \bar{M}\}$}
+\noLine
+\UIC{~~~~~~~~~~~~~~~~$\tt fields(D)=\bar{D}\ \bar{g}$~~~~~~~~~~~~~~~~}
+\RightLabel{~(FIELD-LOOKUP)}
+\UIC{$\tt fields(C)=\bar{D}\ \bar{g},~ \bar{C}\ \bar{f}$}
+\DP
+\end{center}
+\vspace{3pt}
+
+\begin{center}
+\AXC{$\tt CT(C)=class\ C\ extends\ D\ \{\bar{C}\ \bar{f};\ K\ \bar{M}\}$}
+\noLine
+\UIC{$\tt B\ m\ (\bar{B}\ \bar{x})\ \{return\ t;\} \in \bar{M}$}
+\RightLabel{~(METHOD-LOOKUP1)}
+\UIC{$\tt mtype(m,C)=\bar{B}\rightarrow B$}
+\DP
+\end{center}
+\vspace{3pt}
+
+\begin{center}
+\AXC{$\tt CT(C)=class\ C\ extends\ D\ \{\bar{C}\ \bar{f};\ K\ \bar{M}\}$}
+\noLine
+\UIC{$\tt m$ is not defined in $\tt\bar{M}$}
+\RightLabel{~(METHOD-LOOKUP2)}
+\UIC{$\tt mtype(m,C)=mtype(m,D)$}
+\DP
+\end{center}
+\vspace{3pt}
+
+\begin{center}
+\AXC{$\tt mtype(m,D)=\bar{D}\rightarrow D_0\ implies\ \bar{C}=\bar{D}\ and\ C_0=D_0$}
+\RightLabel{~(OVERRIDE)}
+\UIC{$\tt override(m,D,\bar{C}\rightarrow C_0)$}
+\DP
+\end{center}
+\vspace{3pt}
+
+\end{subsection}
+
+\end{section}
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "gpce-2014"
+%%% End: 

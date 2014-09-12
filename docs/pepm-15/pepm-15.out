@@ -1,0 +1,25 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{Motivating Examples}{}% 2
+\BOOKMARK [1][-]{section.3}{Syntax and Semantics of Core SWIN}{}% 3
+\BOOKMARK [2][-]{subsection.3.1}{Background: Featherweight Java}{section.3}% 4
+\BOOKMARK [2][-]{subsection.3.2}{Core SWIN}{section.3}% 5
+\BOOKMARK [3][-]{subsubsection.3.2.1}{Syntax}{subsection.3.2}% 6
+\BOOKMARK [3][-]{subsubsection.3.2.2}{Semantics: Evaluation Rules}{subsection.3.2}% 7
+\BOOKMARK [1][-]{section.4}{Type Checking System for Core SWIN}{}% 8
+\BOOKMARK [2][-]{subsection.4.1}{Type Checking Rules}{section.4}% 9
+\BOOKMARK [2][-]{subsection.4.2}{Type-Safety Theorem}{section.4}% 10
+\BOOKMARK [1][-]{section.5}{From Core SWIN to Full SWIN}{}% 11
+\BOOKMARK [1][-]{section.6}{Case Studies}{}% 12
+\BOOKMARK [2][-]{subsection.6.1}{Research Questions}{section.6}% 13
+\BOOKMARK [2][-]{subsection.6.2}{Study Setup}{section.6}% 14
+\BOOKMARK [2][-]{subsection.6.3}{Results}{section.6}% 15
+\BOOKMARK [3][-]{subsubsection.6.3.1}{General Expressiveness}{subsection.6.3}% 16
+\BOOKMARK [3][-]{subsubsection.6.3.2}{Comparison with Twinning}{subsection.6.3}% 17
+\BOOKMARK [3][-]{subsubsection.6.3.3}{Interesting Transformation Patterns}{subsection.6.3}% 18
+\BOOKMARK [1][-]{section.7}{Related work}{}% 19
+\BOOKMARK [1][-]{section.8}{Conclusion and Future Work}{}% 20
+\BOOKMARK [1][-]{appendix.A}{Feather Weight Java}{}% 21
+\BOOKMARK [2][-]{subsection.A.1}{Syntax}{appendix.A}% 22
+\BOOKMARK [2][-]{subsection.A.2}{Subtyping}{appendix.A}% 23
+\BOOKMARK [2][-]{subsection.A.3}{Typing Rules}{appendix.A}% 24
+\BOOKMARK [2][-]{subsection.A.4}{Auxiliary Definition}{appendix.A}% 25

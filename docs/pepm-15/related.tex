@@ -1,0 +1,286 @@
+\section{Related work}
+\label{sec:related}
+% DSL or meta-programming
+
+\smalltitle{General Transformation Frameworks} A number of
+general-purpose program transformation languages/frameworks have been proposed.
+To be independent of any programming languages, most of these languages
+work on the grammatical level, defining transformations on top of
+syntax trees. For example, TXL~\cite{txl} and
+Stratego/XT~\cite{stratego} are general-purpose and grammar-oriented
+transformation languages, which allow the definitions of a set of
+rules to rewrite the abstract syntax trees of a program. Tom~\cite{tom} is a language extension for Java designed
+to manipulate tree structures. In Tom, term rewriting and plain Java
+code can be mixed to write more powerful program transformations.%  Tom can be used in Java to provide
+% pattern matching like rule-based language. Any Java program is also a
+% Tom program, and users can use both the extending features and Java
+% language itself to perform transformation.
+Compared with
+these general-purpose transformation languages, SWIN mainly focuses on
+transforming Java programs in the scope of API evolution and API
+switching. By using Java features, SWIN allows more concise programs
+to be written for these tasks. Furthermore, none of the general
+transformation languages guarantees type-safety, for type-safety is
+difficult to specify in a language-independent way.
+
+\smalltitle{Transformation Frameworks for Java} Besides
+Twinning~\cite{twinning}, 
+several transformation languages/frameworks for Java
+programs are proposed. For example, Spoon~\cite{fool06} 
+is a transformation framework for Java programs, providing the ability
+to directly read and modify program elements in Java
+programs. As far as we know, these transformation frameworks for Java do
+not consider type safety either, and there is no guarantee that the
+transformation does not introduce compilation errors. Refaster~\cite{refaster}
+uses compilable before-and-after examples of Java code to specify a Java
+refactoring. Similarly as our work, this work also mainly focuses on solving the
+method replacement which is useful in real API migration. Moreover, using 
+direct Java examples to describe the transformation is convenient. However,
+refaster cannot assure the well-typedness of the whole program during transformation, 
+         as it only requires that each transformed expression is well typed.
+
+
+\smalltitle{Type-Safe Transformations} Approaches for ensuring type
+safety also exist. Hula~\cite{hula} is a rule-based update (or transformation) language for
+Haskell, ensuring updates are performed in a type-safe manner. The
+type-safe transformation depends on an core calculus--update
+calculus~\cite{updatecalculus}, which provides type-safe
+transformation over lambda calculus. This work distinguishes program
+changes into declaration changes, definition changes, and application
+changes, and requires the three changes to be consistent. Compared
+with our work, update calculus allows the dynamic change of type
+definitions during transformation while our approach focuses on static
+type mappings as the difference between the old API and the new API
+are already known during program adaptation for different APIs. On the
+other hand, update calculus allows only the replacement of a type to a
+more generic type, while our approach supports more type mapping
+between independent types, such as Vector to ArrayList, because these
+type changes are dominant in program adaptation between APIs.
+
+The work of Balaban~\cite{oopsla05} et al. focuses on a particular
+problem in the adaptation of program between APIs: when some part of
+the program cannot be changed, how to change the other parts 
+while preserving well-typedness and other properties. This work extracts the
+type constraints from the Java program, then solves the constraints
+using a constraint solver to prevent type incorrect program
+transformations. Different from this work
+that considers the well-typedness of a particular client program, our
+work focuses on the type-safety of the transformation itself, taking
+into account all possible client programs. The work of Spoon~\cite{fool06} 
+focuses on the well-typedness of a program using API with forthcoming 
+or deprecated methods. This work extends FJ with forthcoming
+and deprecated methods, and proves the soundness of extended FJ.
+However, this work only allows update on methods, rather than
+update on classes.
+% use the constraint slover to
+% preserve the type correctness while updating programs. This work
+% mainly focus on migrating programs used legacy API becuase some legacy
+% API cannot be transformed.  This work extracted the type constraints
+% from Java source code and rules, then solve the constraints using a
+% constraints solver to prevent type incorrect program transformation
+% performed with the rules.  Our work mainly focus on type incorrectness
+% produced by API evolution and API alternative, and our work can
+% preserve the type-safety of any clients whlie being updated by SWIN
+% rules, rather than the type-safety of a specific client program as
+% work showed by Balaban.
+
+\smalltitle{Semantic-Preserving Transformations} Refactoring-based
+approaches~\cite{reba, catchup} treat the API changes as a set of
+refactorings. The API developers records their changes on the
+API as a set of refactorings, and the later these refactorings can be
+replayed on the client programs to transform the client programs to the new
+API. In this way, the adaptation of the client programs is not only
+type-safe but also semantic-preserving. However, this approach has
+limitations. First, this approach cannot support API changes that
+cannot be expressed as refactorings. Second, this approach only
+applies to API update, and cannot support migrating programs between
+alternative APIs, which are independently developed.
+% operation-based approach\cite{reba, catchup} and
+% matching-based approach\cite{dig-ecoop, graph-oopsla}. The operation-based approach is only suitable for
+% API update. The approach is mainly use a tool to record the API update operation, and require
+% the API update 
+% operation only can be refactoring. 
+% This approach can get the accurate API changes
+% and it limits the API update operation only for
+% refactoring. Our work allowed any API changes.  
+The work of Leather~\cite{pepm14} et al. provides a approach 
+to preserve semantics 
+of a program while changing terms involving type A to terms involving
+type B using type-changing rewrite rules. This work mainly
+focuses on conversion between isomorphic types, whereas our work focuses on
+transformation between any two types. Moreover, unlike this work performing
+transformations on lambda calculus with let-polymorphism, our work performs
+transformations on Featherweight Java which need to solve problems introducing
+by object orientation, such as subtyping.
+
+Package templates~\cite{packtemp} is an extension to Java to write
+reusable and adaptable modules. Since the template instantiation
+process in package templates includes operations like renaming and
+class merging, it can be considered as a semantics-preserving program
+transformation process. Different from our work, the program
+transformation in package templates mainly focuses on the changes on the
+class level, and does not consider the replacement of method
+invocations. A key point in package templates is to avoid name
+collision in transformation. Our approach does not consider this issue
+because in Java language, the client code and the API are usually in
+different packages, and the names are almost impossible to collide.
+
+% solve a particular problem in
+% semantic-preserving transformation: name collisions. When we merge
+% classes and rename methods, methods with the same name need to be
+% properly addressed 
+
+% is a work focus on semantics-preserving source-to-source transformation of
+% Java.
+% While two classes merge or the name of methods changes, methods with same name
+% may lead the behavior of client programs invoking these methods change. 
+% This work mainly focus on the name problems while modifying programs, rather than on how
+% to modify client programs type correctly while API evolution or API alternative as our
+% work mainly foucs on. As there are lots of work focus on the problems caused by name changes,
+% in our paper, we do not allow the name of variables change. \textit{We will give a brief check about 
+% the form name of variables may introduce type errors in updated programs}
+
+
+\smalltitle{Heuristic-based Transformations} Several approaches try to
+further reduce the cost of program adaptation between APIs by
+automatically discovering the transformation program using heuristic
+rules. The heuristic rules range from comparing API source code~\cite{dig-ecoop},
+analyzing existing client source
+code~\cite{graph-oopsla,spatch,gpatch}, and discovering similar code
+pieces~\cite{sediting}. Since these approaches are heuristic-based,
+there is no guarantee the discovered transformations are type-safe.
+  
+% The work related to program adaptation in the 
+% scope of API alternative or API updated can be split into
+% three categories: using DSLs for program adaptation, acquire the API changes, 
+% and apply the non-rule API changes to update client programs.
+
+% There are lots of program transformation languages, 
+% and most of these update languages are rule-based language. 
+% TXL\cite{txl} and Stratego/XT\cite{stratego}
+% are general-purpose and grammar-oriented transformation languages, 
+% while apply rules on abstract syntax tree or concrete syntax tree of programs. 
+% Comparing these general-purpose update languages,
+% SWIN mainly focuses on Java program transformation in the scope of
+% API evolution and API alternative. SWIN can express Java programs
+% update more easily and conveniently for it use the Java features.
+% Tom\cite{tom} 
+% is a language extension designed to manipulate tree structures.
+% Tom can be used in Java to provide pattern matching like rule-based language.
+% Any Java program also are Tom program, 
+% users can both use the extending features and Java language itself to perform
+% transformation. 
+% Although the expressiveness of these languages is more powerful, all these languages cannot
+% preserving type-safety while transforming programs. SWIN is not so strong as these languages,
+% but it useful in real experience, moreover, SWIN can preserving the type-safety while updating
+% programs.
+
+% The work of Balaban\cite{oopsla05} et al. use the constraint slover to preserve the type correctness 
+% while updating programs. This work mainly focus on migrating programs used legacy API
+% becuase some legacy API cannot be transformed.
+% This work extracted the type constraints from Java source code and rules,
+% then solve the constraints using a constraints solver to prevent type
+% incorrect program transformation performed with the rules. 
+% Our work mainly focus on type incorrectness produced by API evolution and API
+% alternative, and our work can preserve the 
+% type-safety of any clients whlie being updated by 
+% SWIN rules, rather than the type-safety of a specific client program as work showed by Balaban.
+
+
+% Hula\cite{hula} is a rule-based update language for Haskell, it perform the update in a type-safe manner. 
+% The type-safe transformation mainly depend on an core calculus -- update calculus, and
+% this work try to transform the hula to update calculus in a right way.
+% Update calculus\cite{updatecalculus} is a general update language for lambda calculus, 
+% and it can preserve the type correctness while updating programs.
+% This work divided the changes into definition changes and application changes. 
+% While methods' definitions change, the code applying these methods should be changed coordinately. 
+% The type changes of method definition are dynamic, and need be inference. The type changes 
+% of definition in our
+% work are static, because we already known the updated API and alternative API.
+% Our work mainly focus on how the application change can be right with defintion changes.
+% However, the work of update calculus can only be allowed to transform a type
+% to a more generic type, but our approaches
+% allows more general type changes, such as Vector to ArrayList. 
+
+% Package templates\cite{packtemp} 
+% is a work focus on semantics-preserving source-to-source transformation of
+% Java.
+% While two classes merge or the name of methods changes, methods with same name
+% may lead the behavior of client programs invoking these methods change. 
+% This work mainly focus on the name problems while modifying programs, rather than on how
+% to modify client programs type correctly while API evolution or API alternative as our
+% work mainly foucs on. As there are lots of work focus on the problems caused by name changes,
+% in our paper, we do not allow the name of variables change. \textit{We will give a brief check about 
+% the form name of variables may introduce type errors in updated programs}
+
+
+% Because our work is in the scope of API alternative and API update, work acquiring the
+% API changes and apply API changes in clients are also related.
+% Acquire the API changes can be also split in two categories: operation-based approach\cite{reba, catchup} and
+% matching-based approach\cite{dig-ecoop, graph-oopsla}. The operation-based approach is only suitable for
+% API update. The approach is mainly use a tool to record the API update operation, and require
+% the API update 
+% operation only can be refactoring. 
+% This approach can get the accurate API changes
+% and it limits the API update operation only for
+% refactoring. Our work allowed any API changes.  
+% The matching-based approach is more general, and this approach is 
+% from a simple idea that if we want
+% to get the changes of two things, we can just compare them. Using matching-based approach, first, we should
+% process the program code, such as serve code as a text or AST (Abstract Syntax Tree). Then, we can use some
+% approaches to compare the processed code.
+% Dig\cite{dig-ecoop} treats the Java source
+% code as text, they use the shingling algorithm from area of information retrieval to 
+% encoding code text to a set of shingles. Then comparing two sets of shingles to get the differences. 
+% The work of Nguyen et al.\cite{graph-oopsla} extract the AST from the Java APIs source code,
+% then comparing the AST of these source code to get the differences. 
+% This method is more accurate than just serve the source code as text for it use more code information.
+% Although this work allowed any API updated, it cannot get the accurate API changes comparing 
+% operation-based approach.
+
+
+% Using the API changes to update the client programs with these API is a hard work. 
+% The most frequently used approach is manually search the code need to update and replace the code
+% to adapt to new API.
+% The simplest search-and-replace is text match and regular expression match, but it is not enough for complex
+% code modification, for these approaches cannot match the syntax-related code block.
+% Semantic Grep\cite{sgrep}
+% provide a approach that express the relations among packages, classes and methods. Using semantic grep, 
+% users can express complex relations between packages, classes and methods, such as a class is belong to
+% a package or a method called another method.
+% It is much useful than common grep when user want to match the block with syntax relation.
+% The work of Kapur et al. \cite{refactoring-replace}
+% focus on the ability of replacements. The approaches above-mentioned all about the ability of match, 
+% the replace operation is same for all the matched block. Therefore, Kapur
+% provides a tool to refactoring replacements, such as adding a parameter for all the matched methods. 
+% This work is useful that it extends replacements to refactoring, rather than simply replace.
+
+% All above-mentioned about apply API changes to update programs need to be done manually.
+% Manually update programs are tedious and error-prone. There are many work for automatically program adaptation.
+% ReBA\cite{reba} and CatchUp!\cite{catchup} use the replay approaches to
+% automatically update client programs. The premise of these approaches is to record the API changes when
+% API vendor perform update, as mentioned before, the update operation can only be refactoring. After recording
+% the update operation on APIs, clients developers can use these update operations to automatically update their
+% program with the tool support.
+% In order to apply the API changes to update program right.
+% Nguyen et al. \cite{graph-oopsla} extract the data-flow graph and control-flow graph from programs, 
+% and match the API changes from these
+% two graph. These can help match the context-sensitive code block, and
+% transform these block to new API in a right way. 
+% Semantic patch\cite{spatch} and Generic patch\cite{gpatch} focus 
+% on infer more general patches from existing patches of Linux kernel patches. 
+% For the Linux kernel API evolution, the related Linux device drivers need to be update in response to 
+% evolution.
+% These approaches extracting the specific part of patches, and generic these parts. Then apply the more general
+% patches to update device drivers automatically.
+% Systematic editing\cite{sediting}
+% focus on similar program update. Code clone is a common phenomenon in programs, so alleviate the work of similar
+% code update is important. These work analyze the AST of programs, then get the update sequences of comparing two ASTs. 
+% Finally, apply the update sequences to another similar programs.
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "pepm-15"
+%%% End: 

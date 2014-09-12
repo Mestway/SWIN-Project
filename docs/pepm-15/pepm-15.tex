@@ -1,0 +1,342 @@
+%-----------------------------------------------------------------------------
+%
+%               Template for sigplanconf LaTeX Class
+%
+% Name:         sigplanconf-template.tex
+% 
+% Purpose:      A template for sigplanconf.cls, which is a LaTeX 2e class
+%               file for SIGPLAN conference proceedings.
+%
+% Guide:        Refer to "Author's Guide to the ACM SIGPLAN Class,"
+%               sigplanconf-guide.pdf
+%
+% Author:       Paul C. Anagnostopoulos
+%               Windfall Softwareb
+%               978 371-2316
+%               paul@windfall.com
+%
+% Created:      15 February 2005
+%
+%-----------------------------------------------------------------------------
+
+
+\documentclass{sigplanconf}
+
+% The following \documentclass options may be useful:
+
+% preprint      Remove this option only once the paper is in final form.
+% 10pt          To set in 10-point type instead of 9-point.
+% 11pt          To set in 11-point type instead of 9-point.B
+% authoryear    To obtain author/year citation style instead of numeric.
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{xspace}
+
+%added
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{graphicx} 
+\usepackage{stfloats}
+
+\usepackage{bussproofs}
+\usepackage{amssymb}
+\usepackage{latexsym}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{graphics}
+
+\usepackage{amsmath,amsthm}
+
+\lstset{%numbers=left,
+  language=Java,
+  numberstyle=\tiny,
+        keywordstyle=\color{blue},
+        commentstyle=\color[cmyk]{1,0,1,0},
+        % frame=single,
+        basicstyle=\scriptsize\ttfamily,
+        escapeinside=@@,
+        breaklines,
+        extendedchars=false,
+        %xleftmargin=2em,xrightmargin=2em, aboveskip=1em,
+        tabsize=4,
+        showspaces=false
+      }
+
+\input{macros}      
+           
+% This is the "centered" symbol
+\def\fCenter{{\mbox{\Large$\rightarrow$}}}
+
+% Optional to turn on the short abbreviations
+\EnableBpAbbreviations
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{definition}{Definition}
+\newtheorem{property}{Property}
+\newenvironment{proof-sketch}{\noindent{\em Proof sketch.}}{\qed\smallskip\\}
+\begin{document}
+
+\special{papersize=8.5in,11in}
+\setlength{\pdfpageheight}{\paperheight}
+\setlength{\pdfpagewidth}{\paperwidth}
+
+\conferenceinfo{CONF 'yy}{Month d--d, 20yy, City, ST, Country} 
+\copyrightyear{20yy} 
+\copyrightdata{978-1-nnnn-nnnn-n/yy/mm} 
+\doi{nnnnnnn.nnnnnnn}
+
+% Uncomment one of the following two, if you are not going for the 
+% traditional copyright transfer agreement.
+%\exclusivelicense                % ACM gets exclusive license to publish, 
+                                  % you retain copyright
+
+%\permissiontopublish             % ACM gets nonexclusive license to publish
+                                  % (paid open-access papers, 
+                                  % short abstracts)
+
+\titlebanner{banner above paper title}        % These are ignored unless
+\preprintfooter{short description of paper}   % 'preprint' option specified.
+
+\title{SWIN: Type-Safe Java Program Adaptation between APIs}
+\subtitle{}
+
+\authorinfo{
+    Jun Li$^{1, 2}$ \and Chenglong Wang$^{1, 2}$ \and Yingfei Xiong$^{1, 2}$ \and Zhenjiang Hu$^{3, 1, 2}$}
+           {$^1$Key Laboratory of High Confidence Software Technologies, Ministry of Education \\
+            $^2$Software Engineering Institute, Peking University, Beijing, 100871, China \\
+        $^3$National Institute of Informatics, 2-1-2 Hitotsubashi, Chiyoda-ku, Tokyo 101-8430, Japan}
+        {\{lij, chenglongwang, xiongyf\}@pku.edu.cn, hu@nii.ac.jp}
+
+\maketitle
+
+\begin{abstract}
+Java program adaptation between different APIs is a common task in
+software development. When an old API is upgraded to an incompatible
+new version, or when we want to migrate an application from one
+platform to another platform, we need to adapt programs between
+different APIs. Although different program transformation tools have
+been developed to automate the program adaptation task, no tool
+ensures type safety in transforming Java programs: given a transformation
+program and any well typed Java program, the transformed result is
+still well typed. As a matter of fact, it is often observed that a
+dedicated adaptation tool turns a working application into a set of
+uncompilable programs.
+
+  % API evolution and API alternative may cause incompatibility in
+  % client programs with the API.  Client developers need to update the
+  % client to adapt to API changes. Manually updating clients is tedious
+  % and error-prone, however, automatically updating approaches are
+  % seldom focus on type correctness preservation while updating a type
+  % correct program. Some works can preserve type correctness are about
+  % lambda calculus updating, but there is a big gap between lambda
+  % calculus and popular high-level language, such as Java.
+
+We address this problem by providing a type-safe transformation
+language, SWIN, for Java program adaptation between different
+APIs. SWIN is based on Twinning, a modern transformation language
+for Java programs. SWIN enhances Twinning with more flexible
+transformation rules, formal semantics, and, most importantly, full
+type-safe guarantee. We formally prove the type safety of SWIN on
+Featherweight Java, a known minimal formal core of Java. Our
+experience with three case studies shows that SWIN is as expressive
+as Twinning in specifying useful program transformations in the case
+studies while guaranteeing the type safety of the transformations.
+
+  % We address this problem by providing a type safe update language
+  % Safe tWINning (SWIN) based an existing update language
+  % \textbf{Twinning}\cite{twinning}.  Twinning is a rule-based language
+  % which describes the Java programs update, and it is easy to learn
+  % and write.  In our experience, twinning is powerful for expressing
+  % the program update, and twinning can describe the complex program
+  % update caused by API changes.  In this paper, we identify a set of
+  % safe update conditions of rules writing by SWIN, and develop a type
+  % system that infers type changes caused by update rules.  We give a
+  % check algorithm that check if the SWIN rules satisfy update
+  % conditions. Finally, we proof that all the Java programs can be
+  % safely update by the checked rules.
+\end{abstract}
+
+%\category
+%{D.3.3}{Programming Languages}{Language Constructs and Features}
+
+% general terms are not compulsory anymore, 
+% you may leave them out
+%\keywords
+%Type-safey, Program adaptation 
+
+\input{intro_new}
+%\input{intro}
+
+\input{examples_new}
+%\input{examples}
+
+\input{tw-fj}
+
+\input{tw-type}
+
+\input{tw-ext}
+
+\input{evaluation}
+
+\input{related}
+
+\input{conclusionsandfuturework}
+\acks We are grateful for the fruitful discussions with Prof. Martin
+Erwig at Oregon State University on update
+  calculus~\cite{updatecalculus} and Prof. James R. Cordy at Queen's
+  University on TXL~\cite{txl}.
+
+% We recommend abbrvnat bibliography style.
+
+\bibliographystyle{abbrvnat}
+
+% The bibliography should be embedded for final submission.
+
+\begin{thebibliography}{}
+\softraggedright
+
+\bibitem[M. Nita et~al.(2010)M. Nita]{twinning}
+    M. Nita and D. Notkin. Using twinning to adapt programs to alternative APIs, in: \emph{Proc. ICSE}, 2010. 
+
+    \bibitem[T. Bartolomei et~al.(2010)T. Bartolomei]{icsm2010}
+    T. Bartolomei, K. Czarnecki, and R. L\"ammel. Swing to SWT and Back: patterns
+    for API migration by wrapping, in: \emph{Proc. ICSM}, 2010.
+
+    \bibitem[D. Dig et~al.(2008)D. Dig]{reba}
+    D. Dig, S Negara, and R. Johnson. ReBA: refactoring-aware binary 
+    adaptation of evolving libraries,
+    in: \emph{Proc. ICSE}, 2008.
+
+    \bibitem[J. Henkel et~al.(2005)J. Henkel]{catchup}
+    J. Henkel and A. Diwan. CatchUp!: capturing and replaying refactorings to support
+    API evolution, in: \emph{Proc. ICSE}, 2005.
+
+    \bibitem[D. Dig et~al.(2006)D. Dig]{dig-ecoop}
+    D. Dig, C. Comertoglu, D. Marinov, and R. Johnson. Automated detection of refactorings
+    in evolving components, in: \emph{Proc. ECOOP}, 2006.
+
+    \bibitem[H. A. Nguyen et~al.(2010)H. A. Nguyen]{graph-oopsla}
+    H. Nguyen, T. Nguyen, G. Jr, A. Nguyen, M. Kim, and T. N. Nguyen.
+    A graph-based approach to API usage adaptation, in: \emph{Proc. OOPSLA}, 2010.
+
+    % \bibitem[R. Bull et~al.(2002)R. Bull]{sgrep}
+    % R. Bull, A. Trevors, A. Malton, and M. Godfrey.
+    % Semantic grep: regular exspressions + relational abstraction,
+    % in: \emph{Proc. WCRE}, 2002.
+
+    % \bibitem[P. Kapur et~al.(2010)P. Kapur]{refactoring-replace}
+    % P. Kapur, B. Cossette, and R. J. Walker. Refactoring references
+    % for library migration, in: \emph{Proc. OOPSLA}, 2010.
+
+    \bibitem[A. Igarashi et~al.(2001)A. Igarashi]{fj}
+    A. Igarashi, B. C. Pierce, and P. Wadler. Featherweight Java: a
+    minimal core calculus for Java and GJ, \emph{ACM Trans. Program.
+    Lang. Syst}, 2001.
+
+    \bibitem[Y. Padioleau et~al.(2008)Y. Padioleau]{spatch}
+    Y. Padioleau, J. Lawall, R. R Hansen, and G. Muller. Documenting and automating
+    collateral evolutions in linux device drivers, in: \emph{Eurosys}, 2008.
+
+    \bibitem[J. Andersen et~al.(2008)J. Andersen]{gpatch}
+    J. Andersen and J. L. Lawall. Generic patch inference, in: \emph{Proc. ASE}, 2008.
+
+    \bibitem[N. Meng et~al.(2011)N. Meng]{sediting}
+    N. Meng, M. Kim, and K. S. Mckinley. Systematic editing: generating program transformations
+    from an example, in: \emph{Proc. PLDI}, 2011.
+    
+    \bibitem[J. R. Cordy(2006)J. R. Cordy]{txl}
+    J. R. Cordy. The TXL source transformation language, \emph{Science of Computer Programming},
+    2006.
+
+    \bibitem[E. Visser(2004)E. Visser]{stratego}
+    E. Visser. Program transformation in stratego/xt: rules, strategies, tools
+    and systems in stratego xt/0.9, \emph{Domain Specific Program Generation}, 2004.
+
+    \bibitem[E. Balland et~al.(2007)E. Balland]{tom}
+    E. Balland, P. Brauner, R. Kopetz, P.-E. Moreau, and A. Reilles. Tom: piggybacking
+    rewriting on Java, in: \emph{Proc. RTA}, 2007.
+
+    \bibitem[I. Balaban et~al.(2005)I. Balaban]{oopsla05}
+    I. Balaban, F. Tip, and R. Fuhrer. Refactoring support for class library
+    migration, in: \emph{Proc. OOPSLA}, 2005.
+
+\bibitem[M. Erwig et~al.(2002)M. Erwig]{hula}
+    M. Erwig and D. Ren. A rule-based language for programming software updates,
+    \emph{SIGPLAN Notices.}, 2002.
+
+\bibitem[M. Erwig et~al.(2007)M. Erwig]{updatecalculus}
+    M. Erwig and D. Ren. An update calculus for expressing type-safe program
+    update, \emph{Science of Computer Programming}, 2007.
+
+\bibitem[S. Leather et~al.(2014)S. Leather]{pepm14}
+    S. Leather, J. Jeuring, A. L\"oh, and B. Schuur. Type-changing rewriting and
+    semantics-preserving transformation, in: \emph{Proc. PEPM}, 2014.
+
+\bibitem[E. W. Axelsen et~al.(2012)E. W. Axelsen]{packtemp}
+    E. W. Axelsen and S. Krogdahl. Package templates: a definition by semantic-preserving
+    source-to-source transformations to efficient Java code, in: \emph{Proc. GPCE}, 2012.
+
+\bibitem[J. Li et~al.(2013)J. Li]{webapi}
+    J. Li, Y. Xiong, X. Liu, and L. Zhang. How does web service API evolution affect clients?,
+    in: \emph{Proc. ICWS}, 2013.
+
+\bibitem[E. Visser(2005)E. Visser]{survey}
+    E. Visser. A survey of strategies in rule-based program transformation systems,
+    \emph{Journal of Symbolic Computation}, 2005.
+
+\bibitem[M. Pilgrim(2009)M. Pilgrim]{python}
+    M. Pilgrim. Dive into Python 3, \emph{2nd edition, APress}, 2009.
+
+\bibitem[B. E. Cossette et~al.(2012)B. E. Cossette]{apiupdate}
+    B. E. Cossette and R. J. Walker. Seeking the ground truth: a retroactive study on the 
+    evolution and migration of software libraries, in: \emph{Proc. FSE}, 2012.
+
+% \bibitem[C. Wang(2014)C. Wang]{proof}
+% C. Wang and J. Li. Formal definition of SWIN language, \emph{Technical Note, available at \url{https://github.com/Mestway/SWIN-Project}}, 2014.
+
+    \bibitem[N. Nystrom(2003)N. Nystrom]{glot}
+    N. Nystrom, M. R. Clarkson, and A. C. Myers.
+    Polyglot: an extensible compiler framework for Java, in: \emph{Proc. CC}, 2003.
+
+    \bibitem[R. Pawlak(2006)R. Pawlak]{spoon}
+    R. Pawlak, C. Noguera, and N. Petitprez. Spoon: program analysis and transformation
+    in Java, \emph{Technical Report 5901}, INRIA, 2006.
+
+    \bibitem[S. A. Spoon(2006)S. A. Spoon]{fool06}
+    S. A. Spoon. Fined-grained API evolution for method deprecation and anti-deprecation,
+    in: \emph{Proc. FOOL}, 2006.
+
+    \bibitem[L. Wasserman(2013)L. Wasserman]{refaster}
+    L. Wasserman. Scalable, example-based refactorings with refaster,
+    in: \emph{Proc. WRT}, 2013.
+
+    \bibitem[B. Pierce(2002)B. Pierce]{tpl}
+    B. Pierce. Types and Programming Languages, \emph{MIT Press}, 2002.
+
+
+\end{thebibliography}
+
+%\appendix
+%\section{Appendix Title}
+
+% This is the text of the appendix, if you need one.
+\section*{Appendix}
+\appendix
+
+\input{tw-fjtype}
+
+%\input{tw-theorem}
+
+
+\end{document}
+
+%                       Revision History
+%                       -------- -------
+%  Date         Person  Ver.    Change
+%  ----         ------  ----    ------
+
+%  2013.06.29   TU      0.1--4  comments on permission/copyright notices
+

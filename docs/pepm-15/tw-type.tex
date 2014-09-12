@@ -1,0 +1,397 @@
+\begin{section}{Type Checking System for Core SWIN}
+\label{tw-type}
+
+Now we turn to our type system that is used to check the type safety
+of transformation programs in SWIN. Given two APIs, $\tt API_s$ and
+$\tt API_d$, and a transformation program, $\tt\Pi$, mapping from $\tt
+API_s$ to $\tt API_d$, if $\tt\Pi$ passes our type checking, we can
+guarantee that $\tt\Pi$ will transform {\em any} FJ program using $\tt
+API_s$ to a well typed FJ program using $\tt API_d$ instead. % $\tt
+% API_s$ and $\tt API_d$ are used to refer to the source API and target
+% API respectively (the formal definition of $\tt API$ can be referred
+% to \ref{APIdef}).
+
+% \begin{figure}
+% \begin{align*}
+%  \tt API ~ ::=&\tt ~ \{ ~ \overline{CL} ~ \}       & \text{API definition}\\
+%  \tt E ~   ::=&\tt ~ \{~ \overline{x:C_1\hookrightarrow C_2}~\}     & \text{SWIN environment}
+% \end{align*}
+% \caption{Auxiliary Definition. $\tt API$ is defined as a set of class declarations, and an $\tt API$ itself is a well typed FJ program. $\tt E$ is the type checking environment, which contains the type migration information of variables appeared in rules.}
+% \label{APIdef}
+% \end{figure}
+
+% In the
+% case of API update, $\tt
+% API_s$ should include only the changed part, i.e.,
+% $\tt API_s$ contains only these 
+%
+%To claim that a piece of update code $\tt\Pi$ that transform client
+%codes with a source API ($\tt API_o$) to an new API ($\tt API_n$) is
+%type-safe, we need to have this update code $\tt\Pi$ can transform any
+%well typed client source code with $\tt API_o$ to a new one that is
+%also well typed under FJ type system.
+%
+%\par
+%To keep the safe property mentioned above, we give restrictions on the update language and check whether a piece of update code conserves the relationship between the old API and the target API. We present a type system for SWIN language to check both the SWIN grammar and the safety conditions mentioned in Section \ref{sec:examples}.
+%\par
+In the following sections, we will define our type-checking rules and 
+prove the type-safety property of SWIN.
+
+\begin{figure}[htb!]
+% \begin{center}
+% \AXC{$\tt
+%   x:C_1\hookrightarrow C'_1,~\bar{y}:\overline{C_2\hookrightarrow C'_2}~ \in
+%   E$}
+% \AXC{$\tt class\ C_1\ extends\ D \{\bar{C}\ \bar{f}; K\ \bar{M}\}\in API_s$ ~~~~ $\tt C_d\ m(\bar{C}_s\ \bar{u})\{...\} \in \bar{M}$}
+% \AXC{$\tt \bar{C}_2<:\bar{C}_s$}                                            \RightLabel{~(T-L1)}
+% \TIC{$\tt E\vdash_l x.m(\bar{y}):C_d$}
+% \DP
+% \end{center}
+% \vspace{2pt}
+
+% \begin{center}
+% \AXC{$\tt class\ C\ \{\ \bar{C}\ \bar{f}; C(~\bar{C}_s\ \bar{u}~) \{...\}\ \bar{M}\}\in API_s$}
+% \AXC{$\tt
+%   \bar{x}:\overline{C_1\hookrightarrow C'_1} \in E$}
+% \AXC{$\tt \bar{C}_1<:\bar{C}_s$}                                    \RightLabel{~(T-L2)}
+% \TIC{$\tt E\vdash_l new\ C(\bar{x}):C$}
+% \DP
+% \end{center}
+% \vspace{2pt}
+
+% \begin{center}
+% \AXC{$\tt
+%   E=\{\bar{x}:\overline{C\hookrightarrow D}\}$}
+% \AXC{$\tt \{~\bar{x}:\bar{D}~\}\vdash_{FJ}^{API_d} t:C_d$}
+% \RightLabel{~(T-R)}
+% \BIC{$\tt E\vdash_r t:C_d$}
+% \AXC{$\tt \{~\bar{x}:\overline{C\hookrightarrow D}~\}\vdash_l l:C_1,\
+%   \{~\bar{x}:\overline{C\hookrightarrow D}~\}\vdash_r r:C_2$}             
+% \RightLabel{~(T-$\pi$)}
+% \UIC{$\tt [\{~\bar{x}:\overline{C\hookrightarrow D}~\}\ l:C_1\rightarrow r:C_2]~\mathit{ok}$}
+% \noLine
+% \BIC{}
+% \DP
+% \end{center}
+
+\begin{center}
+  \AXC{$\tt \{~\bar{x}:\bar{C}~\}\vdash_{FJ}^{API_s} l:C_1$}
+  \AXC{$\tt \{~\bar{x}:\bar{D}~\}\vdash_{FJ}^{API_d} r:C_2$}
+\RightLabel{~(T-$\pi$)}
+\BIC{$\tt [\{~\bar{x}:\overline{C\hookrightarrow D}~\}\ l:C_1\rightarrow r:C_2]~\mathit{ok}$}
+\DP
+\end{center}
+\vspace{2pt}
+\caption{Checking rule for $\pi$}
+\label{typerules}
+\end{figure}
+
+\newcommand{\indentspace}{~~~~~~~~}
+
+\begin{figure*}
+\begin{align*}
+% Curr
+%\tt \mathbf{ClassCover}&\tt(\Pi, API_s, API_d) =\\
+%                  &\tt \forall~C_1. (class\ C_1\ extends\ \_~\{ ... \}\in (API_s-API_d) \\
+%                  &\tt \indentspace\Rightarrow~ \exists~C_2.(class\ C_2\ extends\ \_\in API_d \land C_1\hookrightarrow C_2\in \mathbf{TypeMapping}(\Pi)))\\
+\tt \mathbf{RuleOK} &\tt(\Pi) = \forall~\pi. (\pi\in\Pi \Longrightarrow \pi~\mathit{ok})\\
+\tt \mathbf{ConstrCover}&\tt(\Pi, API_s, API_d) =\\
+                  &\tt \forall~C_1,\bar{C}. (class\ C_1\ extends\ \_~\{ C_1(\bar{C}\ \bar{\_})~...~\}\in (API_s-API_d) \\
+                  &\tt \indentspace\Rightarrow~ \exists~C_2,\bar{C}',\bar{x},r.((~\bar{x}:\overline{C\hookrightarrow C'}~)[new\ C_1(\bar{x}):C_1\rightarrow r:C_2]\in\Pi))\\
+\tt \mathbf{MethCover}&\tt(\Pi, API_s, API_d) =\\ 
+                  &\tt \forall~C_1,C_2,m,\bar{C}.(class\ C_1\ extends\ \_~\{~C_2\ m(~\bar{C}\ \bar{\_}~)\{...\}~...~\}\in (API_s-API_d) \\
+                  &\tt \indentspace\Rightarrow~ \exists~x,\bar{y},C'_1,C'_2,\bar{C}',r.((x:C_1\hookrightarrow C'_1,\ ~\bar{y}:\overline{C\hookrightarrow C'}~)[x.m(\bar{y}):C_2\rightarrow r:C'_2] \in \Pi))\\
+\tt \mathbf{FieldCover}&\tt(\Pi, API_s, API_d) =\\ 
+                  &\tt \forall~C_1,C_2,f.(class\ C_1\ extends\ \_~\{C\ f;...\}\in (API_s-API_d) \\
+                  &\tt \indentspace \Rightarrow~ \exists~x,C'_1,C'_2.((x:C_1\hookrightarrow C'_1~)[x.f:C_2\rightarrow r:C'_2] \in \Pi))                           \\
+\tt \mathbf{MapChecking}&\tt(\Pi, API_s, API_d) =\\
+                  &\tt \forall~C,D.(C\hookrightarrow D\in \mathbf{TypeMapping}(\Pi)\\
+                  &\tt \indentspace\Rightarrow~ (\exists~CL\in API_s \cap API_d. (\mathbf{Decl}(CL)=C \land D = C))\\
+                  &\tt \indentspace\indentspace \lor (\exists~CL\in API_s-API_d. (\mathbf{Decl}(CL)=C)))\\
+\tt \mathbf{Subtyping}&\tt(\Pi, API_s, API_d) = \\
+                      &\tt\forall~C_i,D_i,C_j,D_j.( C_i\hookrightarrow D_i, C_j\hookrightarrow D_j \in \mathbf{TypeMapping}(\Pi) ~~\Rightarrow~~ (C_i <: C_j\Rightarrow D_i<:D_j))\\
+\tt \mathbf{TypeSafe} &\tt(\Pi, API_s, API_d) = \\
+                      &\tt \mathbf{RuleOK}(\Pi) \land \mathbf{ConstrCover}(\Pi, API_s, API_d) \land \mathbf{MethCover}(\Pi, API_s, API_d)\\
+                      &\tt \land \mathbf{FieldCover}(\Pi, API_s, API_d) \land \mathbf{MapChecking}(\Pi, API_s, API_d) \land \mathbf{Subtyping}(\Pi, API_s, API_d)
+\end{align*}
+\caption{Checking rules for $\tt\Pi$. A SWIN program ($\tt\Pi$) with specified source API ($\tt API_s$) and destination API ($\tt API_d$) should pass these checking rules to maintain type safety. Underscore(\_) is a wildcard and apostrophe (...) represents omitted declaration sequences (field declarations or method declarations). }
+\label{logicrules}
+\end{figure*}
+
+\begin{subsection}{Type Checking Rules}
+
+  We present the rules in Figure~\ref{typerules} and
+  Figure~\ref{logicrules}. Figure~\ref{typerules} depicts the rule
+  for checking a single transformation rule $\pi$.
+  Figure~\ref{logicrules} depicts the rules for checking a
+  transformation program $\Pi$.
+
+  \paragraph{Checking Rule for $\pi$} This rule checks whether the
+  types declared in a transformation rule conforms to the actual types
+  inferred using FJ typing rules. In the formal notation, we use
+  $\tt\Gamma\vdash^{API_s}_{FJ}t:C$ to denote that the term $\tt t$ has type $\tt C$
+  under context $\tt\Gamma$ by FJ typing rules when considered together with
+  $\tt API_s$.
+
+  Please note that this rule also indicates that we can drop the type
+  declarations in the transformation rules, i.e., instead of
+  writing $\tt [\ x.m(y):C \rightarrow x.h(y):D\ ]$, we can write $\tt[\
+  x.m(y) \rightarrow x.h(y)\ ]$ and deduce $\tt C$ and $\tt D$ using FJ typing
+  rules. However, we find that with the return type explicitly declared in the code,
+  we could make $\tt \mathbf{TypeMapping}(\Pi)$ explicit, avoiding subtle bugs
+  on erroneous type mappings. As a result, we require the user to
+  declare types of the transformed terms. 
+
+%   \paragraph{}
+  
+  
+% Figure \ref{typerules} gives the detailed definition of the SWIN type
+% checking rules. The goal is to check the rule against {$\tt \mathbf{TypeSafe}$} for a SWIN program $\tt \Pi$. 
+% Given two APIs ($\tt API_s$ and $\tt API_d$) and a SWIN program $\tt \Pi$, the checking rule $\tt \mathbf{TypeSafe}$ will check type safe property of the SWIN program in the following aspects:
+
+% \begin{itemize}
+% \item Each rule is well formed.  ($\mathbf{RuleOK}$)
+% \item For each class constructor, method or field in a class belongs to $\tt API_s-API_d$, there are corresponding rules to transform their usage. ($\mathbf{ConstrCover}, \mathbf{MapChecking}$ and $\mathbf{FieldCover}$)
+% \item Subtyping relationship will be preserved through transformation process, and the mapping between source API type and target API type should be a function. ($\mathbf{Subtyping}$)
+% \item The SWIN program will not migrate a class in $\tt API_s\cap API_d$. ($\mathbf{MapChecking}$)
+% \end{itemize}
+
+% \paragraph{Notations}
+
+% %For each transformation rule, we check its source code pattern (T-L1, T-L2),
+% %destination code pattern (T-R). If both of its code pattern is well formed, the transformation rule $\pi$ is well typed.
+
+% % In the definition, we use \todo{thename} to look up
+% % the type of a method. Please note that in FJ there is no method
+% % overloading, so it is enough to specify only the method name and the
+% % class name.
+
+% In the checking rules, $\tt E\vdash_{l} \mathit{l}$ represents the type inference for left hand side code pattern ($\mathit{l}$) under SWIN typing context $\tt E$ and $\tt E\vdash_{r} \mathit{r}$ represents the type inference on the right hand side code pattern. The definition of SWIN typing context $\tt E$ can be referred to \ref{APIdef}, which is the typing context for variables appeared in SWIN programs.
+
+% Besides, we use $\tt \{\bar{x}:\bar{D}\}\vdash^{API}_{FJ} t:C_d$ to denote that a FJ term has type $\tt C_d$ under FJ typing system and . And $\tt API_s-API_d$ is use to represent the set complements on $\tt API_s$ and $\tt API_d$. 
+
+% We use judgment $\tt E\vdash \bar{e}:\bar{T}$ to denote 
+% that under typing environment $\tt E$ (which describes
+% mapping from meta variables to their types), $\tt \bar{e}$ has
+% type $\tt \bar{T}$. It checks variables (by T-VAR), source code patterns 
+% (by T-L1, T-L2), target code patterns (by T-R),
+% update rules (by T-$\pi$), and the whole update program (by T-$\Pi$).
+% Note that in rule T-R, we use $\tt \{API_d,\bar{x}:\bar{D}\}\vdash_{FJ} t:C_d$,
+% a type check judgment provided by FJ, to check whether 
+% an FJ term $\tt t$ is type-corrected.
+
+% With these rules, an update program $\tt\Pi$ is typed to
+% $\tt\{\overline{C\rightsquigarrow D}\}$ if it passes the following two checks.
+% %
+% First, it checks whether variables in an update rule $\tt\pi$ are
+% bounded in the variable declaration part of $\tt \pi$. This is done 
+% in rules T-L1, T-L2 and T-R.
+% %
+% Second, it checks whether update program $\tt \Pi$ satisfies the four
+% conditions mentioned in Section 2.
+
+\paragraph{Checking rules for $\tt\Pi$}
+The main goal of the type checking rules is to check the four
+conditions presented in Section~2. Next we explain how this is achieved.
+
+\todo{Chenglong, can you make the following description consistent
+  with your new definition?}
+
+\begin{enumerate}
+\item For each rule $\tt\pi$, let the variable declaration be
+  $\tt\bar{x}:\overline{A\hookrightarrow B}$. Then source code pattern $\tt
+  l$ is well typed under the variable environment
+  $\tt\Gamma_s=\{\bar{x}:\bar{A}\}$ and target code pattern is well
+  typed under $\tt\Gamma_d=\{\bar{x}:\bar{B}\}$. (Rules T-L1,T-L2 and
+  T-R guarantee this property.)
+
+\item The class mapping in $\tt \mathbf{TypeMapping}(\Pi)$ should be a
+  function, i.e. one class in the old API should be mapped to only one
+  class in new API. In fact, this property is covered by the subtyping relationship check,
+  as type equality can be treated as a bi-direction subtyping
+  relation. (Rule $\mathbf{Subtyping}$ guarantees this property.)
+
+\item The class transformation preserves the subtyping relationship in the old
+  API. (Rule $\mathbf{Subtyping}$ guarantees this property)
+
+\item The transformation program covers all classes/methods/constructors/fields only
+  in the old API (Rules \textbf{ConstrCover}, \textbf{MethCover}, \textbf{FieldCover}), as well as all type changes required in the type
+  mapping (Rule $\mathbf{MapChecking}$). 
+  The property of the ``class cover'' (i.e. there should be a corresponding rule to transform each class appeared in $\tt API_s-API_d$) 
+  can be achieved by rule $\mathbf{ConstrCover}$ and the definition of $\mathbf{TypeMapping}$. 
+\end{enumerate}
+
+As will be proved in Section \ref{sec:theorem}, if the above checks
+succeed, a transformation program $\tt\Pi$ will be type-safe, guaranteeing the
+well-typedness of the target code when $\tt\Pi$ is applied to any
+client code with old API. Otherwise, there must exist some client code
+that cannot be transformed to a well typed target code with this
+transformation program.
+
+% \todo{Hu revised Section 4 till here. Please check my revision,
+% and improve the rest of this section. If we do not have much space,
+% the example below may be removed.}
+
+% Again, we take the example in section 2 to explain the type checking
+% procedure. Suppose we use SWIN to update client code using $\tt API_1$
+% (a subset of SWING) to client codes with $\tt API_2$ (a subset of SWT). Namely,
+% \begin{align*}
+% \tt API_1=\{\tt &\\
+% 			 &\tt class\ JFrame\ extends\ Container\\
+% 			 &\qquad\tt\{new\ JFrame()\{...\}\},\\
+% 			 &\tt class\ JList\ extends\ Container\\
+% 			 &\tt\qquad\{new\ JList()\{...\}\},\\ 
+% 			 &\tt class\ Container \\
+% 			 &\qquad\tt\{new\ Container()\{...\}\}\\
+% 			\}\\
+% %\end{align*}
+% %\begin{align*}
+% \tt API_2=\{ &\tt\\
+% 			 &\tt class\ Shell\ extends\ Composite\ \{new\ Shell()\{...\}\},\\
+% 			 &\tt class\ List\ \tt\{new\ List()\{...\}\},\\
+% 			 &\tt class\ Composite\ \\ 
+% 			 &\qquad\tt\{new\ Composite(Shell\ x, Integer\ y)\{...\}\}\\
+% 			\}
+% \end{align*}
+% As in Figure~\ref{fig-swingtoswt}. Subtyping in $\tt API_1$ is
+% \begin{align*}
+% \tt JFrame <: Container \\
+% \tt JList <: Container
+% \end{align*}
+% And there is only one subtypeing relation is $\tt API_2$:
+% \begin{align*}
+% \tt Shell <: Composite 
+% \end{align*}
+% We have the following SWIN code to update the old client code:
+% \begin{align*}
+% \tt \Pi=&\tt 	\{\pi_1,\pi_2,\pi_3\}\\
+% {\bf where}\\
+% \tt \pi_1=&\tt 	()[new\ Container():Container \\
+% 			&\tt\rightarrow new\ Composite(new\ Shell(), 0):Composite]\\
+% \tt \pi_2=&\tt 	()[new\ JList():JList\rightarrow new\ List():List]\\
+% \tt \pi_3=&\tt 	()[new JFrame():JFrame\rightarrow new\ Shell():Shell]
+% \end{align*}
+
+% For the rule $\pi_1$, its source code pattern $\tt new\ Container():Container$ can be typed to $\tt Container$ by type checking rule T-L1, and target code pattern $\tt new\ Composite(new\ Shell(), 0):Composite$ can be typed to $\tt Composite$ by type checking rule T-R and thus they pass the checking rule 1 (Grammar checking). Then according to the rule T-$\pi$, there is no unbounded variables thus $\tt\pi_1$ is well typed and it has type $\tt Container\rightsquigarrow Composite$. Similarly, $\pi_2$ and $\pi_3$ are well typed, $\tt\pi_2:JList\rightsquigarrow List$ and $\tt \pi_3:JFrame\rightsquigarrow Shell$.
+% \par
+% Then the final step of type inference is to infer the type of $\tt\Pi$. According to the rule T-$\Pi$, $\Pi=\{\pi_1,\pi_2,\pi_3\}$ holds the property:
+% \begin{enumerate}
+% \item $\tt\Pi$ covers all the APIs defined in $\tt API_1$.
+% \item $\tt\Pi$ is a function on classes in $\tt API_1$.
+% \end{enumerate}
+% But $\Pi$ in this case does not preserve the subtyping relation as $\tt JList <: Container$ in old API but $\tt \Pi(JList)=List \nless: Composite=\Pi(Container)$. Thus $\Pi$ is not well typed under SWIN type system, thus this SWIN code is not safety. 
+% \par
+% And if we have a function defined in client code: $$\tt class\ A\ \{void\ f(Container C){...}\}$$ 
+% It is clear that the following code:
+% $$\tt new\ A().f(new JList())$$
+% is well typed with old API. But after update, it is not well typed as $\tt new\ A().f(new List())$ will meet an argument type error for the updated function definition $\tt A\ \{void\ f(Composite C){...}\} $. (As subtyping relation is not preserved in new API).
+% \par
+% On the other hand, if SWIN code is well typed (thus passing grammar checking and safety checking), we have the theorem in the next subsection to guarantee that it will safely update any client code using the old API.
+
+\end{subsection}
+
+\begin{subsection}{Type-Safety Theorem}
+\label{sec:theorem}
+
+In this subsection, we present the type-safety property of a well-typed SWIN program formally and outline the key theorems and lemmas here. 
+
+Intuitively, the type-safety property of a well-type SWIN program is that a well-typed SWIN program can transform \emph{any} FJ program to a well typed FJ program. The the proof needs to bridge the type inference tree on an old
+API to the new type inference tree on a new API, and we need to generate
+a derivation tree based on conditions in checking rules and the
+derivation tree on original client code.
+
+Because of the space limit, we cannot present the full proof
+here. Instead, we present five key lemmas that can stepwise lead to
+the final theorem. The full proof of lemmas and the theorem
+can be found in  the technical report on the formal definition of SWIN. \todo{cite the TR}
+% language~\cite{proof}.
+
+In our lemmas, $\tt\Gamma=\bar{x}:\bar{C}$ represents the typing context of a FJ term $\tt t$, which designates each variable $\tt x$ in the term with a type $\tt C$.  Specially, given a term $\tt t$ in client code and a transformation program $\tt\Pi$, $\tt\Gamma_s$ represents the variable environment for $\tt t$ (before transformation) and $\tt\Gamma_d$ represents the environment of the transformed term $\tt\Pi(t)$.
+%\end{def1}
+
+% Specially, in our lemmas, we use $\tt\Gamma_s$ to denote the variable environment for client code with old API, and $\tt \Gamma_d$ to denote the variable environment for client code with new API. 
+
+\begin{lemma}[Typing Context]
+Given a SWIN program $\tt\Pi$ acting on $\tt API_s$ to $\tt API_d$, suppose the typing context for a term $\tt t$ is $\tt\Gamma_s = \bar{x}:\bar{C}$ , then the typing context for $\tt\Pi(t)$ is $\tt\Gamma_d=\bar{x}:\overline{\Pi(C)}$.
+\end{lemma}
+\begin{proof}
+Note that FJ typing context $\tt\Gamma$ will be created in the rule FJ-M-OK and will not change during type derivation of a term. According to the rule E-DELCARATION and E-METHOD, both the method argument types and the class type will be updated to $\tt\Pi(C)$.
+\end{proof}
+%\todo{do you want to present a lemma or a definition in Lemma 1? If a lemma,
+%  what are the definitions of $\Gamma_s$ and $\Gamma_d$? If a
+%  definition, change it to a definition.}
+
+\begin{lemma}[Subtyping]
+Suppose $\tt \Pi$ passes SWIN type checking rules, and it transforms an FJ program with $\tt API_s$ to a new program with $\tt API_d$, then:\par
+$\tt C_1<: C_2 $ in old program ~~$\Longrightarrow$~~ $\tt\Pi(C_1)<:\Pi(C_2)$ in the transformed program.
+\end{lemma}
+\begin{proof}
+The subtyping relationship between classes have the following two cases:
+\begin{itemize}
+\item $\tt C_1$ is declared in client code: E-DECLARATION will guarantee that subtype relationship will be preserved in transformation.
+\item $\tt C_1$ is declared in API: the checking rule $\mathbf{Subtyping}$ guarantees it. 
+\end{itemize}
+Combining these two cases and the transitional subtype relationship, the subtyping relationship will be guaranteed.
+\end{proof}
+
+\begin{lemma}[Variable Substitution]
+Suppose that an FJ term $\tt t$ is well typed under context $\tt \Gamma=\Gamma_1,\{\bar{x}:\bar{C}_x\}$, i.e. $\tt \Gamma\vdash_{FJ} t:C_t$, then after substituting terms $\tt \bar{t}_v$ for variables $\tt \bar{x}$ , with the property that $\tt\Gamma_1\vdash_{FJ}\bar{t}_v:\bar{C}_v$ and $\tt\bar{C}_v <: \bar{C}_x$, $\tt t$ can be typed to $\tt C_t$ or a sub-class of $\tt C_t$. Namely,
+$$\tt \Gamma_1,\{\bar{x}:\bar{C}_x\} \vdash_{FJ} t:C_t \Longrightarrow \Gamma_1\vdash_{FJ} [\bar{x}\rightarrow\bar{t}_u]t: C'_t,\ C'_t <: C_t$$
+\end{lemma}
+\begin{proof}
+By induction on the derivation of a term $\tt t$, we have fives cases to discuss. ($\tt x$, $\tt(C)t$, $\tt t.f$, $\tt new~C(\bar{t})$ and $\tt t.m(\bar{t})$).
+The first three cases ($\tt x$,$\tt (C)t$ and $\tt t.f$) are obvious according to their evaluation rules.
+
+For case 4 and case 5, the following properties are used in proof:
+\begin{itemize}
+\item The arguments in the method invocation will be substitute by terms whose types are subtypes of the original argument variables (Arguments are compatible).
+\item The target term (the caller) is of a type that is subtype to the original caller variable (The method can be found in the new caller term).
+\end{itemize}
+With these subtyping relation cleared, the proof is also obvious according to the rule FJ-METHOD and FJ-CONSTRUCTOR.
+\end{proof}
+
+\begin{lemma}[Term Formation]
+Suppose we have a well typed SWIN program $\tt \Pi$, if a term $\tt t$ in the original typing context can be typed to $\tt C$, then after transformation, the term is well typed and its type is a subtype of $\tt \Pi(C)$. i.e.
+$$\tt \Gamma_s\vdash^{API_s}_{FJ} t:C \Longrightarrow \Gamma_d\vdash^{API_d}_{FJ} \Pi(t):C',\ where\ C'<:\Pi(C)$$
+\end{lemma}
+\begin{proof}
+By induction on the term derivation. Again we have five cases to prove. ($\tt x$, $\tt(C)t$, $\tt t.f$, $\tt new~C(\bar{t})$ and $\tt t.m(\bar{t})$)
+
+The first two cases ($\tt x$, $\tt (C) t$) are obvious according to Lemma 1 and their evaluation rules.
+The last three cases are not trivial in proof, we simply mention some points for case 5 (method invocation) as an example, and the proof can be referred to TR \todo{cite TR}.
+
+For case $t=t_0.m(\bar{t}_u)$, we have two subcases to deal with:
+\begin{itemize}
+\item The method is defined in a class which is defined in client code: to prove that arguments and the caller terms are well formed terms whose types are subtypes of the original ones.
+\item The method is defined in a class defined in old API: to prove that the rule $\tt\pi$ to transform the term will finally leads to a well-typed term according to the Substitution Lemma and Subtyping Lemma.
+\end{itemize}
+
+And with these five cases proved, we have a well type SWIN program can correctly transform FJ terms.
+\end{proof}
+
+\begin{theorem}[Type-Safety]
+Class declarations are well typed after a transformation by a well typed SWIN program $\tt \Pi$. 
+i.e. For any \verb|CL|,
+ $$\tt \Pi(CL)= class\ \Pi(C_1)\ extends\ \Pi(C_2)\ \{\ \Pi(\bar{C}_i)\ \bar{f}_i;\ \Pi(K)\  \overline{\Pi(M)}\ \}$$
+is well typed with new API if $\tt \Pi$ is well typed.
+\end{theorem}
+\begin{proof}
+We need to prove that method calls are well formed in the transformed FJ program and the class declarations are well formed.
+
+This can be obvious as all terms are well formed after transforamtion (Lemma 4), and according to the evaluation rules E-METHOD-DECLARATION and E-CLASS-DECLARATION, the fact that all declarations are well formed can be easily proved by going through declaration details.
+\end{proof}
+
+With the type-safety theorem proved, a well typed SWIN program can transform any FJ client code safely.
+\end{subsection}
+
+\end{section}
+
+
+
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "pepm-15"
+%%% End: 

@@ -1,0 +1,66 @@
+\newcommand{\code}[1]{\texttt{\footnotesize #1}}
+\newcommand{\todo}[1]{{\bf \{TODO: {#1}\}}}
+
+\def\modify#1#2#3{{\small\underline{\sf{#1}}:} {\color{red}{\small #2}}
+{{\color{red}\mbox{$\Rightarrow$}}} {\color{blue}{#3}}}
+%\renewcommand{\modify}[3]{{#3}}
+
+\newcommand{\yxmodify}[2]{\modify{Yingfei}{#1}{#2}}
+\newcommand{\clmodify}[2]{\modify{Chenglong}{#1}{#2}}
+\newcommand{\ahmodify}[2]{\modify{Arnaud}{#1}{#2}}
+%\newcommand{\ahdelete}[2]{\modify{Arnaud}{#1}}
+%\newcommand{\ahnew}[2]{\modify{Arnaud}{\sout{#1}}}
+\newcommand{\ssmodify}[2]{\modify{Steven}{#1}{#2}}
+\newcommand{\kcmodify}[2]{\modify{Krzysztof}{#1}{#2}}
+
+\newcommand\mymargin[1]{\marginpar{{\flushleft\textsc\footnotesize {#1}}}}
+\newcommand\yxmargin[1]{\mymargin{YX:\;#1}}
+\newcommand\kcmargin[1]{\mymargin{KC:\;#1}}
+
+\newcommand{\figref}[1]{Figure~\ref{#1}}
+\newcommand{\eqnref}[1]{violation~\eqref{#1}}
+\newcommand{\secref}[1]{Section~\ref{#1}}
+\newcommand{\tblref}[1]{Table~\ref{#1}} 
+\newcommand{\smalltitle}[1]{{\smallskip \noindent \bf  {#1}.\ }}
+\newcommand{\smalltitlecolon}[1]{{\smallskip \noindent \bf  {#1}:\ }}
+
+
+\newcommand{\yxmodifyok}[2]{#2}
+\newcommand{\ahmodifyok}[2]{#2}
+\newcommand{\ssmodifyok}[2]{#2}
+\newcommand{\kcmodifyok}[2]{#2}
+
+\newcommand{\yxmodifyno}[2]{#1}
+\newcommand{\ahmodifyno}[2]{#1}
+\newcommand{\ssmodifyno}[2]{#1}
+\newcommand{\kcmodifyno}[2]{#1}
+\newcommand{\ahwhynotok}[1]{\textbf{[#1]}}
+
+
+\newcommand{\yxrevise}[2]{\modify{Yingfei}{#1}{#2}}
+\newcommand{\yxreviseb}[2]{\modify{Yingfei}{#1}{#2}}
+
+
+\newcommand{\comment}[2]{{\small\color{magenta}\underline{\sf{#1}}:} {\color{magenta}{\small #2}}}
+\newcommand{\yxcomment}[1]{\comment{Yingfei}{#1}}
+% \newcommand{\yxcommentb}[1]{\comment{Yingfei}{#1}}
+
+
+\renewcommand{\yxrevise}[2]{#2}
+\renewcommand{\yxreviseb}[2]{#2}
+%\renewcommand{\todo}[1]{}
+
+% \renewcommand{\yxmodify}[2]{#2}
+% \renewcommand{\ahmodify}[2]{#2}
+% \renewcommand{\ssmodify}[2]{#2}
+% \renewcommand{\kcmodify}[2]{#2}
+
+
+\newcommand{\tmath}[1]{\mathit{#1}}
+
+\newtheorem{example}{Example}
+\newcommand{\myend}{\qed}
+\newcommand{\myendup}{\vskip-15pt\qed}
+
+\newcommand\type[1]{\mathbf{Type}(#1)}
+\newcommand\reason[1]{\quad\{~\mbox{\small #1}~\}}

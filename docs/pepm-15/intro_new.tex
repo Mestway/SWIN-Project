@@ -1,0 +1,203 @@
+\section{Introduction}
+\label{intro}
+
+% API switching is common
+% API switching tool is often provided
+% coding API switching tool is hard
+%% in particular, type correctness is not guaranteed
+% dedicated transformation tools are provided, but mainly syntactic
+% achieving type safe is not easy
+%% twinning does not achieve full type correctness
+%% first, interleaving features are likely to be ignored
+%% second, correctness and completeness need to be considered together
+
+Modern programs often depend on different APIs (Application
+Programming Interfaces), and it is a common task for the developers to
+adapt programs between alternative APIs. One example is \emph{API update}: when an old API
+is updated to a new version with incompatible changes, we need to
+transform the client programs from the old API to the new API. Another
+example is \emph{API switching}: we often need to migrate programs between different
+platforms, such as from the Android platform to iOS, or from Java
+Swing to SWT. In such cases, we need to transform the programs from the
+API on one platform to the API on another platform. However, manually
+adapting programs is not easy: we need to examine every use of the
+source API and replace them with the suitable target API. Thorough
+knowledge of the source and target APIs as well as the client program
+is required.
+
+Given the importance of program migration, it would be helpful and
+beneficial for tool vendors to provide automated tools to assist
+application adaptations. When API upgrades, API providers could
+provide tools to automate the upgrade of client applications,
+preventing potential loss of users from the incompatibility of the new
+API. Similarly, platform providers could provide tools to facilitate
+the migration of application from other platforms to their own
+platforms, attracting more applications and users on their platform.
+For example, Microsoft has provided the Visual Basic upgrade wizard
+tool, to facilitate the transition from Visual Basic to Visual
+Basic.Net. RIM has provided a tool suite to transform Android
+applications into blackberry applications. These tools work in the
+form of program transformation: they take the old client program as
+input, and produce a new program that preserves the behavior of the
+source program as much as possible while targeting the new API.
+
+However, providing a program transformation tool is not easy. Among
+the large body of API adaptations performed in practice, only a small
+portion has transformation tool support, and it is common for the
+transformation tools to introduce bugs in the transformed programs. A
+particular type of bugs we are concerned with in this paper is type error,
+where a well typed program becomes \emph{not} well typed after the
+transformation. For example, Python has provided an official 2to3
+script to transform Python programs from Python 2.x to 3.x. However, as
+discovered in a case study by Pilgrim and Willison~\cite{python}, the script will introduce a
+type error in the transformed code whenever the original code contains a
+call to the ``\code{file()}'' method.
+
+% \textbf{ 
+%     while python API 2.x was updating to 3.x, a official 
+%     update script 2to3 script was provided for developer to automatically
+%     update their client programs. A case study
+%     \footnote{http://www.diveintopython3.net/case-study-porting-chardet-to-python-3.html}
+%     shows that 2to3 script cannot preserve type-safety of updated client programs.
+%     Because in python 2.x, there is a method named \textit{file}, and this method
+%     was removed in python 3.x. While using 2to3 script to update a client that including
+%     method \textit{file}, a type error will be produced in the update client. Our paper
+% can solve this problem.}
+
+To overcome the difficulty of providing transformation tools, a large
+number of program transformation languages~\cite{twinning, txl, stratego, tom,
+survey} have
+been proposed. These languages provide high-level constructs for
+specifying transformations between programs, reducing the development
+cost and preventing certain kinds of errors. For example, a number of
+program transformation languages prevent the possibility of
+introducing grammatical errors in transformation, either by specifying
+the transformation on top of context-free grammars~\cite{txl, stratego}
+  or by designing the transformation language specifically for a
+programming language~\cite{twinning}. However, as
+far as we know, no transformation language for mainstream
+object-oriented programs ensures \emph{type safety}: for any
+transformation program $p$ and a well typed source program $s$, the
+transformed program $p(s)$ is still well typed. As a result, given a
+program transformation, we have no guarantee that a well typed
+program will still be well typed after the transformation.
+
+It is not easy to ensure type safety in transformation languages. We
+highlight two challenges here.  First, typing is one of the most
+complex components in modern programming language design, involving
+many interleaving of issues. The design of a transformation language
+needs to carefully check each intersection of the issues, which is
+not an easy job. Second, type safety involves two aspects: correctness
+and completeness. Correctness means that every transformed piece in
+the program is well typed, while completeness means that all unchanged
+pieces are still well typed under the new API. It is easy to ignore one
+aspect in transformation language design. As a matter of fact,
+Twinning~\cite{twinning}, a modern transformation language for Java
+programs, have introduced strict rules for checking types in the
+transformation program to prevent the introduction of type 
+errors. However, as our motivation section will show later, these
+rules still fail to establish full type safety.
+
+% our contribution
+%% * a transformation language based on twinning with formal syntax
+%% and formal semantics 
+%% * a set of type checking rules that guarantee type safetyf
+%% * an empirical study that show the feasibility and expressiveness
+%% of the language
+% paper organization
+
+In this paper we report our first attempt to design a type-safe
+transformation language for Java. As the first attempt, we focus on
+the class of one-to-many mappings between APIs. One-to-many mappings
+mean one method invocation in the source API will be replaced as one
+or multiple method invocations in the target API with possible gluing
+code. We choose this class for two reasons. 1) One-to-many mappings
+are dominant in the migration 
+between alternative APIs. An empirical study~\cite{apiupdate}
+shows that 95.3\% of the required changes are
+one-to-many mapping in the API update of struts, log4j, and jDOM.
+% Microsoft summarizes ``the most popular and important'' API mappings
+% from Android to iOS as the API mapping
+% index\footnote{\url{http://msdn.microsoft.com/en-us/library/windows/apps/jj945420.aspx},
+% accessed at Aug 7th, 2014.}.
+2) Studying one-to-many mappings is a necessary step toward more
+general many-to-many mappings. Since one-to-many mappings are a sub class
+of many-to-many mappings, type safety in many-to-many mappings requires type safety
+in one-to-many mappings.
+As a matter of fact, the language Twinning is
+designed for one-to-many mappings, and is known for its simplicity and
+usefulness in many adaptation applications. Our approach is built upon
+Twinning, where we add extra conditions to ensure type safety. 
+
+More concretely, our contributions are summarized as follows.
+\begin{itemize}
+\item We propose a new transformation language, SWIN (Safe tWINning),
+  for Java program adaptation between alternative APIs. The SWIN
+  language is based on Twinning~\cite{twinning}, a modern program
+  adaptation language for Java. Compared with Twinning, SWIN includes
+  a set of type checking rules to ensure type safety. These
+  type checking rules enable a cross-checking over the source API, the
+  target API, and the transformation program, and ensure that any well
+  typed Java program using the source API will be transformed into a
+  well typed Java program using only the target API, if the
+  transformation program is well typed under the type checking rules.
+  SWIN also have more flexible replacement rules than Twinning.
+\item We formalize a core part of SWIN, known as core SWIN. Core SWIN
+  works on Featherweight Java (FJ)~\cite{fj}, a formal model of the core Java
+  language often used to reason typing-related properties of Java. We
+  formally prove the type safety of core SWIN on FJ. We also
+  informally describe
+  the rest of SWIN and discuss the type safety of full SWIN.
+% \item A transformation language, SWIN (Safe tWINning), for Java
+%   program adaptation between alternative APIs. The SWIN language is
+%   based on Twinning~\cite{twinning}, a modern program adaptation
+%   language for Java. The semantics of Twinning is informally
+%   specified. SWIN enhanced Twinning with formal semantics and more
+%   flexible replacement rules.
+% \item A set of type checking rules for SWIN to ensure type
+%   safety. These type checking rules enable a cross-checking over the
+%   source API, the target API, and the transformation program, and
+%   ensure that any well typed Java program using the source API will
+%   be transformed into a well typed Java program using only the
+%   target API, if the transformation program is well typed under the
+%   type checking rules. We formally prove this property on
+%   Featherweight Java~\cite{fj}, a formal model of the core Java
+%   language often used to reason typing-related properties of Java.
+\item We have implemented
+  SWIN\footnote{https://github.com/Mestway/SWIN-Project} and have
+  evaluated SWIN by implementing three real world transformation
+  programs in SWIN. These programs ranges from web APIs~\cite{webapi}
+  to local APIs, including both API updating and API switching. Our
+  case study shows that SWIN is able to specify a range of useful
+  program transformations in practice. More importantly, compared with
+  Twinning, the additional type checking rules in SWIN does not confine the
+  expressiveness of the language.
+\end{itemize}
+
+The rest of our paper is structured as follows. Section~\ref{sec:examples}
+briefly introduces Twinning, and then give two motivating examples to show why Twinning 
+is not type-safe in program adaptation. 
+Section~\ref{sec:examples} also discusses how to maintain type safety 
+in program adaptation. 
+Section~\ref{tw-fj} presents core SWIN, with an introduction to
+Featherweight Java.
+% gives an 
+% introduction to Featherweight Java, and the formal definition of our 
+% transformation language SWIN.
+Section~\ref{tw-type} gives the type system for core SWIN, as well as the proof of type safety while transforming programs using rules in SWIN  
+on Featherweight Java.
+Section~\ref{sec:extension} explains how to extend core SWIN to full SWIN.
+% shows that our proof can be extended to full Java.
+% In Section~\ref{sec:evaluation}, we select three real cases to show the expressiveness of SWIN, and
+% then compare SWIN with Twinning.
+Section~\ref{sec:evaluation} presents three case studies which
+demonstrate the expressiveness of SWIN.
+% Section~\ref{sec:related} shows related work in this area. Conclusions and future work are presented
+% in Section~\ref{sec:conclusionsandfutruework}.
+Finally, Section~\ref{sec:related} discuss related work and
+Section~\ref{sec:conclusionsandfutruework} concludes the paper.
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "pepm-15"
+%%% End: 

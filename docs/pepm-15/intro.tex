@@ -1,0 +1,129 @@
+\section{Introduction}
+\label{intro}
+Preserving the type-safety (or type correctness) while modifying (or updating) Java programs is a hard work, 
+especially the modification is not trivial. 
+Modifying a program is a kind of software maintenance under some conditions. 
+In software engineering, software maintenance 
+is the modification of a software product after delivery to correct faults, to improve performance or 
+other attributes. Software maintenance is the last stage in software life cycle, and is the most 
+important and time-consuming stage. Studies indicate that the cost of maintaining software dominates 
+more than 60\% of all cost in software development, the figure can even up to 80\%\cite{verhoef}. 
+Software maintenance can be classified into four categories: corrective maintenance, adaptive maintenance, 
+perfective maintenance, and preventive maintenance\footnote{http://www.iso.org/iso/catalogue\_detail.htm?csnumber=39064}. 
+Adaptive maintenance means 
+modification of a software product performed after delivery to keep a software product usable in a 
+changed or changing environment. Statistics indicate that adaptive maintenance 
+account for 20\% of all maintenances. 
+
+One scenario for adaptive maintenance is that modifying the client programs to adapt to 
+new API (Applicable Programming Interface). In software development, nearly all developers 
+try to use existing APIs rather than implementing their own APIs. Using existing APIs can improve 
+development efficiency and lower the cost of software development. 
+However, some APIs may be failed or evolutive. For a failed API, developers need to 
+find a new API that has the similar functionalities as a replacement. 
+For a evolutive API, 
+developers can use the updated API (API after evolution) as a replacement. 
+Because the incompatibility may be introduced by new APIs, in both these cases, 
+developers need to modify (update) client programs to adapt to the new 
+API. These processes of modifying client programs are program adaptation. 
+The usual way of program 
+adaptation is manually update programs assistant by the search-and-replace tool, 
+but it is tedious and error-prone. 
+
+An automatically program adaptation approach is using rule-based language to describe
+the modifications, 
+then automatically update these programs with the assistant of tools.
+A rule-based language is a meta-language includes a set of
+rules. Usually a rule includes two parts, one for match, and another for replacement.
+While a code block is matching with a rule, this code block will be replaced according
+the rule. 
+With respect to other automatic program adaptation approaches, 
+using rule-based language to update client programs has many merits.
+The modifications are flexible, rather than only using the build-in 
+modifications. Thus the ability and generality of using rule-based 
+language to modify the program is strong. However, one widely criticized 
+problem of using rule-based language is high cost of studying the language.
+Twinning \cite{twinning} is a very simple rule-based language, and it is easy to learn and write.
+In our experience,  the ability of twinning is powerful. 
+In our paper, we provide a rule-based language SWIN which based on twinning.
+The syntax and semantics of SWIN are similar as twinning, so the merits of easy
+to learn and powerful to write have been inherited. 
+
+However, although many merits in twinning, every developers
+write their own rules to update programs still a hard work. First,
+the developers need to acquire how the differences between new API and old API.
+In order to get these information, they should read the API release notes, 
+API source code, and etc., all of these
+are not easy and time-consuming. Then they should know the client programs very well to write
+valid rules. However, a software usually developed by many people, so developers
+need to work cooperative, and it is time-consuming. Although developers write rules carefully, 
+maybe there are something wrong in rules.
+Therefore, after modified programs, 
+the developers need to test whether the modified programs are right (type correct or behavior preserving). 
+If there
+are some type error in the programs, developers need to modify the program again.
+All of these processes are not easy and time-consuming.
+
+In order to lower the painful of developers in program adaptation, we provide the rule-based
+language SWIN mainly for API vendors.
+When the API failed or API updated, the API vendor can
+write a set of rules using SWIN to help the client program developers automatically update their 
+programs. For the API vendor is familiar with the API, 
+so this is an easy job, and the maintenance of rules is
+also not hard. 
+Many other rule-based languages are focus on updating general object languages. 
+These rule-based languages 
+usually grammar-oriented
+which free of the specific object program language,
+thus these rule-based languages are also free of the type of specific object language. 
+In our
+paper, we consider the type correctness preserving while modifying programs, 
+and we focus on a specific programming language -- Java.
+There are some works focus
+on preserving the type correctness when using the rule-based language to modify
+the programs. One [Martin] work chose the lambda calculus as the object language,
+but there is a big gap between lambda calculus and high-level programming language.
+Although twinning\cite{twinning} chose Java as object language, but they focus on
+the type-safety preservation of specific programs modification. In our paper, we want to extend
+the rule-based language twinning as Safe tWINning (SWIN) that assure any type-safety Java
+programs can be preserved type correctness after using the rules of SWIN to modify the programs.
+
+For our work mainly provide to developer, and developer should write rules which can update any
+client programs with their APIs and assure the updated programs are type correct. Our work
+provide the some type safe properties of rules. If rules satisfy these properties, 
+they can be used to safely
+update any client programs which means any type correctness client program is also 
+type correctness after being updated.
+We also provide a checking algorithm to check if rules satisfy type safe properties.
+In our paper, we chose Featherweight Java as our object language to proof that checked rules can 
+really preserve the
+type correctness of any client programs.
+
+Our contributions are:
+\begin{itemize}
+\item We provide the formal syntax and semantics of twinning. 
+\item We provide a set of type safe properties of rules and a check algorithm to check if update rules are safety.
+\item We proof that the correctness of these properties in featherweight Java, and our proof can 
+    assure that the checked rules are safety for all the client program.
+\item we provide a tool for automatically program update
+\end{itemize}
+
+The rest of the paper is structured as follows. In Section \ref{sec:examples}, first, we 
+briefly introduce Twinning. Then, we give two motivating examples to show why twinning
+cannot preserve type correctness in program adaptation. 
+. In the last part of this Section, 
+we informally explain our four safe properties that update rules should satisfy with to preserve the 
+type correctness.
+Section \ref{tw-fj} gives an 
+introduction to featherweight Java, and the formal definition of our update language SWIN.
+In Section \ref{tw-type}, we give the formal definition 
+of safe properties, as well as the proof of type safety while transforming program with
+rules satisfying these properties on featherweight Java.
+Section \ref{sec:extension} shows that our proof can be extended to full Java.
+In Section\ref{evaluation}, we select three real cases to show that expressiveness of SWIN, and
+compare SWIN with twinning.
+Section \ref{related} shows related work in this area. Conclusions and future work are presented
+in Section\ref{conclusionsandfuturework}.
+
+
+

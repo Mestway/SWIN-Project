@@ -1,0 +1,290 @@
+\begin{section}{Full Proof for Type Safety}\label{sec:proof}
+
+\begin{definition}{Typing Context} $\tt\Gamma=\bar{x}:\bar{C}$ represents the environment of a term $\tt t$, which designates each variable $\tt x$ in a term with concrete a type $\tt C$.  Specially, given a term $\tt t$ in client code and a transform program $\tt\Pi$, $\tt\Gamma_s$ represents the variable environment for $\tt t$ (before transformation) and $\tt\Gamma_d$ represents the environment of a $\tt\Pi(t)$ (after code transformation).
+\end{definition}
+
+\begin{lemma}{Lemma 1}
+Given a SWIN program $\tt\Pi$ acting on $\tt API_s$ to $\tt API_n$, suppose environment for term $\tt t$ is $\tt\Gamma_s = \bar{x}:\bar{C}$ , then the variable environment for $\tt\Pi(t)$ is $\tt\Gamma_d=\bar{x}:\overline{\Pi(C)}$.
+\end{lemma}
+\begin{proof}
+Note that all variables in the client code are bounded by the definition of a method $\tt M$. 
+\par
+We have the variable environment for term $\tt t$ is $\Gamma_s$, and we assume that $\tt t$ is defined in the body of method $\tt M$ with definition is $\tt M=C_1\ m(\bar{C}_m\ \bar{x})\{return\ t;\}$, 
+then $\tt\Gamma_s = \bar{x}:\bar{C}_m$. According to the rule E-METHOD, we have $\tt\Pi(M)=\Pi(C_1)\ m(\Pi(\bar{C}_m)\ \bar{x})\ \{return\ \Pi(t);\}$. Then types of variables in $\tt \Pi(t)$ is $\tt\bar{x}:\overline{\Pi(C)}$. Thus the variable environment for $\tt\Pi(t)$ is $\tt\Gamma_d=\bar{x}:\overline{\Pi(C)}$.
+\end{proof}
+
+\begin{lemma}
+Suppose $\tt \Pi$ passes SWIN type checking rules, and it transform old client code with $\tt API_s$ to new client code with $\tt API_d$, then:\par
+$\tt C_1<: C_2 $ in old client code $\Rightarrow$ $\tt\Pi(C_1)<:\Pi(C_2)$ in new client code.
+\end{lemma}
+\begin{proof} Consider the two possibilities of $\tt C_1$:
+\begin{subparagraph}{Case-1:} class $\tt C_1$ is defined in client code. 
+\par
+In this case, according to the rule E-DECLARATION, we have $\tt \Pi(CL)= class\ \Pi(C_1)\ extends\ \Pi(C_2)\ \{\ \Pi(\bar{C}_i)\ \bar{f}_i;\ \Pi(K)\  \overline{\Pi(M)}\ \}$ in client code. And thus in updated client code, we have $\tt\Pi(C_1) <: \Pi(C_2)$ directly by the class definition.
+\end{subparagraph}
+\begin{subparagraph}{Case-2:} class $\tt C_1$ is defined in $\tt API_s$.
+\par
+In this case, $\tt C_2$ must also present in the definition of $\tt C_1$ in $\tt API_s$. 
+\par
+According to the rule CLASS-COVER in the SWIN checking rules, there exists $\tt C_1\hookrightarrow D_1$, and $\tt C_2\hookrightarrow D_2$ in $\tt TypeMapping(\Pi)$.
+By the condition $\tt C_1<:C_2$ and the rule SUBTYPING-PRESERVING, we have $\tt D_1 <: D_2$. Thus we have $\tt D_1=\pi(C_1) <: \pi(C_2)=D_2$.
+\end{subparagraph}
+\par \ 
+\par
+With both cases proved, the lemma is true.
+\end{proof}
+
+\begin{lemma}
+Suppose a FJ term $\tt t$ is well typed under environment $\tt \Gamma=\Gamma_1,\{\bar{x}:\bar{C}_x\}$, i.e. $\tt \Gamma\vdash_{FJ} t:C_t$, then after substituting terms $\tt \bar{t}_v$ for variables $\tt \bar{x}$ , with the property that $\tt\Gamma_1\vdash_{FJ}\bar{t}_v:\bar{C}_v$ and $\tt\bar{C}_v <: \bar{C}_x$, $\tt t$ can be typed to $\tt C_t$ or a sub-class of $\tt C_t$. Namely,
+$$\tt \Gamma_1,\{\bar{x}:\bar{C}_x\} \vdash_{FJ} t:C_t \Longrightarrow \Gamma_1\vdash_{FJ} [\bar{x}\rightarrow\bar{t}_u]t: C'_t,\ C'_t <: C_t$$
+\end{lemma}
+\begin{proof}
+By induction on the derivation of a FJ term $\tt t$, there are five cases to discuss.
+\subparagraph{Case-1}$\tt t=x, \Gamma\vdash_{FJ} t:C_t, x:C_t$
+\par
+In this case, we substitute an FJ term $\tt t_u$ of type $\tt C_u\ where\ \tt C_u<:C_t$ for $\tt x$. Then we have $\tt[x\rightarrow t_u]t=t_u$, thus $\tt\Gamma\vdash_{FJ} [x\rightarrow t_u]t:C_u$ and $\tt C_u<:C_t$.
+
+\subparagraph{Case-2}$\tt t=(C) t_1,\ \Gamma\vdash_{FJ} t:C$.
+\par This is done right away, as after substitution, $\tt t'=(C)[\bar{x}\rightarrow \bar{t}_u]t_1$ is still a cast term with type $\tt C$. thus $\tt\Gamma \vdash_{FJ} [\bar{x}\rightarrow\bar{t}_u]t:C$.
+
+\subparagraph{Case-3}$\tt t=t_1.f,\ \Gamma\vdash_{FJ} t:C_t,\ t_1:C_1$
+\par
+By induction, we have $\tt \Gamma\vdash_{FJ} t_1:C'_1$ and $\tt C'_1 <: C_1$. 
+Then the field access is also referred to the field in $\tt C_1$ (the super class). And after substitution, we still have $\tt \Gamma\vdash_{FJ} [\bar{x}\rightarrow\bar{t}_u]t:C_t$.
+
+\subparagraph{Case-4} $\tt t=new\ C_0(\bar{t}_x),\ \Gamma\vdash_{FJ} t_x:C_x, t:C_0$
+\par
+The substitution is $\tt[\bar{x}\rightarrow\bar{t}_u]t = new\ C_0([\bar{x}\rightarrow\bar{t}_u]\bar{t}_x)$.
+By induction, after substitution, we have $\tt \Gamma\vdash_{FJ} [\bar{x}\rightarrow\bar{t}_u]\bar{t}_x:\bar{C}'_x$ and $\tt \bar{C}'_x<:\bar{C_x}$. 
+As the $\tt t$ can be well typed in $\Gamma$, by rule FJ-NEW (FJ-type checking rule), 
+We have 
+\begin{center}
+\AXC{$\tt fields(C_0)=\bar{D}\ \bar{f}$}
+\AXC{$\tt \Gamma\vdash_{FJ}\bar{t}_x:\bar{C}_x$}
+\AXC{$\tt \bar{C}_x <: \bar{D}$}
+\TIC{$\tt \Gamma\vdash_{FJ} new\ C(\bar{t}_x):C_0$}
+\DP
+\end{center}
+And after substitution, we have 
+\begin{center}
+\AXC{$\tt fields(C_0)=\bar{D}\ \bar{f}$}
+\AXC{$\tt \Gamma\vdash_{FJ}[\bar{x}\rightarrow\bar{t}_u]\bar{t}_x:\bar{C}'_x$}
+\AXC{$\tt \bar{C}'_x <: \bar{C}_x <: \bar{D}$}
+\TIC{$\tt \Gamma\vdash_{FJ} new\ C([\bar{x}\rightarrow\bar{t}_u]\bar{t}_x):C_0$}
+\DP
+\end{center}
+Then $\tt t=new\ C([\bar{x}\rightarrow\bar{t}_u]\bar{t}_x)$ can also be typed to $\tt C_0$.
+
+\subparagraph{Case-5} $\tt t=t_0.m(\bar{t}_x),\ \Gamma\vdash_{FJ} t_x:C_x, t_0:C_0, t:C$
+\par
+In this case, we have $\tt [\bar{x}\rightarrow\bar{t}_u]t=[\bar{x}\rightarrow\bar{t}_u]t_0.m([\bar{x}\rightarrow\bar{t}_u]\bar{t}_x)$
+\par
+By induction, after substitution, we have: $$\tt \Gamma\vdash_{FJ} [\bar{x}\rightarrow\bar{t}_u]\bar{t}_x:\bar{C}'_x,[\bar{x}\rightarrow\bar{t}_u]t_0:C'_0$$ and $\tt \bar{C}'_u<:\bar{C}_u, C'_0<:C_0$. 
+As the term $\tt t$ can be typed to $\tt C_0$ before substitution, there exists the following type inference rule:
+\begin{center}
+\AXC{$\tt \Gamma\vdash_{FJ} t_0:C_0$}
+\AXC{$\tt mtype(m,C_0)=\bar{D}\rightarrow C$}
+\noLine
+\BIC{~~~~~~~~~~~~~~~~$\tt \Gamma\vdash_{FJ}\bar{t}_x:\bar{C}_x\qquad\bar{C}_x <: \bar{D}$~~~~~~~~~~~~~~~~}
+\UIC{$\tt \Gamma\vdash_{FJ} t_0.m(\bar{t}_x):C$}
+\DP
+\end{center}
+As $\tt C'_0 <: C_0$, we have $\tt mtype(m,C'_0)=mtype(m, C_0)$. Then we have:
+\begin{center}
+\AXC{$\tt \Gamma\vdash_{FJ} [\bar{x}\rightarrow\bar{t}_u]t_0:C'_0$}
+\AXC{$\tt mtype(m,C'_0)=\bar{D}\rightarrow C$}
+\noLine
+\BIC{~~~~~~~~$\tt \Gamma\vdash_{FJ}[\bar{x}\rightarrow\bar{t}_u]\bar{t}'_x:\bar{C}'_x$\quad\quad\quad\quad$\tt \bar{C}'_x <: \bar{C}_x <:\bar{D}$~~~~~~~~}
+\UIC{$\tt \Gamma\vdash_{FJ} [\bar{x}\rightarrow\bar{t}_u]t_0.m([\bar{x}\rightarrow\bar{t}_u]\bar{t}_x):C$}
+\DP
+\end{center}
+Thus we have $\tt \Gamma\vdash_{FJ} [\bar{x}\rightarrow\bar{t}_u]t:C$. And thus the property holds.
+\par
+\ 
+\par
+With all these five cases discussed, we finish the proof. 
+\end{proof}
+
+\begin{lemma}
+Suppose we have a well typed SWIN program $\tt \Pi$, if a term $\tt t$ in the original type environment can be typed to $\tt C$, then after transformation, the term is well typed and the type is a subtype of $\tt \Pi(C)$. i.e.
+$$\tt \Gamma_s\vdash_{FJ} t:C \Longrightarrow \Gamma_d\vdash_{FJ} \Pi(t):C',\ where\ C'<:\Pi(C)$$
+\end{lemma}
+\paragraph{Assumption} We assume that we cannot access the field of an API class in client code without using a public method defined in API, as we can treat field access as a special method access without arguments.
+\begin{proof}
+By induction on a derivation of a term $\tt t$. At each step of the induction, we assume that the desired property holds for all sub-derivations.
+We give our proof based on the last step of the derivation, which can only be one of variables, field access, method invocation, object creation or cast.
+\paragraph{Case-1:}
+$\tt t=x,\ \Gamma_s\vdash_{FJ} t:C_t$
+\par
+The derivation of a term $\tt t$ is only one step. Then $\tt t$ must be a variable bounded in the definition of the method body. Suppose the type of x is $\tt\Gamma_s\vdash_{FJ} x:C_t$, then according to Lemma 1, we have $\tt\Gamma_d\vdash_{FJ} x:\Pi(C_t)$, which holds the property.
+
+
+\paragraph{Case-2:}
+$\tt t=t_1.f,\ \Gamma_s\vdash_{FJ} t:C_t,\ t_1:C_1$.
+\par
+According to the definition, the type of $\tt f$ is $\tt C_t$. And by the rule E-T-FILED, $\tt \Pi(t)=\Pi(t_1).f$. 
+According to the assumption, the term $\tt t_1$ can only be a client-defined class. Thus we have $\tt \Pi(C_1)=C_1$.
+\par
+By induction, we have $\tt \Gamma_d\vdash_{FJ}\Pi(t_1):C'_1,\ where\ C'_1<:\Pi(C_1)$. And we have $\tt C'_1<:C_1$. And $\tt t_1.f$ is referred to the field access in super class $\tt C_1$.
+\par
+The class definition of $\tt C_1$ is $\tt class\ C_{11}\ extends\ C_{12}\ \{ \bar{C}_{1i}\ \bar{f}_{1i};\ K\ \bar{M}\ \}$, according to the rule E-DECLARATION, we have the definition of the field $\tt f$ as $\tt \Gamma_d\vdash_{FJ} \Pi(C_t):f$. 
+\par
+Then we have $\tt \Gamma\vdash_{FJ} \Pi(t_1).f:\Pi(C_t)$. Thus term $\tt t$ preserves the property.
+
+\paragraph{Case-3:}
+$\tt t=(C) t_1,\ \Gamma_s\vdash_{FJ} t:C$.
+\par
+By the rule E-TERM-CAST, we have $\tt\Pi(t)=(\Pi(C))\ \Pi(t_1)$, and by induction, $\tt t$ is well typed in $\tt\Gamma_d$, then the type of the term is $\tt\Gamma_d\vdash_{FJ} \Pi(t):\Pi(C)$ by FJ-CAST.
+
+\paragraph{Case-4:}
+$\tt t=new\ C_0(\bar{t}_u),\ \Gamma_s\vdash_{FJ} t_u:C_u, t:C_0$
+\par
+In this case, we have two sub-cases:
+\subparagraph{sub-case 1:} The class $\tt C_0$ is defined in client code rather than in $\tt API_s$, and class $\tt C_0$ has constructor $\tt  C_0(\bar{C}_2\ \bar{x})\ \{...\}$.
+\par In this sub-case, there will be no rule $\tt\pi$ in $\tt \Pi$ matching this term (as a rule only matches an API method). Then according to the rule E-ALTER-NEW, 
+$\tt\Pi(t)=new\ C_0(\overline{\Pi(t_u)})$. Now we need to prove that $\tt\Pi(t)$ is well typed in $\tt \Gamma_d$ and this can be done with the following properties:
+\begin{enumerate}
+\item According to the rule E-CONSTRUCTOR, we have the constructor of class $\tt C_0$ after update is $\tt C_0(\overline{\Pi(C_2)}\ x)$, and $\tt fields(C_0) = \overline{\Pi(C_2)}$.
+\item As term $\tt t$ is well typed in the original code. We have the relationship $\tt \bar{C}_u <: \bar{C}_2$.
+\item By induction, $\tt \Gamma_d \vdash_{FJ} \overline{\Pi(t_u)}: \bar{C}'_u,\ where\ \bar{C}'_u <: \overline{\Pi(C_u)}$.
+\item As $\Pi$ is well typed in SWIN type system, according to Lemma 2, $\tt \overline{\Pi(C_u)} <: \overline{\Pi(C_2)}$.
+\end{enumerate}
+With these four properties, the term $\tt\Pi(t)$ is well typed according to the type checking rule FJ-NEW (in FJ type system):
+\begin{center}
+\AXC{$\tt fields(C_0) = \overline{\Pi(C_2)}$}
+\noLine
+\UIC{$\tt \Gamma_d\vdash_{FJ} \overline{\Pi(t_u)}:\bar{C}'_u\quad\quad\bar{C}'_u <: \overline{\Pi(C_u)} <: \overline{\Pi(C_2)}$}
+\UIC{$\tt \Gamma_d\vdash_{FJ} new\ C_0(\overline{\Pi(t_u)}): C_0$}
+\DP
+\end{center}
+And then $\tt\Pi(t)$ is well typed and has type $\tt C_0$, which is of course a subtype of $\tt C_0$.
+
+\subparagraph{sub-case 2:} $\tt\ C_0(\bar{C}_2\ \bar{x}) \{...\}$ is a constructor defined in $\tt API_s$, and the constructor has type $\tt \bar{C}_2\rightarrow C_0$.
+\par
+ As $\tt \Pi$ is well typed in SWIN type system, we have $\tt C_0\hookrightarrow D_0\in TypeMapping(\Pi)$ (By CONSTR-COVER), then there is a rule $\tt\pi=[(~\bar{x}:\overline{C_x\hookrightarrow D_x}~)\ new\ C_0(\bar{x}):C_0 \rightarrow t_r:D_0]$ to transform this term. 
+ Now we need to prove that after meta-variable substitution (We refer to $\tt\sigma t_r$ as the term after meta-variable substitution of $\tt t_r$), $\tt\sigma t_r$ is well typed under $\tt\Gamma_d$, and $\tt\Gamma_d\vdash_{FJ} \sigma t_r:C_{tr},\ where\ C_{tr}<: D_0$. And this can be proved with the following properties:
+\begin{enumerate}
+%
+% Do we really need this???
+%\item $\tt\pi$ is well typed in SWIN type system. According to the rule T-L2, we have $\tt\bar{C}_x<:\bar{C}_2$, and the source code pattern is well typed.
+%
+%
+\item According to T-R, $\tt \{API_d, \bar{x}:\bar{D}_x\}\vdash_{FJ}t:C_d$.
+\item According to E-NEW, $\tt \bar{C}_u <: \bar{C}_x$ 
+\item According to Lemma 2 and property 2, $\tt \overline{\Pi(C_u)}<: \overline{\Pi(C_x)}=\bar{D}_x$
+\item By induction, $\tt \Gamma_d \vdash_{FJ} \overline{\Pi(t_u)}: \bar{C}'_u,\ where\ \bar{C}'_u <: \overline{\Pi(C_u)}$.
+\end{enumerate}
+With these four properties, by E-T-NEW, we have the substitution $\tt \{\bar{x}\rightarrow\overline{\Pi(t_u)}\}$ with type that $\tt \overline{\Pi(t_u)}:\bar{C}'_u,\ where\ \bar{C}'_u <: \overline{\Pi(C_u)}<:\bar{D}_x$. According to Lemma 3, after substitution $\tt\Pi(t_u)$ for $\tt x$ in the term $\tt t_r$, the type of the term $\tt\sigma t_r$ should be $\tt D'_0$ and $\tt D'_0 <: D_0$. 
+Thus we have $\tt\Gamma_d\vdash_{FJ} \Pi(t):D'_0,\ where\ D'_0 <: D_0 = \Pi(C_0)$. 
+\par
+\ 
+\par
+With these two sub cases proved, Case-4 is proved.
+
+\paragraph{Case-5:}
+$\tt t=t_0.m(\bar{t}_u),\ \Gamma_s\vdash_{FJ} t_u:C_u, t_0:C_0, t:C$
+\par 
+This case can also be divided into two sub-cases, which are similar to those of Case-4.
+\subparagraph{sub-case 1:} 
+The method is defined in a class that is defined in client code, i.e. $\tt C_0$ is a client-defined class. Then the application of $\tt\Pi$ will be evaluated with rule E-ALTER-INVOKE, and $\tt\Pi(t)=\Pi(t_0).m(\overline{\Pi(t_u)})$. As the term is well typed in original client code, we have:
+\begin{center}
+\AXC{$\tt \Gamma_s\vdash_{FJ} t_0:C_0$}
+\AXC{$\tt \Gamma_s\vdash_{FJ} \bar{t}_u:\bar{C}_u$}
+\noLine
+\BIC{$\tt \tt mtype(m,C_0)=\bar{D}\rightarrow C\quad\quad\tt  \bar{C}_u<:\bar{D}$}
+\UIC{$\tt \Gamma_s\vdash_{FJ} t_0.m(\bar{t}_u):C$}
+\DP
+\end{center}
+Now we have the following properties:
+\begin{enumerate}
+\item By induction, $\tt\Gamma_d\vdash_{FJ}\Pi(t_0):C'_0,\ where\ C'_0<:\Pi(C_0)=C_0$ (As $\tt C_0$ is defined in client code, we have $\tt \Pi(C_0)=C_0$).
+\item By induction, $\tt\Gamma_d\vdash_{FJ}\overline{\Pi(t_u)} :\bar{C}'_u,\ where\ \bar{C}'_u <: \overline{\Pi(C_u)}$
+\item According to Lemma 2 and the condition $\tt\bar{C}_u<:\bar{D}$, we have $\tt \overline{\Pi(C_u)}<:\overline{\Pi(D)}$
+\item As $\tt \Pi(t_0):C'_0$ is a subtype of $\tt C_0$, we have $\tt mtype(m,C'_0)=\overline{\Pi(D)}\rightarrow \Pi(C)$ by E-METHOD.
+\end{enumerate}
+Then with these four properties, we have:
+\begin{center}
+\AXC{$\tt \Gamma_d\vdash_{FJ} \Pi(t_0):C'_0$}
+\AXC{$\tt mtype(m,C'_0)=\overline{\Pi(D)}\rightarrow \Pi(C)$}
+\noLine
+\BIC{~~~~~~~~$\tt \Gamma_d\vdash_{FJ} \overline{\Pi(t_u)}:\bar{C}'_u$\quad\quad$\tt  \bar{C}'_u<:\overline{\Pi(C_u)}<:\overline{\Pi(D)}$~~~~~~~~}
+\UIC{$\tt \Gamma_d\vdash_{FJ} \Pi(t_0).m(\overline{\Pi(t_u)}):\Pi(C)$}
+\DP
+\end{center}
+And thus sub-case 1 is proved.
+\subparagraph{sub-case 2:}
+The function is defined in an API class, and by rule METHOD-COVER, we have a rule 
+$\tt \pi=[(~\bar{x}:\overline{C_x\hookrightarrow D_x}~,~y:C_0\hookrightarrow D_0)\ y.m(\bar{x}):C \rightarrow t_r:D]$ to transform the method invocation, and we suppose the method has definition $\tt C\ m(\bar{D}\ \bar{u})$, so the type of $\tt m$ in $\tt C_0$ is $\tt\bar{D}\rightarrow C$.
+We have the following derivation in the old API and four properties based on the derivation: 
+\begin{center}
+\AXC{$\tt \Gamma_s\vdash_{FJ} t_0:C_0$}
+\AXC{$\tt mtype(m,C_0)=\bar{D}\rightarrow C$}
+\noLine
+\BIC{~~~~~~~~~~~~~~~~$\tt \Gamma_s\vdash_{FJ} \bar{t}_u:\bar{C}_u$\qquad$\tt  \bar{C}_u<:\bar{D}$~~~~~~~~~~~~~~~~}
+\UIC{$\tt \Gamma_s\vdash_{FJ} t_0.m(\bar{t}_u):C$}
+\DP
+\end{center}
+
+\begin{enumerate}
+\item $\tt\bar{C}_u<:\bar{C}_x$, as this rule matches the term.
+\item By Lemma 2, we have $\tt \overline{\Pi(C_u)} <: \overline{\Pi(C_x)} = \bar{D}_x$
+\item According to T-R, $\tt \{API_d, \bar{x}:\bar{D}_x\}\vdash_{FJ}t_r:D$.
+\item By induction, we have $\tt \Gamma_d\vdash_{FJ}\overline{\Pi(t_u)}:\bar{C}'_u,\ where\ \bar{C}'_u <:\overline{\Pi(C_u)}$
+\end{enumerate}
+With these four properties, by E-T-INVOKE, we will generate the substitution $\tt \{\bar{x}\rightarrow\overline{\Pi(t_u)}\}$ with property that $\tt \overline{\Pi(t_u)}:\bar{C}'_u,\ where\ \bar{C}'_u <: \overline{\Pi(C_u)}<:\bar{D}_x$.
+Then according to Lemma 3 and the fact that $\tt t_r$ is well typed to $\tt D$, after substitution, the type of return term should be $\tt D'$ and $\tt D' <: D$, and this finishes the proof of sub-case 2.
+\par
+With these two sub-cases proved, Case-5 is proved.
+
+\par
+\ 
+\par
+With all these five cases proved, the proof of the Lemma completes by induction. And thus $\tt \Gamma_s\vdash_{FJ} t:C \Rightarrow \Gamma_d\vdash_{FJ} \Pi(t):C',\ where\ C'<:\Pi(C)$.
+\end{proof}
+
+\begin{theorem}
+Method declaration and class declaration are well typed after code transformation with a well type SWIN program $\tt \Pi$. i.e.
+ $$\tt\Pi(M)=\Pi(C_1)\ m(\Pi(\bar{C}_m)\ \bar{x})\ \{return\ \Pi(t);\}$$
+ $$\tt \Pi(CL)= class\ \Pi(C_1)\ extends\ \Pi(C_2)\ \{\ \Pi(\bar{C}_i)\ \bar{f}_i;\ \Pi(K)\  \overline{\Pi(M)}\ \}$$
+are well typed with new API if $\tt \Pi$ is well typed.
+\end{theorem}
+
+\begin{proof}:
+For $\tt\Pi(M)$, as it is well typed with old API ($\tt API_s$), we have the following derivation under FJ type system:
+\begin{center}
+\AXC{$\tt\bar{x}:\bar{C}, this:C\vdash_{FJ} t_0:E_0$}
+\AXC{$\tt E_0 <: C_0$}
+\noLine
+\BIC{$\tt CT(C)=class\ C\ extends\ D\ \{...\}$\quad\quad$\tt override(m,D,\bar{C}\rightarrow C_0)$}
+\UIC{$\tt C_0\ m(\bar{C}\ \bar{x})\ \{return\ t_0;\}\ OK\ in\ C$}
+\DP
+\end{center}
+Now we can prove the lemma with following properties:
+\begin{enumerate}
+\item According to Lemma 2 and the fact that $\tt E_0<:C_0$, we have $\tt\Pi(E_0)<:\Pi(C_0)$.
+\item According to Lemma 4, $\tt\Gamma_d\vdash_{FJ} t_0:E'_0,\ where\ E'_0<:\Pi(E_0)$
+\item By E-DECLARATION and E-METHOD, the form of method definition co-variant with $\tt\Pi$, thus $\tt CT(\Pi(C))=class\ \Pi(C)\ extends\ \Pi(D)\ \{...\}$ and $\tt override(m,\Pi(D),\overline{\Pi(C)})$
+\end{enumerate}
+Thus we have:
+\begin{center}
+\AXC{$\tt\bar{x}:\overline{\Pi(C)}, this:\Pi(C)\vdash_{FJ} \Pi(t_0):E'_0$}
+\AXC{$\tt E'_0 <: \Pi(E_0) <: \Pi(C_0)$}
+\noLine
+\BIC{$\tt CT(\Pi(C))=class\ \Pi(C)\ extends\ \Pi(D)\ \{...\}$}
+\noLine
+\UIC{~~~~~~~~~~~~~~~~~~~~$\tt override(m,\Pi(D),\bar{\Pi(C)}\rightarrow \Pi(C_0))$~~~~~~~~~~~~~~~~~~~~}
+\UIC{$\tt \Pi(C_0)\ m(\overline{\Pi(C)}\ \bar{x})\ \{return\ \Pi(t_0);\}\ OK\ in\ \Pi(C)$}
+\DP
+\end{center}
+And this proves the safety of method declaration.
+\par
+For class declaration, as all method declaration are well typed, we just need to prove the consistency of the constructor for $\tt\Pi(C)$, and this is immediate by E-CONSTRUCTOR.
+\par
+Then the lemma is proved and all method declaration and class declaration are well typed.
+\end{proof}
+
+\end{section}
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "gpce-2014"
+%%% End: 
