@@ -16,9 +16,10 @@
 \def\fCenter{{\mbox{\Large$\rightarrow$}}}
 
 \newcommand{\blue}[1] {\textcolor{blue}{#1}}
-\newcommand\type[1]{\mathsf{Type}(#1)}
+\newcommand\type[1]{\mathbf{Type}(#1)}
 \newcommand{\mychange}{\textcolor{red}{NEW}}
 \newcommand{\indentspace}{~~~~~~~~}
+\newcommand{\env}[2]{\vdash_{#1}^{#2}}
 
 
 \newtheorem{theorem}{Theorem}
@@ -37,9 +38,9 @@
 %\pagestyle{fancy}
 
 \begin{document}
-\title{Formal Definition of SWIN language}
+\title{Formal Definition of SWIN}
 \author{Chenglong Wang \and Jun Li \and Yingfei Xiong \and Zhenjiang Hu}
-\date{\today}
+\date{}
 \maketitle
 
 \section{Featherweight Java}
@@ -117,7 +118,7 @@
 
 \[
   \begin{array}{c}
-    \infer[\text{(METHOD-LOOPUP2)}]
+    \infer[\text{(METHOD-LOOKUP2)}]
     {\tt mtype(m,C)=mtype(m,D)}
     {
       \begin{array}{c}
@@ -235,12 +236,10 @@
   \tt r   \quad ::=\quad  &\tt  t                                 & \text{FJ term}
 \end{align*}
 
-\subsection{Environment}
+\subsection{API definition}
 \begin{align*}
- \tt API ~ ::=&\tt ~ \{ ~ \overline{CL} ~ \}       & \text{API definition}\\
- \tt E ~   ::=&\tt ~ \{~ \overline{x:C_1\hookrightarrow C_2}~\}     & \text{SWIN typing context}\\
+ \tt API ~ ::=\tt ~ \{ ~ \overline{CL} ~ \}\qquad\text{(API definition)}\\
 \end{align*}
-
 
 \subsection{Evaluation Rules}
 \begin{center}
@@ -289,8 +288,10 @@
 \vspace{2pt}
 
 \begin{center}
-\AXC{$\tt (x:C_1\hookrightarrow C_2)[~x.f:C_l\ \rightarrow\ r:C_r~]\in \Pi$ ~~~~ $\tt\type{t} < C_l$}                 \RightLabel{~(E-T-FIELD)}
-\UIC{$\tt \Pi(t.f)=\tt[~x\rightarrow \Pi(t)~]r$}
+\AXC{$\tt (x:C_1\hookrightarrow C_2)[~x.f:C\ \rightarrow\ r:D~]\in \Pi$ ~~~~ $\tt\type{t} <: C_1$}
+\noLine
+\UIC{$\tt\nexists~(x:C_3\hookrightarrow C_4)[~x.f:C\ \rightarrow\ r:D~]\in \Pi.(\mathbf{Type}(t)<: C_3 <: C_1\land C_3\neq C_1) $}                 \RightLabel{~(E-T-FIELD)}
+\UIC{$\tt \Pi(t.f)=\tt[~x\mapsto \Pi(t)~]r$}
 \DP
 \end{center}
 \vspace{2pt}
@@ -307,15 +308,19 @@
 \noLine
 \UIC{$\tt\quad\quad \{~\bar{x}:\overline{C_1\hookrightarrow C_2}~\}\subseteq \bar{d} \quad\quad  \type{\bar{t}_u}<:\bar{C}_1$}               
 \RightLabel{~(E-T-NEW)}
-\UIC{$\tt \Pi(new\ C_0(\bar{t}_u))=[~\bar{x}\rightarrow \overline{\Pi(t_u)}~](r)$}
+\UIC{$\tt \Pi(new\ C_0(\bar{t}_u))=[~\bar{x}\mapsto \overline{\Pi(t_u)}~](r)$}
 \DP
 \end{center}
+\vspace{2pt}
 
 \begin{center}
-\AXC{$\tt  (\bar{d})[\ x_0.m_0(\ \overline{y}\ ):C_l\ \rightarrow\ r:C_r]\in\Pi$}
+\AXC{$\tt  (\bar{y}:\overline{C_1\hookrightarrow C_2},\ x_0:C_3\hookrightarrow C_4)[\ x_0.m_0(\ \overline{y}\ ):C\ \rightarrow\ r:D]\in\Pi$}
 \noLine
-\UIC{$\tt \{\bar{y}:\overline{C_1\hookrightarrow C_2},\ x_0:C_3\hookrightarrow C_4\} \subseteq \bar{d} \quad\quad\type{t_0}<:C_3\quad\quad \type{\bar{t}_u}<:\bar{C}_1$}\RightLabel{~(E-T-INVOKE)}
-\UIC{$\tt \Pi(t_0.m_0(\bar{t}_u))=[~x_0\rightarrow \Pi(t_0),\ \bar{y}\rightarrow \overline{\Pi(t_u)}~](r)$}
+\UIC{$\tt \type{t_0}<:C_3\quad\quad \type{\bar{t}_u}<:\bar{C}_1$}
+\noLine
+\UIC{$\tt \nexists~(\bar{y}:\overline{C_1\hookrightarrow C_2},\ x_0:C_5\hookrightarrow C_6)[\ x_0.m_0(\ \overline{y}\ ):C\ \rightarrow\ r:D]\in\Pi.(\mathbf{Type}(t_0)<: C_5 <: C_3 \land C_5\neq C_3)$}
+\RightLabel{~(E-T-INVOKE)}
+\UIC{$\tt \Pi(t_0.m_0(\bar{t}_u))=[~x_0\mapsto \Pi(t_0),\ \bar{y}\mapsto \overline{\Pi(t_u)}~](r)$}
 \DP
 \end{center}
 \vspace{2pt}
@@ -353,71 +358,67 @@
 
 \subsection{Type Checking Rules}
 
-\[
-  \begin{array}{c}
-    \infer[\text{(T-L1)}]
-    {\tt E\vdash_l x.m(\bar{y}):C_d}
-    {
-      \begin{array}{c}
-          \tt x:C_1\hookrightarrow C'_1,~\bar{y}:\overline{C_2\hookrightarrow C'_2}~ \in E ~~~~~~ \tt class\ C_1\ extends\ D \{\bar{C}\ \bar{f}; K\ \bar{M}\}\in API_s\\
-          \tt \tt C_d\ m(\bar{C}_s\ \bar{u})\{...\} \in \bar{M} ~~~~~~ \bar{C}_2<:\bar{C}_s
-      \end{array}
-    }
-  \end{array}
-\]
-
 \begin{center}
-\AXC{$\tt class\ C\ \{\ \bar{C}\ \bar{f}; C(~\bar{C}_s\ \bar{u}~) \{...\}\ \bar{M}\}\in API_s$}
-\AXC{$\tt
-  \bar{x}:\overline{C_1\hookrightarrow C'_1} \in E$}
-\AXC{$\tt \bar{C}_1<:\bar{C}_s$}                                    \RightLabel{~(T-L2)}
-\TIC{$\tt E\vdash_l new\ C(\bar{x}):C$}
+  \AXC{$\tt \{~\bar{x}:\bar{C}~\}\vdash_{l}^{API_s} l:C_1$}
+  \AXC{$\tt \{~\bar{x}:\bar{D}~\}\vdash_{FJ}^{API_d} r:C_2$}
+\RightLabel{~(T-$\pi$)}
+\BIC{$\tt (\bar{x}:\overline{C\hookrightarrow D})[l:C_1\rightarrow r:C_2]~\mathit{ok}$}
 \DP
 \end{center}
 \vspace{2pt}
 
 \begin{center}
-\AXC{$\tt
-  E=\{\bar{x}:\overline{C\hookrightarrow D}\}$}
-\AXC{$\tt \{~\bar{x}:\bar{D}~\}\vdash_{FJ}^{API_d} t:C_d$}
-\RightLabel{~(T-R)}
-\BIC{$\tt E\vdash_r t:C_d$}
-\DP
+  \AXC{$\tt \Gamma\vdash_{FJ}^{API} x:C_0$~~~~$\tt mtype(m,C_0)=\bar{D}\rightarrow C$~~~~$\tt \Gamma\vdash_{FJ}^{API}\bar{y}:\bar{D}$}
+    \RightLabel{~(T-L1)}
+  \UIC{$\tt \Gamma\vdash_{l}^{API} x.m(\bar{y}):C$}
+  \DP
 \end{center}
+\vspace{2pt}
 
 \begin{center}
-\AXC{$\tt \{~\bar{x}:\overline{C\hookrightarrow D}~\}\vdash_l l:C_1,\
-  \{~\bar{x}:\overline{C\hookrightarrow D}~\}\vdash_r r:C_2$}             
-\RightLabel{~(T-$\tt\pi$)}
-\UIC{$\tt [\{~\bar{x}:\overline{C\hookrightarrow D}~\}\ l:C_1\rightarrow r:C_2]~\mathit{ok}$}
-\DP
+  \AXC{$\tt fields(C)=\bar{D}~\bar{f}$~~~~$\tt \Gamma\vdash_{FJ}^{API}\bar{x}:\bar{D}$}\RightLabel{~(T-L2)}
+  \UIC{$\tt \Gamma\vdash_{l}^{API} new~C(\bar{x}):C$}
+  \DP
+\end{center}
+\vspace{2pt}
+
+\begin{center}
+  \AXC{$\tt fields(C)=\bar{D}~\bar{f}$~~~~$\tt \Gamma\vdash_{FJ}^{API} x:C$}\RightLabel{~(T-L3)}
+  \UIC{$\tt \Gamma\vdash_{l}^{API} x.f_i:D_i$}
+  \DP
 \end{center}
 
-\begin{align*}
-\tt \mathbf{RuleOK} &\tt(\Pi) = \forall~\pi. (\pi\in\Pi \Rightarrow \pi~\mathit{ok})\\
-\tt \mathbf{ConstrCover}&\tt(\Pi, API_s, API_d) =\\
-                  &\tt \forall~C_1,\bar{C}. (class\ C_1\ extends\ \_~\{ C_1(\bar{C}\ \bar{\_})~...~\}\in (API_s-API_d) \\
-                  &\tt \indentspace\Rightarrow~ \exists~C_2,\bar{C}',\bar{x},r.((~\bar{x}:\overline{C\hookrightarrow C'}~)[new\ C_1(\bar{x}):C_1\rightarrow r:C_2]\in\Pi))\\
-\tt \mathbf{MethCover}&\tt(\Pi, API_s, API_d) =\\ 
-                  &\tt \forall~C_1,C_2,m,\bar{C}.(class\ C_1\ extends\ \_~\{~C_2\ m(~\bar{C}\ \bar{\_}~)\{...\}~...~\}\in (API_s-API_d) \\
-                  &\tt \indentspace\Rightarrow~ \exists~x,\bar{y},C'_1,C'_2,\bar{C}',r.((x:C_1\hookrightarrow C'_1,\ ~\bar{y}:\overline{C\hookrightarrow C'}~)[x.m(\bar{y}):C_2\rightarrow r:C'_2] \in \Pi))\\
-\tt \mathbf{FieldCover}&\tt(\Pi, API_s, API_d) =\\ 
-                  &\tt \forall~C_1,C_2,f.(class\ C_1\ extends\ \_~\{C\ f;...\}\in (API_s-API_d) \\
-                  &\tt \indentspace \Rightarrow~ \exists~x,C'_1,C'_2.((x:C_1\hookrightarrow C'_1~)[x.f:C_2\rightarrow r:C'_2] \in \Pi))                           \\
-\tt \mathbf{MapChecking}&\tt(\Pi, API_s, API_d) =\\
-                  &\tt \forall~C,D.(C\hookrightarrow D\in \mathbf{TypeMapping}(\Pi)\\
-                  &\tt \indentspace\Rightarrow~ (\exists~CL\in API_s \cap API_d. (\mathbf{Decl}(CL)=C \land D = C))\\
-                  &\tt \indentspace\indentspace \lor (\exists~CL\in API_s-API_d. (\mathbf{Decl}(CL)=C)))\\
-\tt \mathbf{Subtyping}&\tt(\Pi, API_s, API_d) = \\
-                      &\tt\forall~C_i,D_i,C_j,D_j.( C_i\hookrightarrow D_i, C_j\hookrightarrow D_j \in \mathbf{TypeMapping}(\Pi) ~~\Rightarrow~~ (C_i <: C_j\Rightarrow D_i<:D_j))\\
-\tt \mathbf{TypeSafe} &\tt(\Pi, API_s, API_d) = \\
-                      &\tt \mathbf{RuleOK}(\Pi) \land \mathbf{ConstrCover}(\Pi, API_s, API_d) \land \mathbf{MethCover}(\Pi, API_s, API_d)\\
-                      &\tt \land \mathbf{FieldCover}(\Pi, API_s, API_d) \land \mathbf{MapChecking}(\Pi, API_s, API_d) \land \mathbf{Subtyping}(\Pi, API_s, API_d)
-\end{align*}
+\[
+\begin{array}{ll}
+% Curr
+%\tt \mathbf{ClassCover}&\tt(\Pi, API_s, API_d) =\\
+%                  &\tt \forall~C_1. (class\ C_1\ extends\ \_~\{ ... \}\in (API_s-API_d) \\
+%                  &\tt \indentspace\Rightarrow~ \exists~C_2.(class\ C_2\ extends\ \_\in API_d \land C_1\hookrightarrow C_2\in \mathbf{TypeMapping}(\Pi)))\\
+\tt \mathbf{RuleOK} \tt(\Pi) = \forall~\pi. (\pi\in\Pi \Rightarrow \pi~\mathit{ok})\\
+\tt \mathbf{ConstrCover} \tt(\Pi, API_s, API_d) =\\
+\qquad                  \tt \forall~C_1,\bar{C}. (class\ C_1\ extends\ \_~\{ C_1(\bar{C}\ \bar{\_})~...~\}\in (API_s-API_d) \\
+\qquad                  \tt \indentspace\Rightarrow~ \exists~C_2,\bar{C}',\bar{x},r.((~\bar{x}:\overline{C\hookrightarrow C'}~)[new\ C_1(\bar{x}):C_1\rightarrow r:C_2]\in\Pi))\\
+\tt \mathbf{MethCover}\tt(\Pi, API_s, API_d) =\\ 
+\qquad                  \tt \forall~C_1,C_2,m,\bar{C}.(class\ C_1\ extends\ \_~\{~C_2\ m(~\bar{C}\ \bar{\_}~)\{...\}~...~\}\in (API_s-API_d) \\
+\qquad                  \tt \indentspace\Rightarrow~ \exists~x,\bar{y},C'_1,C'_2,\bar{C}',r.((x:C_1\hookrightarrow C'_1,\ ~\bar{y}:\overline{C\hookrightarrow C'}~)[x.m(\bar{y}):C_2\rightarrow r:C'_2] \in \Pi))\\
+\tt \mathbf{FieldCover}\tt(\Pi, API_s, API_d) =\\ 
+\qquad                  \tt \forall~C_1,C_2,f.(class\ C_1\ extends\ \_~\{C_2\ f;...\}\in (API_s-API_d) \\
+\qquad                  \tt \indentspace \Rightarrow~ \exists~x,C'_1,C'_2.((x:C_1\hookrightarrow C'_1~)[x.f:C_2\rightarrow r:C'_2] \in \Pi))                           \\
+\tt \mathbf{MapChecking}\tt(\Pi, API_s, API_d) =\\
+\qquad                  \tt \forall~C,D.(C\hookrightarrow D\in \mathbf{TypeMapping}(\Pi)\\
+\qquad                  \tt \indentspace\Rightarrow~ (\exists~CL\in API_s \cap API_d. (\mathbf{Decl}(CL)=C \land D = C))\\
+\qquad                  \tt \indentspace\indentspace \lor (\exists~CL\in API_s-API_d. (\mathbf{Decl}(CL)=C)))\\
+\tt \mathbf{Subtyping}\tt(\Pi, API_s, API_d) = \\
+\qquad                      \tt\forall~C_i,D_i,C_j,D_j.( C_i\hookrightarrow D_i, C_j\hookrightarrow D_j \in \mathbf{TypeMapping}(\Pi) ~~\Rightarrow~~ (C_i <: C_j\Rightarrow D_i<:D_j))
+% \tt \mathbf{TypeSafe} &\tt(\Pi, API_s, API_d) = \\
+%                       &\tt \mathbf{RuleOK}(\Pi) \land \mathbf{ConstrCover}(\Pi, API_s, API_d) \land \mathbf{MethCover}(\Pi, API_s, API_d)\\
+%                       &\tt \land \mathbf{FieldCover}(\Pi, API_s, API_d) \land \mathbf{MapChecking}(\Pi, API_s, API_d) \land \mathbf{Subtyping}(\Pi, API_s, API_d)
+\end{array}
+\]
 
 \section{Metatheory}
 \begin{lemma}[Typing Context]
-Given a SWIN program $\tt\Pi$ acting on $\tt API_s$ to $\tt API_d$, suppose the typing context for a term $\tt t$ is $\tt\Gamma_s = \bar{x}:\bar{C}$ , then the typing context for $\tt\Pi(t)$ is $\tt\Gamma_d=\bar{x}:\overline{\Pi(C)}$.
+Given a SWIN program $\tt\Pi$ acting on $\tt API_s$ to $\tt API_d$, suppose the typing context for a term $\tt t$ is $\tt\Gamma_s = \bar{x}:\bar{C}$ , then the typing context for $\tt\Pi(t)$ is $\tt\Gamma_d=\bar{x}:\overline{\Pi(C)}$. (For simplicity, we use $\tt \Pi(\Gamma_s)$ to represent $\tt \bar{x}:\overline{\Pi(C)}$, i.e. $\tt\Pi$ will act on all variable types in a typing context.)
 \end{lemma}
 \begin{proof}
 According to the FJ typing rules, the typing context will not change once it is created in the rule FJ-M-OK. For the typing context $\tt\Gamma$, except the variable $\tt this$,  all other variables in the typing context are bounded in the definition of a method $\tt M$.
@@ -454,17 +455,315 @@ With this case proved, for any $\tt C_1 <: C_2$, it can be split into $\tt C_1<:
 \end{proof}
 
 \begin{lemma}[Variable Substitution]
-Suppose that an FJ term $\tt t$ is well typed under context $\tt \Gamma=\Gamma_1,\{\bar{x}:\bar{C}_x\}$, i.e. $\tt \Gamma\vdash_{FJ} t:C_t$, then after substituting terms $\tt \bar{t}_v$ for variables $\tt \bar{x}$ , with the property that $\tt\Gamma_1\vdash_{FJ}\bar{t}_v:\bar{C}_v$ and $\tt\bar{C}_v <: \bar{C}_x$, $\tt t$ can be typed to $\tt C_t$ or a sub-class of $\tt C_t$. Namely,
-$$\tt \Gamma_1,\{\bar{x}:\bar{C}_x\} \vdash_{FJ} t:C_t \Longrightarrow \Gamma_1\vdash_{FJ} [\bar{x}\rightarrow\bar{t}_u]t: C'_t,\ C'_t <: C_t$$
+Suppose that an FJ term $\tt t$ is well typed under context $\tt \Gamma=\Gamma_1,\{\bar{x}:\bar{C}_x\}$, i.e. $\tt \Gamma\vdash_{FJ} t:C_t$, then after substituting terms $\tt \bar{t}_u$ for variables $\tt \bar{x}$ , with the property that $\tt\Gamma_1\vdash_{FJ}\bar{t}_u:\bar{C}_u$ and $\tt\bar{C}_u <: \bar{C}_x$, $\tt t$ can be typed to $\tt C_t$ or a sub-class of $\tt C_t$. Namely,
+$$\tt \Gamma_1,\{\bar{x}:\bar{C}_x\} \vdash_{FJ} t:C_t \Longrightarrow \Gamma_1\vdash_{FJ} [\bar{x}\mapsto\bar{t}_u]t: C'_t,\ C'_t <: C_t$$
 \end{lemma}
 \begin{proof}
-By induction on the derivition on an FJ term $\tt t$, there are five cases to discuss:
+By induction on the derivation on an FJ term $\tt t$, there are five cases to discuss:
 \begin{itemize}
-\item case-1 $\tt t = x, \Gamma_{FJ} t:C_t, x:C_t$.
+\item case-1: $\tt t = x$ and $\tt x$ is a variable.
 
-In this case, we substitue an FJ term $\tt t_u$ for $\tt x$, where $\tt \Gamma_1\vdash_{FJ} t_u:C_u$ and $\tt C_u <: C_t$
+In this case, we substitute an FJ term $\tt t_u$ for $\tt x$, where $\tt \Gamma_1\vdash_{FJ} t_u:C_u$ and $\tt C_u <: C_t$, then the substitution will be $\tt [x\mapsto t_u]x\Rightarrow t_u$. As $\tt \Gamma_1\vdash_{FJ} t_u:C_u <:C_t$, we have $\tt \Gamma_1\vdash_{FJ}[x\mapsto t_u]x:C_u<:C_t$. Then we have the case proved.
+
+\item case-2: $\tt t=(C)t_1$ and $\tt\Gamma_1,\{\bar{x}:\bar{C}_x\}\vdash_{FJ} t_1:C_1$.
+
+In this case, by induction, we have $\tt \Gamma_1\vdash_{FJ}[\bar{x}\mapsto \bar{t}_u]t_1:C'_1$ and $\tt C'_1 <: C_1$. For the term $\tt t$, after substitution, we have $\tt\Gamma_1\vdash_{FJ}(C)t_1:C$ and $\tt C<:C$. Then we have the case proved.
+
+\item case-3: $\tt t=t_1.f$ and $\tt \Gamma_1,\{\bar{x}:\bar{C}_x\}\vdash_{FJ}t_1:C_1$.
+
+By induction, we have $\tt \Gamma_1\vdash_{FJ} [\bar{x}\mapsto \bar{t}_u]t_1:C'_1$ and $\tt C'_1<:C_1$. Then for field access, it will still access the same field $\tt f$ as it did before. Thus we have $\tt \Gamma_1\vdash_{FJ}[\bar{x}\mapsto \bar{t}_u]t_1.f:C_t$ and $\tt C_t<:C_t$, and the case is proved.
+
+\item case-4: $\tt t=new~C_0(\bar{t}_1)$ and $\tt \Gamma_1,\{\bar{x}:\bar{C}_x\}\vdash_{FJ}\bar{t}_1:\bar{C}_1$.
+
+The substitution $\tt[\bar{x}\mapsto \bar{t}_u]t$ equals to $\tt new~C_0([\bar{x}\mapsto\bar{t}_u]\bar{t}_1)$. 
+
+As the term $\tt t$ is well typed, we have:
+\[
+    \begin{array}{c c c}
+      \infer
+      {\tt \Gamma\vdash_{FJ} new~C(\bar{t}_1):C_0}
+      {\tt fields(C_0)=\bar{D}~\bar{f}
+      &\tt \Gamma\vdash_{FJ} \bar{t}_1:\bar{C}_1
+      &\tt \bar{C}_1 <: \bar{D}
+      }
+    \end{array}
+\]
+
+By induction, we have $\tt \Gamma_1\vdash_{FJ} [\bar{x}\mapsto\bar{t}_u]\bar{t}_1:\bar{C}'_1$ and $\tt \bar{C}'_1 <: \bar{C}_1$, then we have the following derivation:
+\[
+  \begin{array}{c c c}
+    \infer
+    {\tt \Gamma\vdash_{FJ}new~C([\bar{x}\mapsto\bar{t}_u]\bar{t}_1):C_0}
+    {\tt fields(C_0)=\bar{D}~\bar{f}
+    &\tt \Gamma\vdash_{FJ}[\bar{x}\mapsto\bar{t}_u]\bar{t}_1:\bar{C}'_1
+    &\tt \bar{C}'_1<:\bar{C}_1<:\bar{D}}
+  \end{array}
+\]
+
+Thus we still have $\tt \Gamma_1\vdash_{FJ}new~C([\bar{x}\mapsto \bar{t}_u]\bar{t}_1):C_0$ and $\tt C_0 <: C_0$. This case is proved.
+
+\item case-5: $\tt t=t_0.m(\bar{t}_1)$ and $\tt \Gamma_1,\{\bar{x}:\bar{C}_x\}\vdash_{FJ}\bar{t}_1:\bar{C}_1,t_0:C_0$.
+
+In this case, the substitution $\tt[\bar{x}\mapsto\bar{t}_u]t$ equals to $\tt ([\bar{x}\mapsto\bar{t}_u]t_0).m([\bar{x}\mapsto\bar{t}_u]\bar{t}_1)$.
+
+As the term $\tt t$ is well typed in FJ type system, we have:
+\[
+  \begin{array}{c c c c}
+    \infer
+    {\tt\Gamma\vdash_{FJ}t_0.m(\bar{t}_1):C}
+    {\tt \Gamma\vdash_{FJ}t_0:C_0
+    &\tt \mathsf{mtype}(m,C_0) = \bar{D}\rightarrow C
+    &\tt \Gamma\vdash_{FJ}\bar{t}_1:\bar{C}_1
+    &\tt \bar{C}_1 <:\bar{D}
+    }
+  \end{array}
+\]
+
+By induction, we have $\tt\Gamma_1\vdash_{FJ}[\bar{x}\mapsto\bar{t}_u]\bar{t}_1:C'_1, t_0:C'_0$ and $\tt C'_0 <: C_0, \bar{C}'_1 <:\bar{C}_1$.
+
+For the condition that $\tt C'_0 <: C_0$, we have $\tt \mathsf{mtype}(m,C'_0)=\mathsf{mtypem}(m,C_0)$ according to the rule METHOD-LOOKUP2.
+
+With these conditions, we have the following derivation for the new term after substitution:
+\[
+  \begin{array}{c c c c}
+  \infer
+  {\tt \Gamma_1\vdash_{FJ}[\bar{x}\mapsto \bar{t}_u]t_0.m([\bar{x}\mapsto \bar{t}_u]\bar{t}_1):C}
+  {\tt \Gamma_1\vdash_{FJ}[\bar{x}\mapsto \bar{t}_u]t_0:C'_0
+  &\tt \mathsf{mtype}(m, C'_0)=\bar{D}\rightarrow C
+  &\tt \Gamma_1\vdash_{FJ}[\bar{x}\mapsto \bar{t}_u]\bar{t}_1:\bar{C}'_t
+  &\tt \bar{C}'_1<:\bar{C}_1<:\bar{D}}
+  \end{array}
+\]
+
+Thus we prove the case that: $\tt Gamma_1\vdash_{FJ}[\bar{x}\mapsto \bar{t}_u]t:C$ and $\tt C<:C$.
 \end{itemize}
 
+With these five cases proved, we have the lemma proved.
+\end{proof}
+
+\begin{lemma}[Term Formation]
+Given a well-typed SWIN program $\tt \Pi$, if a term $\tt t$ in the original typing context can be typed to $\tt C$, then after transformation by $\tt \Pi$, the term is well-typed and its type is a subtype of $\tt \Pi(C)$. i.e.
+$$\tt \Gamma_s\vdash^{API_s}_{FJ} t:C \Longrightarrow \Gamma_d\vdash^{API_d}_{FJ} \Pi(t):C',\ where\ C'<:\Pi(C)$$
+\end{lemma}
+\begin{proof}
+By induction on a derivation of a term $\tt t$. At each step of the induction, we assume that the desired property holds for all sub-derivations. We give our proof based on the last step of the derivation, which can only be one of the following five cases:
+
+Before we move on to the cases analysis, we should note that according to Lemma 1, we have the relationship that $\tt\Gamma_d=\Pi(\Gamma_s)$.
+
+\begin{itemize}
+\item case-1: $\tt t=x$ and $\tt\Gamma_s\env{FJ}{API_s} x:C$.
+
+In this case, we have that $\tt\Gamma_d\env{FJ}{API_d} x:\Pi(C)$ according to Lemma 1. Then we have $\tt\Gamma_d\env{FJ}{API_d}t:\Pi(C)$ and $\tt \Pi(C)<:\Pi(C)$, and the case is proved.
+
+\item case-2: $\tt t=(C) t_1$ and $\tt \Gamma_s\env{FJ}{API_s}t_1:C_1$.
+
+According to the rule E-T-CAST, $\tt \Pi(t) = \Pi(C)~\Pi(t_1)$.
+
+By induction, we have $\tt\Gamma_d\env{FJ}{API_d}t_1:C'_1$ and $\tt C'_1 <: \Pi(C_1)$.
+
+By the rule FJ-*CAST (represent one of the three cast rules), we have $\tt \Gamma_d\env{FJ}{API_d} (\Pi(C))~\Pi(t_1) : \Pi(C)$, and $\tt\Pi(C)<:\Pi(C)$. Thus the case is proved. 
+
+\item case-3: $\tt t=t_1.f$ and $\tt \Gamma_s\env{FJ}{API_s}t_1:C_1$. In this case, there are further two subcases:
+  \begin{itemize}
+    \item subcase-1: $\tt C_1$ is declared in $\tt API_d$, i.e. $\tt\exists~CL\in API_s$ and $\tt\mathbf{Decl}(CL)=C_1$. Then we have $\tt \Pi(C_1)$ is declared in $\tt API_d$
+
+      According to the checking rule $\tt \mathbf{FieldCover}$, we have a transformation rule $$\tt \pi=(x:C_1\hookrightarrow C'_1)[x.f:C\hookrightarrow r:C']\in\Pi$$ to transform the field access expressions.
+
+      By the evaluation rule E-T-FIELD, we have $\tt \Pi(t_1.f)=[x\mapsto\Pi(t_1)]r$. According to Lemma 3, we have $\tt\Gamma_d\env{FJ}{API_d}[x\mapsto\Pi(t_1)]r:C''$ and $\tt C'' <: C'$. 
+
+      And by the definition of $\tt \mathbf{TypeMapping}$, there exists $\tt C\hookrightarrow C'$ in $\tt \mathbf{TypeMapping}(\Pi)$. Thus $\tt \Pi(C)=C'$.
+
+      With these properties, we have $\tt \Gamma_d\env{FJ}{API_d} \Gamma_d\env{FJ}{API_d}[x\mapsto t_1]r:C''$ and $\tt C'' <: C' =\Pi(C)$. And the subcase is proved.
+    \item subcase-2: $\tt C_1$ is defined in client class declarations.
+
+      In this subcase, the rule will be evaluated by the rule E-ALTER-FIELD. By induction, we have $\tt\Gamma\env{FJ}{API_d}\Pi(t_1):C'_1$ and $\tt C'_1 <:\Pi(C_1)$. Then according to the rule FJ-FIELD and the auxiliary function FIELD-LOOKUP and the evaluation rule E-DECLARATION, we have the following derivation tree:
+      \[
+          \begin{array}{c c}
+          \infer
+          {\tt \Gamma\env{FJ}{API_d} \Pi(t_1).f : \Pi(C)}
+          {\tt \Gamma\env{FJ}{API_d} \Pi(t_1):C'_1
+          & \begin{array}{c c}
+              \infer 
+              {\tt \Pi(C)~f\in\mathsf{field}(C'_1)}
+              {\tt C'_1 <: \Pi(C_1)
+              &\tt \Pi(C)~f\in\mathsf{field}(\Pi(C_1))}
+            \end{array}
+          }
+          \end{array}
+      \]
+      And of course, $\tt \Pi(C)<:\Pi(C)$, thus we have the subcase proved.
+  \end{itemize}
+  With these two subcases proved, the case for field access is proved.
+
+\item case-4: $\tt t=new~C(\bar{t}_1)$ and $\tt\Gamma\env{FJ}{API_s}\bar{t}_1:\bar{C}_1$.
+
+In this case, we still have two subcases to discuss.
+  \begin{itemize}
+    \item subcase-1: The class $\tt C$ is declared in $\tt API_s$, i.e. $\tt\exists~CL\in API_s.(\mathbf{Decl}(CL)=C_0$), then $\tt \Pi(C_0)$ should be declared in $\tt API_d$.
+
+    By the checking rule $\tt \mathbf{ConstrCover}$, there exists the following transformation rule to transform this term:
+      $$\tt \pi=(\bar{x}:\overline{C_2 \hookrightarrow C'_2})[new~C_0(\bar{x}):C\hookrightarrow r:C']$$
+
+    According to the rule E-T-NEW, we have:
+    \[
+      \begin{array}{c c}
+        \infer
+        {\tt \Pi(new~C(\bar{t}_1))=[\bar{x}\mapsto \overline{\Pi(t_1)}]r}
+        {\tt (\bar{x}:\overline{C_2 \hookrightarrow C'_2})[new~C_0(\bar{x}):C\hookrightarrow r:C']\in\Pi
+        & \begin{array}{c c}
+            \infer
+            {\tt \mathbf{Type}(\bar{t}_1)<:\bar{C}_2}
+            {\tt \mathbf{Type}(\bar{t}_1)=\bar{C}_1
+            &\tt \bar{C}_1 <:\bar{C}_2}
+          \end{array}}
+      \end{array}
+    \]
+
+    By Lemma 3, we have $\tt \Gamma_d\env{FJ}{API_d}[\bar{x}\mapsto \overline{\Pi(t)_1}]r : C''$ and $\tt C'' <: C'$. And according to the definition of $\tt \mathbf{TypeMapping}$ and the checking rule $\tt \mathbf{Subtyping}$, we have $\tt \Pi(C)=C'$. 
+
+    Then we have $\tt \Gamma_d\env{FJ}{API_d} \Pi(t):C''$ and $\tt C'' <: \Pi(C)$, and the subcase is proved.
+
+    \item subcase-2: The class $\tt C$ is declared in client code. Then the transformation of the term $\tt t$ should be evaluated according to the rule E-ALTER-NEW, thus we have $\tt \Pi(t)=new~\Pi(C)(\overline{\Pi(t_1)})$.
+
+    To finish the proof of the subcase, we need the following facts:
+    \begin{itemize}
+      \item According to the rule E-CONSTRUCTOR, the constructor definition is transformed to $\tt \Pi(C)~(\overline{\Pi(C_2)}~\bar{x}) \{...\}$. Thus $\mathsf{fields}(\Pi(C))=\overline{\Pi(C_2)}$
+      \item By induction, we have $\tt \Gamma_d\env{FJ}{API_d}\overline{\Pi(t_1)}:\bar{C}'_1$ and $\tt \bar{C}'_1 <: \overline{\Pi(C_1)}$.
+      \item By the typing rule FJ-NEW, we have $\tt \bar{C}_1<:\bar{C}_2$. And by Lemma 2, we have $\tt \overline{\Pi(C_1)} <:\overline{\Pi(C_2)}$.
+    \end{itemize}
+    With these facts, we have the following judgment:
+    \[
+      \begin{array}{ccc}
+      \infer
+      {\tt \Gamma_d\env{FJ}{API_d}new~\Pi(C)(\overline{\Pi(t_1)}):\Pi(C)}
+      {
+       \tt \mathsf{fields}(\Pi(C))=\overline{\Pi(C_2)}
+      &\tt \Gamma_d\env{FJ}{API_d}\overline{\Pi(t_1)}:\bar{C}'_1
+      &\tt \bar{C}'_1<:\overline{\Pi(C_1)} <:\overline{\Pi(C_2)}
+      }
+      \end{array}
+    \]
+    And this proved the subcase.
+  \end{itemize} 
+  With these two subcases proved, the case for object creation is proved.
+
+  \item case-5: $\tt t = t_1.m(\bar{t}_2)$ and $\tt \Gamma_s\env{FJ}{API_s}t_1:C_1,\bar{t}_2:\bar{C}_2$.
+
+  Similar to the previous one, there are also two subcases for this case.
+  \begin{itemize}
+    \item subcase-1: the class $\tt C_1$ is declared in $\tt API_s$. i.e. $\tt \exists~CL\in API_s.(\mathbf{Decl}(CL)=C_0)$.
+
+    In this subcase, the term $\tt t_1.m(\bar{t}_2)$ will be transformed by a rule according to E-T-INVOKE as the checking rule $\tt MethCover$ guarantees that there is a rule in $\tt \Pi$ to transform the method (At least a rule exists to transform the method $\tt m$ declared in a parent class of $\tt C$).
+
+    Suppose the transformation rule is the following one (And this one is the closest rule to transform):
+
+    $$\tt (\bar{y}:\overline{C_3\hookrightarrow C'_3}, x:C_4\hookrightarrow C'_4)[x.m(\bar{y}):C\rightarrow r:D]$$
+
+    Then by the rule E-T-INVOKE, the transformation will be :
+    \[
+      \begin{array}{c}
+        \infer
+        {\tt \Pi(t_1.m(\bar{t}_2))=[x\mapsto\Pi(t_1), \bar{y}\mapsto\overline{\Pi(t_2)}]r}
+        {
+          \begin{array}{c c}
+            \tt (\bar{y}:\overline{C_3\hookrightarrow C'_3}, x:C_4\hookrightarrow C'_4)[x.m(\bar{y}):C\rightarrow r:D]\in\Pi ~~~~
+            \tt \mathbf{Type}(t_1) <: C_4 ~~~~ \mathbf{Type}(\bar{t}_2)<:\bar{C}_3 \\
+            \tt \nexists (\bar{y}:\overline{C_3\hookrightarrow C'_3}, x:C_5\hookrightarrow C'_5)[x.m(\bar{y}):C\rightarrow r:D]\in\Pi.(\mathbf{Type}(t_0)<:C_5 \land C_5\neq C_4)
+          \end{array}
+        }
+      \end{array}
+    \]
+
+    By Lemma 3, we have $\tt \Gamma_d\env{FJ}{API_d}[x\mapsto\Pi(t_1), \bar{y}\mapsto\overline{\Pi(t_2)}]r:C'$ and $\tt C'<:D$. Also, by the definition of $\tt \mathbf{TypeMapping}$, we have $\tt \Pi(C)=D$. Thus we have $\tt\Gamma\env{FJ}{API_d}t_1.m(\bar{t}_2):C'$ and $\tt C'<:\Pi(C)$. And this subcase is proved.
+
+    \item subcase-2: the class $\tt C_1$ is declared in client code. And in this case, the term $\tt t$ will be transformed by the rule E-ALTER-INVOKE:
+    $$\tt \Pi(t_1.m(\bar{t}_2))=\Pi(t_1).m(\overline{\Pi(t_2)})$$
+
+    To finish the proof of this case, we need the following points:
+    \begin{itemize}
+      \item By induction, we have $\tt \Gamma_d\env{FJ}{API_d}\Pi(t_1):C'_1$ and $\tt C'_1<:\Pi(C_1)$, $\tt \Gamma_d\env{FJ}{API_d}\overline{\Pi(t_2)}:\bar{C}'_2$ and $\tt \bar{C}'_2 <: \overline{\Pi(C_2)}$.
+      \item According to the well-typedness of the original term in $\tt API_s$, we have the following derivation:
+        \[
+          \begin{array}{ccc}
+            \infer
+            { \tt \Gamma_s\env{FJ}{API_s}t_1.m(\bar{t}_2):C}
+            {
+               \tt \Gamma_s\env{FJ}{API_s}t_1:C_1
+              &\tt \mathsf{mtype}(m,C_1)=\bar{C}_u\rightarrow C
+              &\tt \Gamma_s\env{FJ}{API_s}\bar{t}_2:\bar{C}_2
+              &\tt \bar{C}_2 <:\bar{C}_u
+            }
+          \end{array}
+        \]
+      \item According to the rule E-DECLARATION and E-METHOD, $\tt\mathsf{mtype}(m, \Pi(C_1)=\bar{\Pi(C_u)}\rightarrow \Pi(C)$. By the definition of $\tt\mathsf{mtype}$, we have $\tt \mathsf{mtype}(m,C'_1)=\mathsf{mtype}(m,\Pi(C_1))$.
+      \item By the checking rule $\tt \mathbf{Subtyping}$, we have $\tt \overline{\Pi(C_2)}<:\overline{\Pi(C_u)}$
+    \end{itemize}
+
+    With these facts, we can derive the type of the transformed term using the following tree:
+
+    \[
+      \begin{array}{ccc}
+        \infer
+        {\tt \Gamma_d\env{FJ}{API_d}\Pi(t_1).m(\overline{\Pi(t_2)}):\Pi(C)}
+        {
+          \begin{array}{cc}
+        \tt \Gamma_d\env{FJ}{API_d}\Pi(t_1):C'_1 ~~~~
+        \tt \mathsf{mtype}(m, C'_1)=\mathsf{mtype}(m, \Pi(C_1))=\overline{\Pi(C_u)}\rightarrow\Pi(C)\\
+        \tt \Gamma_d\env{FJ}{API_d}\overline{\Pi(t_2)}:\bar{C}'_2~~~~
+        \tt \bar{C}'_2<:\overline{\Pi(C_2)}<:\overline{\Pi(C_u)}
+          \end{array}
+        }
+      \end{array}
+    \]
+    And thus we have $\tt \Gamma_d\env{FJ}{API_d}\Pi(t):\Pi(C)$ in this subcase.
+  \end{itemize}
+  With these two subcases proved, we have the lemma holds for the case 5.
+\end{itemize}
+With these five cases for a term proved, by induction, the lemma holds for any FJ term.
+\end{proof}
+
+\begin{lemma}[Method Formation]
+An FJ method declaration is well formed after transformed by a well-typed SWIN program. i.e. For any \verb|M|, $$\tt \Pi(M)=\Pi(C_1)\ m(\Pi(\bar{C}_m)\ \bar{x})\ \{return\ \Pi(t);\}$$ is well-formed with new API if $\tt \Pi$ is well typed.
+\end{lemma}
+
+\begin{proof}
+According to Lemma 4, we have $\tt \{\bar{x}:\overline{\Pi({C}_m)}, this:\Pi(C_1)\}\env{FJ}{API_d} t:C'_1$ and $\tt C'_1<:\Pi(C_1)$.
+
+Suppose $\tt CT(C)=class~C~extends~D~\{...\}$, according to the rule E-METHOD and E-DECLRATION, $\tt \mathsf{override}(m,\Pi(D),\overline{\Pi(C)}\rightarrow C_1)$.
+
+Then the formation of the transformed term is proved by the FJ-M-OK derivation on these judgments:
+\begin{center}
+\AXC{$\tt \{\bar{x}:\overline{\Pi({C}_m)}, this:\Pi(C_1)\}\env{FJ}{API_d} t:C'_1$ ~~~~ $\tt C'_1<:\Pi(C_1)$}
+\noLine
+\UIC{$\tt CT(\Pi(C))=class\ \Pi(C_1)\ extends\ \Pi(D)\ \{...\}$}
+\noLine
+\UIC{~~~~~~~~~~~$\tt \mathsf{override}(m,\Pi(D),\overline{\Pi(C)}\rightarrow C_1)$~~~~~~~~~~~}
+\RightLabel{~(FJ-M-OK)}
+\UIC{$\tt \Pi(C_1)\ m\ (\bar{C}\ \bar{x})\ \{return\ t_0;\}\ OK\ in\ \Pi(C)$}
+\DP
+\end{center}
+\end{proof}
+
+
+\begin{theorem}[Type-Safety]
+Any FJ program is well-typed after a transformation by a well-typed SWIN program $\tt \Pi$. 
+i.e. For any \verb|CL|,
+ $$\tt \Pi(CL)= class\ \Pi(C_1)\ extends\ \Pi(C_2)\ \{\ \Pi(\bar{C}_i)\ \bar{f}_i;\ \Pi(K)\  \overline{\Pi(M)}\ \}$$
+is well-typed with new API if $\tt \Pi$ is well-typed.
+\end{theorem}
+
+\begin{proof}
+By Lemma 5, we have all method declarations well formed. And by the rule E-CONSTRUCTOR, we have the following derivation:
+\[
+  \begin{array}{ccc}
+    \infer
+    {\tt class~\Pi(C)~extends~\Pi(D)~\{\overline{\Pi(C)}~\bar{f};\Pi(K)~\overline{\Pi(M)}\} ~ \mathit{ok}}
+    {\tt \Pi(K)=\Pi(C)~(\overline{\Pi(C)}~\bar{f})\{...\}
+    &\tt \mathsf{fields}(\Pi(D))=\overline{\Pi(D)}~\bar{g}
+    &\tt \overline{\Pi(M)}~\mathit{ok}}
+  \end{array}
+\]
+With this proved, we have the theorem proved, i.e a well-typed SWIN program can transform any FJ program correctly.
 \end{proof}
 
 \end{document}
