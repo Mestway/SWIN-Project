@@ -39,7 +39,8 @@
 
 \begin{document}
 \title{Formal Definition of SWIN}
-\author{Chenglong Wang \and Jun Li \and Yingfei Xiong \and Zhenjiang Hu}
+\author{Chenglong Wang \and Jun Li \and Yingfei Xiong \and Zhenjiang Hu \\ \{chenglongwang, lij, xiongyf\}@pku.edu.cn, hu@nii.ac.jp}
+
 \date{}
 \maketitle
 
@@ -122,7 +123,7 @@
     {\tt mtype(m,C)=mtype(m,D)}
     {
       \begin{array}{c}
-        \tt CT(C)=class\ C\ extends\ D\ \{\bar{C}\ \bar{f};\ K\ \bar{M}\}\\
+        \tt \mathit{CT}(C)=class\ C\ extends\ D\ \{\bar{C}\ \bar{f};\ K\ \bar{M}\}\\
         \text{$\tt m$ is not defined in $\tt\bar{M}$}
       \end{array}
     }
@@ -257,9 +258,9 @@
 \vspace{2pt}
 
 \begin{center}
-\AXC{$\tt M=C_1\ m(\bar{C}_m\ \bar{x})\ \{return\ t;\}$}                             
+\AXC{$\tt M=C_1\ m(\bar{C}\ \bar{x})\ \{return\ t;\}$}                             
 \RightLabel{~(E-METHOD)}
-\UIC{$\tt\Pi(M)=\Pi(C_1)\ m(\Pi(\bar{C}_m)\ \bar{x})\ \{return\ \Pi(t);\}$}
+\UIC{$\tt\Pi(M)=\Pi(C_1)\ m(\Pi(\bar{C})\ \bar{x})\ \{return\ \Pi(t);\}$}
 \DP
 \end{center}
 \vspace{2pt}
@@ -565,13 +566,27 @@ By the rule FJ-*CAST (represent one of the three cast rules), we have $\tt \Gamm
 
 \item case-3: $\tt t=t_1.f$ and $\tt \Gamma_s\env{FJ}{API_s}t_1:C_1$. In this case, there are further two subcases:
   \begin{itemize}
-    \item subcase-1: $\tt C_1$ is declared in $\tt API_d$, i.e. $\tt\exists~CL\in API_s$ and $\tt\mathbf{Decl}(CL)=C_1$. Then we have $\tt \Pi(C_1)$ is declared in $\tt API_d$
+    \item subcase-1: $\tt C_1$ is declared in $\tt API_s$, i.e. $\tt\exists~CL\in API_s$ and $\tt\mathbf{Decl}(CL)=C_1$. Then we have $\tt \Pi(C_1)$ is declared in $\tt API_d$
 
-      According to the checking rule $\tt \mathbf{FieldCover}$, we have a transformation rule $$\tt \pi=(x:C_1\hookrightarrow C'_1)[x.f:C\hookrightarrow r:C']\in\Pi$$ to transform the field access expressions.
+      According to the checking rule $\tt \mathbf{FieldCover}$, we have a transformation rule $$\tt \pi=(x:D_1\hookrightarrow D'_1)[x.f:C\hookrightarrow r:C']\in\Pi$$ to transform the field access expressions. i.e. $\tt \nexists (x:E_1\hookrightarrow E'_1)[x.f:C\hookrightarrow r:C']\in\Pi.(C_1<:E_1 <: D_1 \land E_1\neq D_1)$ 
 
-      By the evaluation rule E-T-FIELD, we have $\tt \Pi(t_1.f)=[x\mapsto\Pi(t_1)]r$. According to Lemma 3, we have $\tt\Gamma_d\env{FJ}{API_d}[x\mapsto\Pi(t_1)]r:C''$ and $\tt C'' <: C'$. 
+      By the evaluation rule E-T-FIELD, we have: 
+        \[
+          \begin{array}{cc}
+            \infer
+            {\tt\Pi(t_1.f)=[x\mapsto\Pi(t_1)]r}
+            {
+              \begin{array}{cc}
+                \tt (x:D_1\hookrightarrow D'_1)[x.f:C\hookrightarrow r:C']\in\Pi ~~~~ C_1 <: D_1 \\
+                \tt  \nexists (x:E_1\hookrightarrow E'_1)[x.f:C\hookrightarrow r:C']\in\Pi.(C_1<:E_1<: D_1 \land E_1\neq D_1 )
+              \end{array}
+            }
+          \end{array}
+        \]
 
-      And by the definition of $\tt \mathbf{TypeMapping}$, there exists $\tt C\hookrightarrow C'$ in $\tt \mathbf{TypeMapping}(\Pi)$. Thus $\tt \Pi(C)=C'$.
+      According to Lemma 3, we have $\tt\Gamma_d\env{FJ}{API_d}[x\mapsto\Pi(t_1)]r:C''$ and $\tt C'' <: C'$. 
+
+      And by the definition of $\tt \mathbf{TypeMapping}$, $\tt C\hookrightarrow C'$ is collected in $\tt \mathbf{TypeMapping}(\Pi)$, which indicates $\tt \Pi(C)=C'$.
 
       With these properties, we have $\tt \Gamma_d\env{FJ}{API_d} \Gamma_d\env{FJ}{API_d}[x\mapsto t_1]r:C''$ and $\tt C'' <: C' =\Pi(C)$. And the subcase is proved.
     \item subcase-2: $\tt C_1$ is defined in client class declarations.
@@ -599,23 +614,21 @@ By the rule FJ-*CAST (represent one of the three cast rules), we have $\tt \Gamm
 
 In this case, we still have two subcases to discuss.
   \begin{itemize}
-    \item subcase-1: The class $\tt C$ is declared in $\tt API_s$, i.e. $\tt\exists~CL\in API_s.(\mathbf{Decl}(CL)=C_0$), then $\tt \Pi(C_0)$ should be declared in $\tt API_d$.
+    \item subcase-1: The class $\tt C$ is declared in $\tt API_s$, i.e. $\tt\exists~CL\in API_s.(\mathbf{Decl}(CL)=C_0$), then $\tt \Pi(C_0)$ is declared in $\tt API_d$.
 
     By the checking rule $\tt \mathbf{ConstrCover}$, there exists the following transformation rule to transform this term:
-      $$\tt \pi=(\bar{x}:\overline{C_2 \hookrightarrow C'_2})[new~C_0(\bar{x}):C\hookrightarrow r:C']$$
+      $$\tt \pi=(\bar{x}:\overline{C_2 \hookrightarrow C'_2})[new~C(\bar{x}):C\hookrightarrow r:C']$$
 
-    According to the rule E-T-NEW, we have:
+    As the term is well typed, we have $\tt \type{\bar{t}_1}<:\bar{C}_2$
+
+    Then according to the rule E-T-NEW, we have:
     \[
       \begin{array}{c c}
         \infer
         {\tt \Pi(new~C(\bar{t}_1))=[\bar{x}\mapsto \overline{\Pi(t_1)}]r}
-        {\tt (\bar{x}:\overline{C_2 \hookrightarrow C'_2})[new~C_0(\bar{x}):C\hookrightarrow r:C']\in\Pi
-        & \begin{array}{c c}
-            \infer
-            {\tt \mathbf{Type}(\bar{t}_1)<:\bar{C}_2}
-            {\tt \mathbf{Type}(\bar{t}_1)=\bar{C}_1
-            &\tt \bar{C}_1 <:\bar{C}_2}
-          \end{array}}
+        {\tt (\bar{x}:\overline{C_2 \hookrightarrow C'_2})[new~C(\bar{x}):C\hookrightarrow r:C']\in\Pi
+        &\tt \mathbf{Type}(\bar{t}_1)<:\bar{C}_2
+        }
       \end{array}
     \]
 
@@ -627,7 +640,7 @@ In this case, we still have two subcases to discuss.
 
     To finish the proof of the subcase, we need the following facts:
     \begin{itemize}
-      \item According to the rule E-CONSTRUCTOR, the constructor definition is transformed to $\tt \Pi(C)~(\overline{\Pi(C_2)}~\bar{x}) \{...\}$. Thus $\mathsf{fields}(\Pi(C))=\overline{\Pi(C_2)}$
+      \item According to the rule E-DECLARATION, the class definition is transformed to $\tt \Pi(CL)=class~\Pi(C)~extends~\Pi(D)~\{\overline{\Pi(C_2}~f;~\Pi(K)~\overline{\Pi(M)}\}$. Thus $\tt\mathsf{fields}(\Pi(C))=\overline{\Pi(C_2)}$
       \item By induction, we have $\tt \Gamma_d\env{FJ}{API_d}\overline{\Pi(t_1)}:\bar{C}'_1$ and $\tt \bar{C}'_1 <: \overline{\Pi(C_1)}$.
       \item By the typing rule FJ-NEW, we have $\tt \bar{C}_1<:\bar{C}_2$. And by Lemma 2, we have $\tt \overline{\Pi(C_1)} <:\overline{\Pi(C_2)}$.
     \end{itemize}
@@ -651,9 +664,9 @@ In this case, we still have two subcases to discuss.
 
   Similar to the previous one, there are also two subcases for this case.
   \begin{itemize}
-    \item subcase-1: the class $\tt C_1$ is declared in $\tt API_s$. i.e. $\tt \exists~CL\in API_s.(\mathbf{Decl}(CL)=C_0)$.
+    \item subcase-1: the class $\tt C_1$ is declared in $\tt API_s$. i.e. $\tt \exists~CL\in API_s.(\mathbf{Decl}(CL)=C_1)$.
 
-    In this subcase, the term $\tt t_1.m(\bar{t}_2)$ will be transformed by a rule according to E-T-INVOKE as the checking rule $\tt MethCover$ guarantees that there is a rule in $\tt \Pi$ to transform the method (At least a rule exists to transform the method $\tt m$ declared in a parent class of $\tt C$).
+    In this subcase, the term $\tt t_1.m(\bar{t}_2)$ will be transformed by a rule according to E-T-INVOKE as the checking rule $\tt \mathbf{MethCover}$ guarantees that there is a rule in $\tt \Pi$ to transform the method (At least a rule exists to transform the method $\tt m$ declared in a parent class of $\tt C$, according to Lemma 6).
 
     Suppose the transformation rule is the following one (And this one is the closest rule to transform):
 
@@ -668,7 +681,7 @@ In this case, we still have two subcases to discuss.
           \begin{array}{c c}
             \tt (\bar{y}:\overline{C_3\hookrightarrow C'_3}, x:C_4\hookrightarrow C'_4)[x.m(\bar{y}):C\rightarrow r:D]\in\Pi ~~~~
             \tt \mathbf{Type}(t_1) <: C_4 ~~~~ \mathbf{Type}(\bar{t}_2)<:\bar{C}_3 \\
-            \tt \nexists (\bar{y}:\overline{C_3\hookrightarrow C'_3}, x:C_5\hookrightarrow C'_5)[x.m(\bar{y}):C\rightarrow r:D]\in\Pi.(\mathbf{Type}(t_0)<:C_5 \land C_5\neq C_4)
+            \tt \nexists (\bar{y}:\overline{C_3\hookrightarrow C'_3}, x:C_5\hookrightarrow C'_5)[x.m(\bar{y}):C\rightarrow r:D]\in\Pi.(\mathbf{Type}(t_1)<:C_5<:C_4 \land C_5\neq C_4)
           \end{array}
         }
       \end{array}
@@ -695,8 +708,8 @@ In this case, we still have two subcases to discuss.
             }
           \end{array}
         \]
-      \item According to the rule E-DECLARATION and E-METHOD, $\tt\mathsf{mtype}(m, \Pi(C_1)=\bar{\Pi(C_u)}\rightarrow \Pi(C)$. By the definition of $\tt\mathsf{mtype}$, we have $\tt \mathsf{mtype}(m,C'_1)=\mathsf{mtype}(m,\Pi(C_1))$.
-      \item By the checking rule $\tt \mathbf{Subtyping}$, we have $\tt \overline{\Pi(C_2)}<:\overline{\Pi(C_u)}$
+      \item According to the rule E-DECLARATION and E-METHOD, $\tt\mathsf{mtype}(m, \Pi(C_1))=\overline{\Pi(C_u)}\rightarrow \Pi(C)$. By the definition of $\tt\mathsf{mtype}$, we have $\tt \mathsf{mtype}(m,C'_1)=\mathsf{mtype}(m,\Pi(C_1))$.
+      \item By the checking rule $\tt \mathbf{Subtyping}$, and the fact $\tt\bar{C}_2 <:\bar{C}_u$ we have $\tt \overline{\Pi(C_2)}<:\overline{\Pi(C_u)}$.
     \end{itemize}
 
     With these facts, we can derive the type of the transformed term using the following tree:
@@ -737,7 +750,7 @@ Then the formation of the transformed term is proved by the FJ-M-OK derivation o
 \noLine
 \UIC{$\tt CT(\Pi(C))=class\ \Pi(C_1)\ extends\ \Pi(D)\ \{...\}$}
 \noLine
-\UIC{~~~~~~~~~~~$\tt \mathsf{override}(m,\Pi(D),\overline{\Pi(C)}\rightarrow C_1)$~~~~~~~~~~~}
+\UIC{~~~~~~~~~~~~~~~$\tt \mathsf{override}(m,\Pi(D),\overline{\Pi(C)}\rightarrow C_1)$~~~~~~~~~~~~~~~~}
 \RightLabel{~(FJ-M-OK)}
 \UIC{$\tt \Pi(C_1)\ m\ (\bar{C}\ \bar{x})\ \{return\ t_0;\}\ OK\ in\ \Pi(C)$}
 \DP
@@ -764,6 +777,76 @@ By Lemma 5, we have all method declarations well formed. And by the rule E-CONST
   \end{array}
 \]
 With this proved, we have the theorem proved, i.e a well-typed SWIN program can transform any FJ program correctly.
+\end{proof}
+
+\begin{lemma}[Confluent]
+For each API ($\tt API_s$) declared class $\tt C$, there is exactly one transformation rule in a well typed SWIN program $\tt \Pi$ to transform an expression of field access/new object/method invocation related to the class $\tt C$, if all left hand side patterns are different in the SWIN program.
+\end{lemma}
+\begin{proof}
+The proof consists of two parts: existence and uniqueness. And we make the proof by discussing different kinds of form of a term $\tt t$ related to $\tt C$.
+
+\begin{itemize}
+  \item $\tt t=new~C(\bar{t}_1)$. According to the checking rule $\tt \mathbf{ConstrCover}$. There exists a rule $\tt \pi = (\bar{x}:\overline{C_1\hookrightarrow C'_1})[new~C(\bar{x}):C \rightarrow r:C']$ in $\tt \Pi$ to match the term. By the checking rule T-L2 in for $\tt \pi$, if there is another rule to match the term $\tt t$, it is supposed to be $\tt \pi'=(\bar{x}:\overline{C_1}\hookrightarrow C'_1)[l:C \hookrightarrow r'':C'']$, which contradicts the fact in our definition that only one same left hand pattern will appear in the rule set $\tt\Pi$. Thus there will be only one rule to match the term.
+  
+  Then according to the rule E-T-NEW, this transformation rule $\tt\pi$ can transform the term $\tt t$.
+
+  \item $\tt t=t_1.f$, suppose $\tt\Gamma\env{FJ}{API_s} t_1:C_1$ and the field $\tt f$ is declared in a super class of $\tt C$ named $\tt D$. (As the class order is linear and field declaration cannot be override, it is the only place to declare the field $\tt f$)
+
+  Suppose there are two rules can match the term $\tt t$:
+  \[
+    \begin{array}{c}
+      \tt \pi_1=(x:C_2\hookrightarrow C'_2)[~x.f:C\ \rightarrow\ r:D~] \\
+      \tt \pi_2=(x:C_3\hookrightarrow C'_3)[~x.f:C\ \rightarrow\ r:D~]
+    \end{array}
+  \]
+  As these two patterns can be used to match the term $\tt t$, then we have $\tt C_1 <: C_2$ and $\tt C_1 <: C_3$. And by FJ type system, $\tt C_2$ and $\tt C_3$ should have subtyping relation. Suppose $\tt C_2 <: C_3$, then by the rule E-T-FIELD, we have $\tt C_1<:C_2<:C_3$, and the rule itself guarantees that the first rule $\tt\pi_1$ will be used to transform the term.
+
+  \item $\tt t = t_1.m(\bar{t}_2)$, and $\tt \Gamma_s\env{FJ}{API_s}t_1:C_1,\bar{t}_2:\bar{C}_2$.
+  
+  There are two subcases for the case:
+    \begin{itemize}
+      \item $\tt m$ is define (or override) in class $\tt C_1$. According to the rule $\tt \mathbf{MethCover}$, we have a rule $\tt \pi$ to match the term. And according to the rule E-T-INVOKE, there is no closer class to transform the term and argument types are fixed as the case $\tt t=new~C(\bar{t}_1)$. Thus the rule $\tt \pi$ will be used to transform the rule, by the following derivation:
+
+      \[
+        \begin{array}{c}
+          \infer
+          {\tt \Pi(t_1.m(\bar{t}_2))=[x\mapsto\Pi(t_1), \bar{y}\mapsto\overline{\Pi(t_2)}]r}
+          {
+            \begin{array}{c c}
+              \tt (\bar{y}:\overline{C_3\hookrightarrow C'_3}, x:C_1\hookrightarrow C'_1)[x.m(\bar{y}):C\rightarrow r:D]\in\Pi ~~~~
+              \tt \mathbf{Type}(t_1) = C_1 <: C_1 ~~~~ \mathbf{Type}(\bar{t}_2)<:\bar{C}_3 \\
+              \tt \nexists (\bar{y}:\overline{C_3\hookrightarrow C'_3}, x:C_5\hookrightarrow C'_5)[x.m(\bar{y}):C\rightarrow r:D]\in\Pi.(C_1<:C_5<:C_1 \land C_5\neq C_1)
+            \end{array}
+          }
+        \end{array}
+      \]
+
+      \item $\tt m$ is not defined in $\tt C_1$, but in a class $\tt C_3$, which is a super class of $\tt C_1$. Then a transformation rule $\tt \pi'$ exists to transform the method invocation of $\tt C_3$. Suppose there is no other rule to match the term $\tt t$, then $\tt \pi'$ will be used to transform the term, and if there exists another rule $\tt \pi''$ to transform the term, then $\tt \pi''$ will be used to transform $\tt t$. As the subtyping relation is finite in FJ, thus there exists a lower bound $\tt\pi_l$, and by E-T-INVOKE, it will be used to transform the term. 
+    \end{itemize}
+
+  With these three cases proved, the lemma is proved.
+\end{itemize}
+\end{proof}
+
+\begin{theorem}
+  Any SWIN program is convergent.
+\end{theorem}
+\begin{proof}
+The proof includes two parts: termination and confluent.
+\begin{itemize}
+\item Termination: SWIN employs a normal order evaluation semantics. First, the evaluation rules visit
+a term leftmost and outermost. After performing the transformation on that term, the evaluation 
+rules recursively visit the sub terms of the term, and for each visit, the transformation
+will be applied on the original sub terms, and produce the transformation result by combining
+the transformed sub terms. 
+In this way we can ensure each recursive visit will be 
+terminated as the length of the sub terms 
+are always shorter than the term.
+
+\item Confluent: By Lemma 6.
+\end{itemize}
+
+With these two cases proved, any well typed SWIN program is convergent.
 \end{proof}
 
 \end{document}
